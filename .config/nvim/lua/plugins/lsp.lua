@@ -250,6 +250,14 @@ return {
         end,
         desc = "Signature Help",
       },
+      {
+        mode = "n",
+        "gR",
+        function()
+          vim.lsp.buf.references()
+        end,
+        desc = "Check references under cursor",
+      },
     },
   },
   {
