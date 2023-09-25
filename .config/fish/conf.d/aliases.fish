@@ -50,7 +50,7 @@ alias devdotc "devdot commit -m"
 alias devdotps "devdot push"
 
 # Clean Pacman
-alias pacclean "sudo paru -Rns (paru -Qtdq)"
+alias pacclean "paru -Rns (paru -Qtdq)"
 
 # ex = EXtractor for all kinds of archives
 # usage: ex <file>
