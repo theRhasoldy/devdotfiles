@@ -114,9 +114,9 @@ return {
 
       lsp["tsserver"].setup({
         defaults,
-        disable_formatting = true,
         settings = {
           typescript = {
+            format = { enable = false },
             inlayHints = {
               includeInlayEnumMemberValueHints = true,
               includeInlayFunctionLikeReturnTypeHints = true,
@@ -127,8 +127,10 @@ return {
               includeInlayVariableTypeHints = true,
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
+            implementationsCodeLens = { enabled = true },
           },
           javascript = {
+            format = { enable = false },
             inlayHints = {
               includeInlayEnumMemberValueHints = true,
               includeInlayFunctionLikeReturnTypeHints = true,
@@ -139,6 +141,7 @@ return {
               includeInlayVariableTypeHints = true,
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
+            implementationsCodeLens = { enabled = true },
           },
         },
       })
@@ -172,11 +175,11 @@ return {
         },
         virtual_text = {
           spacing = 4,
-          -- source = "if_many",
-          prefix = "󰊠 ",
+          source = "if_many",
           -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
           -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
           -- prefix = "icons",
+          prefix = "󰊠 ",
           severity_sort = true,
         },
       })

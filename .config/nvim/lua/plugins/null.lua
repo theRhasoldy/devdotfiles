@@ -5,16 +5,19 @@ return {
     local null = require("null-ls")
 
     local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
     local formatting = null.builtins.formatting
+    local diagnostics = null.builtins.diagnostics
 
     null.setup({
       debounce = 150,
       sources = {
-        null.builtins.formatting.prettierd.with({ extra_filetypes = { "astro" } }),
-        formatting.stylua,
+        null.builtins.code_actions.gitsigns,
+        formatting.prettierd.with({ extra_filetypes = { "astro" } }),
         formatting.fixjson,
-        -- null.builtins.code_actions.gitsigns,
-        null.builtins.diagnostics.eslint_d.with({
+        formatting.stylua,
+        diagnostics.luacheck,
+        diagnostics.eslint_d.with({
           diagnostics_format = "[eslint] #{m}\n(#{c})",
           extra_filetypes = { "astro" },
           condition = function(utils)
