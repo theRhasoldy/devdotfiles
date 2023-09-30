@@ -84,7 +84,7 @@ return {
                 path = path,
               },
               library = {
-                vim.api.nvim_get_runtime_file("", true),
+                runtime = "~/.local/share/nvim/mason/packages",
               },
               -- maxPreload = 2000,
               -- preloadFileSize = 50000,
@@ -219,14 +219,14 @@ return {
       },
       {
         mode = "n",
-        "gn",
+        "d]",
         function()
           vim.diagnostic.goto_next()
         end,
       },
       {
         mode = "n",
-        "gN",
+        "d[",
         function()
           vim.diagnostic.goto_prev()
         end,
@@ -271,7 +271,7 @@ return {
     opts = {
       signs = {
         enable = true,
-        timeout = 500, -- in milliseconds
+        timeout = 1000, -- in milliseconds
         position = "eol", -- "right_align" | "overlay"
         separator = " | ", -- signs separator
         show_count = true, -- show the number of each action kind
@@ -293,18 +293,12 @@ return {
         -- The values can either be a string or a string tuple (with description)
         -- example: "<leader>aq" | { "<leader>aq", "Quickfix" }
         apply_first = nil, -- directly applies the first code action
-        -- These are just basically `vim.lsp.buf.code_action` with the `apply` option with some filters
-        -- If there's only one code action, it gets automatically applied.
         quickfix = nil, -- can be filtered with the `quickfix_filter` option bellow
-        quickfix_next = nil, -- tries to fix the next diagnostic
-        quickfix_prev = nil, -- tries to fix the previous diagnostic
         refactor = nil,
         refactor_inline = nil,
         refactor_extract = nil,
         refactor_rewrite = nil,
         source = nil,
-        -- server-specific mappings, server_name = {...}
-        -- This is a map of code actions prefixes and keys
         actions = {
           -- example:
           -- ["rust_analyzer"] = {
@@ -313,9 +307,6 @@ return {
           -- }
         },
       },
-      -- This is used for filtering actions in the quickfix functions
-      -- It's a map of diagnostic codes and the preferred action prefixes
-      -- You can check the diagnostic codes by hovering on the diagnostic
       quickfix_filters = {
         -- example:
         -- ["rust_analyzer"] = {
