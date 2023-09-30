@@ -59,7 +59,8 @@ return {
         "rafamadriz/friendly-snippets",
         config = function()
           require("luasnip.loaders.from_vscode").lazy_load()
-          require("luasnip").filetype_extend("javascript", { "javascript" })
+          require("luasnip").filetype_extend("js" or "jsx", { "javascript" })
+          require("luasnip").filetype_extend("ts" or "tsx", { "typescript" })
         end,
       },
       keys = {
