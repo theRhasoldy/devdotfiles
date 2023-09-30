@@ -12,7 +12,7 @@ return {
     null.setup({
       debounce = 150,
       sources = {
-        null.builtins.code_actions.gitsigns,
+        -- null.builtins.code_actions.gitsigns,
         formatting.prettierd.with({ extra_filetypes = { "astro" } }),
         formatting.fixjson,
         formatting.stylua,
