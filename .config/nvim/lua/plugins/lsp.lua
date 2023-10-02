@@ -167,6 +167,16 @@ return {
 
       lsp["cssls"].setup(defaults)
 
+      lsp["tailwindcss"].setup({
+        defaults,
+        settings = {
+          tailwindCSS = {
+            classAttributes = { "class", "className", "classNames", "class:list", "classList", "ngClass" },
+            emmetCompletions = true,
+          },
+        },
+      })
+
       vim.diagnostic.config({
         underline = false,
         update_in_insert = true,

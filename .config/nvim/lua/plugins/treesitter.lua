@@ -6,7 +6,7 @@ return {
       {
         "nvim-treesitter/nvim-treesitter-context",
         name = "treesitter-context",
-        opts = { separator = "" },
+        opts = { separator = "", max_lines = 4 },
         keys = {
           {
             "gtc",
@@ -33,7 +33,6 @@ return {
       {
         "nvim-treesitter/nvim-treesitter-textobjects",
       },
-      {},
     },
     opts = {
       ensure_installed = {
