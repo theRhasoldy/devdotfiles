@@ -63,16 +63,19 @@ return {
       },
       highlight = {
         custom_captures = {},
-        disable = {},
         enable = true,
         additional_vim_regex_highlighting = false,
       },
       incremental_selection = {
-        disable = {},
         enable = true,
+        keymaps = {
+          init_selection = "<Leader>v",
+          node_incremental = "<Leader>v",
+          node_decremental = "<bs>",
+          scope_incremental = false,
+        },
       },
       indent = {
-        disable = {},
         enable = true,
       },
       textobjects = {
