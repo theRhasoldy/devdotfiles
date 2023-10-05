@@ -23,6 +23,8 @@ opt.signcolumn = "yes"
 opt.laststatus = 3 -- Global Statusline
 opt.showmode = false
 
+opt.cursorline = true
+
 -- Tabs
 opt.tabstop = 2
 opt.softtabstop = 2
