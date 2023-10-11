@@ -278,6 +278,7 @@ return {
   {
     "luckasRanarison/clear-action.nvim",
     event = "BufReadPre",
+    enabled = false,
     opts = {
       signs = {
         enable = true,
