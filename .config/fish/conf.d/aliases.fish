@@ -3,6 +3,8 @@ alias ls "exa --icons --group-directories-first"
 alias lsa "ls -a"
 alias ll "ls -l@ --git --time accessed --no-permissions"
 alias lla "ll -a"
+alias lld "ll -D"
+alias llf "ll -f"
 alias llt "lla -T"
 
 # ...
@@ -30,10 +32,15 @@ alias cat "bat"
 alias g "git"
 alias gs "git status"
 alias ga "git add"
-alias gc "git commit -m && gitleaks detect"
-alias gcz "git cz && gitleaks detect"
+alias gc " git commit -m"
+
+alias gcz "git cz"
+alias glcz "git cz && gitleaks detect"
+
+alias gps "git push"
+alias glps "gitleaks detect && git push"
+
 alias gpl "git pull"
-alias gps "gitleaks detect && git push"
 
 # Dotfiles
 alias dot "/usr/bin/git --git-dir $HOME/.config/dotfiles.git/ --work-tree $HOME"
