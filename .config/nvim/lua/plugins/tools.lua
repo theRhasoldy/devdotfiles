@@ -29,4 +29,45 @@ return {
       },
     },
   },
+  {
+    "sindrets/diffview.nvim",
+    event = { "BufReadPost", "BufNewFile" },
+    opts = {
+      enhanced_diff_hl = true,
+      view = {
+        -- Configure the layout and behavior of different types of views.
+        -- Available layouts:
+        --  'diff1_plain'
+        --    |'diff2_horizontal'
+        --    |'diff2_vertical'
+        --    |'diff3_horizontal'
+        --    |'diff3_vertical'
+        --    |'diff3_mixed'
+        --    |'diff4_mixed'
+        default = {
+          -- Config for changed files, and staged files in diff views.
+          layout = "diff2_horizontal",
+          winbar_info = true,
+        },
+        merge_tool = {
+          -- Config for conflicted files in diff views during a merge or rebase.
+          layout = "diff4_mixed",
+          disable_diagnostics = true,
+          winbar_info = true,
+        },
+        file_history = {
+          -- Config for changed files in file history views.
+          layout = "diff2_horizontal",
+          winbar_info = true,
+        },
+      },
+    },
+    keys = {
+      {
+        "<leader>gd",
+        "<cmd>DiffviewOpen<CR>",
+        desc = "Open diff view window",
+      },
+    },
+  },
 }

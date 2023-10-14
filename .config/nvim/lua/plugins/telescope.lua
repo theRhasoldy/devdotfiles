@@ -91,6 +91,7 @@ return {
         dir_icon = "",
         grouped = true,
         theme = "ivy",
+        prompt_path = true,
       },
     },
   },
