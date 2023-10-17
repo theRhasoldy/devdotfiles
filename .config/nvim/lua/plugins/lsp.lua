@@ -71,6 +71,11 @@ return {
       -- Language server configs
       local lsp = require("lspconfig")
 
+      local lsp_defaults = lsp.util.default_config
+
+      lsp_defaults.capabilities =
+        vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+
       lsp["lua_ls"].setup({
         defaults,
         single_file_support = true,
@@ -126,6 +131,9 @@ return {
               includeInlayPropertyDeclarationTypeHints = true,
               includeInlayVariableTypeHints = true,
             },
+            suggest = {
+              includeCompletionsForModuleExports = true,
+            },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
           },
@@ -139,6 +147,9 @@ return {
               includeInlayParameterNameHintsWhenArgumentMatchesName = true,
               includeInlayPropertyDeclarationTypeHints = true,
               includeInlayVariableTypeHints = true,
+            },
+            suggest = {
+              includeCompletionsForModuleExports = true,
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
