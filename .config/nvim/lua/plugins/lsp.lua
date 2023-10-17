@@ -110,7 +110,7 @@ return {
         filetypes = { "sh" },
       })
 
-      lsp["marksman"].setup(defaults)
+      lsp["eslint"].setup(defaults)
 
       lsp["tsserver"].setup({
         defaults,
@@ -153,13 +153,20 @@ return {
         },
       })
 
+      lsp["mdx_analyzer"].setup({
+        defaults,
+        filetypes = { "mdx" },
+      })
+
+      lsp["remark_ls"].setup(defaults)
+
       lsp["html"].setup({
         defaults,
         single_file_support = true,
         filetypes = { "html" },
       })
 
-      lsp["emmet_ls"].setup(defaults)
+      lsp["emmet_ls"].setup({ defaults, filetypes = { "mdx" } })
 
       lsp["yamlls"].setup(defaults)
 
