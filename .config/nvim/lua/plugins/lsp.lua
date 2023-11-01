@@ -115,7 +115,7 @@ return {
         filetypes = { "sh" },
       })
 
-      lsp["eslint"].setup(defaults)
+      -- lsp["eslint"].setup(defaults)
 
       lsp["tsserver"].setup({
         defaults,
@@ -183,7 +183,20 @@ return {
 
       lsp["jsonls"].setup(defaults)
 
-      lsp["cssls"].setup(defaults)
+      lsp["cssls"].setup({
+        defaults,
+        settings = {
+          css = { validate = true, lint = {
+            unknownAtRules = "ignore",
+          } },
+          scss = { validate = true, lint = {
+            unknownAtRules = "ignore",
+          } },
+          less = { validate = true, lint = {
+            unknownAtRules = "ignore",
+          } },
+        },
+      })
 
       lsp["tailwindcss"].setup({
         defaults,
