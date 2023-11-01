@@ -30,7 +30,7 @@ set -gx TERM xterm-kitty
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-set -gx PAGER "less"
+set -gx PAGER /usr/local/bin/moar
 set -gx QT_STYLE_OVERRIDE kvantum
 
 # Locales
