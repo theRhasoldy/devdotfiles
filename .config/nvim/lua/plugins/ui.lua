@@ -55,13 +55,12 @@ return {
   },
   {
     "stevearc/dressing.nvim",
+    event = "BufReadPre",
     init = function()
-      ---@diagnostic disable-next-line: duplicate-set-field
       vim.ui.select = function(...)
         require("lazy").load({ plugins = { "dressing.nvim" } })
         return vim.ui.select(...)
       end
-      ---@diagnostic disable-next-line: duplicate-set-field
       vim.ui.input = function(...)
         require("lazy").load({ plugins = { "dressing.nvim" } })
         return vim.ui.input(...)
@@ -71,7 +70,10 @@ return {
       title_pos = "center",
       insert_only = false,
       border = "single",
-      backend = { "nui", "telescope", "fzf_lua", "fzf", "builtin" },
+      backend = { "telescope", "nui", "fzf_lua", "fzf", "builtin" },
+      input = {
+        enabled = true,
+      },
       nui = {
         border = {
           style = "single",
@@ -80,10 +82,19 @@ return {
       builtin = {
         -- These can be integers or a float between 0 and 1 (e.g. 0.4 for 40%)
         border = "single",
-        override = function(conf)
-          -- This is the config that will be passed to nvim_open_win.
-          -- Change values here to customize the layout
-          return conf
+      },
+      select = {
+        enabled = true,
+        get_config = function(opts)
+          if opts.kind == "codeaction" then
+            return {
+              backend = "builtin",
+              builtin = {
+                position = "10%",
+                relative = "cursor",
+              },
+            }
+          end
         end,
       },
     },
