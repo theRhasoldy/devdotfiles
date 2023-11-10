@@ -108,8 +108,10 @@ return {
       },
     },
     config = function(_, opts)
-      local ft_to_parser = require("nvim-treesitter.parsers").filetype_to_parsername
-      ft_to_parser.mdx = "tsx" -- the someft filetype will use the python parser and queries.
+      local ft_to_parser = vim.treesitter.language.register
+      ft_to_parser("tsx", "mdx")
+      ft_to_parser("bash", "conf")
+
       require("nvim-treesitter.configs").setup(opts)
     end,
   },

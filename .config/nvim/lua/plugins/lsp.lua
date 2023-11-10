@@ -37,6 +37,7 @@ return {
       end
 
       local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
 
       local attach_settings = function(client)
         -- Disabled built-in lsp formatting, handled by null-ls
@@ -110,6 +111,7 @@ return {
       })
 
       lsp["bashls"].setup({
+        defaults,
         single_file_support = true,
         cmd = { "bash-language-server", "start" },
         filetypes = { "sh" },
@@ -177,7 +179,7 @@ return {
         filetypes = { "html" },
       })
 
-      lsp["emmet_ls"].setup({ defaults, filetypes = { "mdx" } })
+      lsp["emmet_ls"].setup(defaults)
 
       lsp["yamlls"].setup(defaults)
 
@@ -219,7 +221,6 @@ return {
           source = "if_many",
           -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
           -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
-          -- prefix = "icons",
           prefix = "󰊠 ",
           severity_sort = true,
         },
