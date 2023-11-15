@@ -24,5 +24,9 @@ return {
     end,
   },
   "nvim-tree/nvim-web-devicons",
-  { "folke/neodev.nvim", opts = {} },
+  {
+    "folke/neodev.nvim",
+    event = "VeryLazy",
+    opts = {},
+  },
 }

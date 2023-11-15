@@ -91,7 +91,7 @@ return {
               backend = "builtin",
               builtin = {
                 position = "10%",
-                relative = "cursor",
+                relative = "editor",
               },
             }
           end

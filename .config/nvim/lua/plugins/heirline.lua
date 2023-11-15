@@ -12,7 +12,7 @@ return {
 
     -- Winbar
     local colors = {
-      gray = utils.get_highlight("Title").fg,
+      gray = utils.get_highlight("Comment").fg,
       dark_gray = utils.get_highlight("NonText").fg,
       pink = utils.get_highlight("Operator").fg,
       red = utils.get_highlight("Define").fg,

@@ -17,8 +17,6 @@ return {
     end,
     opts = {
       key_labels = {
-        -- override the label used to display some keys. It doesn't effect WK in any other way.
-        -- For example:
         ["<space>"] = "spc",
         ["<CR>"] = "ret",
         ["<tab>"] = "tab",
@@ -35,17 +33,15 @@ return {
     opts = {
       enhanced_diff_hl = true,
       view = {
-        -- Configure the layout and behavior of different types of views.
-        -- Available layouts:
-        --  'diff1_plain'
-        --    |'diff2_horizontal'
-        --    |'diff2_vertical'
-        --    |'diff3_horizontal'
-        --    |'diff3_vertical'
-        --    |'diff3_mixed'
-        --    |'diff4_mixed'
         default = {
-          -- Config for changed files, and staged files in diff views.
+          -- Available layouts:
+          --  'diff1_plain'
+          --    |'diff2_horizontal'
+          --    |'diff2_vertical'
+          --    |'diff3_horizontal'
+          --    |'diff3_vertical'
+          --    |'diff3_mixed'
+          --    |'diff4_mixed'
           layout = "diff2_horizontal",
           winbar_info = true,
         },
@@ -69,5 +65,10 @@ return {
         desc = "Open diff view window",
       },
     },
+  },
+  {
+    "Zeioth/garbage-day.nvim",
+    event = "BufReadPre",
+    opts = {},
   },
 }
