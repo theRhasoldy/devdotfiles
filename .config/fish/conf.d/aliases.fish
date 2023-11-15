@@ -99,3 +99,5 @@ function ex
     echo "'$argv[1]' is not a valid file"
   end
 end
+
+alias screenshare "mpv -vo=xv udp://0.0.0.0:1111 --no-cache --untimed --no-demuxer-thread --video-sync=audio --vd-lavc-threads=1 & wf-recorder --muxer=mpegts --codec=libx264 --file=udp://0.0.0.0:1111"

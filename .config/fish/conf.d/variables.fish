@@ -30,7 +30,9 @@ set -gx TERM xterm-kitty
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-set -gx PAGER /usr/local/bin/moar
+set -gx PAGER moar
+set -gx MANPAGER moar
+set -gx MOAR "--statusbar=bold --style=doom-one"
 set -gx QT_STYLE_OVERRIDE kvantum
 
 # Locales
