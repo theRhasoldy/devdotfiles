@@ -320,15 +320,17 @@ return {
         show_label = false, -- show the string returned by `label_fmt`
         update_on_insert = false, -- show and update signs in insert mode
         icons = {
-          quickfix = " ",
-          refactor = "󰖷 ",
+          quickfix = "󰖷 ",
+          refactor = " ",
           source = "󱍵 ",
+          combined = "󰌵 ", -- used when combine is set to true or as a fallback when there is no action kind
         },
         highlights = { -- highlight groups
           quickfix = "Function",
           refactor = "Include",
           source = "Statement",
           label = "Comment",
+          combined = "Variable",
         },
       },
       mappings = {
