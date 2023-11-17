@@ -144,6 +144,13 @@ return {
       formatting = {
         format = require("lspkind").cmp_format({
           mode = "symbol",
+          menu = {
+            buffer = "[Buffer]",
+            nvim_lsp = "[LSP]",
+            luasnip = "[LuaSnip]",
+            nvim_lua = "[Lua]",
+            latex_symbols = "[Latex]",
+          },
         }),
       },
     })
