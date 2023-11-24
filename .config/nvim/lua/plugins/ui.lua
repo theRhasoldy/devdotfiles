@@ -9,9 +9,6 @@ return {
       cmdline = {
         view = "cmdline",
       },
-      inc_rename = {
-        view = "popupmenu",
-      },
       routes = {
         {
           -- Macros message
@@ -53,7 +50,7 @@ return {
     event = "VeryLazy",
     opts = {
       top_down = false,
-      fps = 30,
+      fps = 60,
       stages = "fade",
       icons = {
         DEBUG = "",
@@ -111,12 +108,10 @@ return {
     },
   },
   {
-    "echasnovski/mini.animate",
-    event = "UIEnter",
+    "karb94/neoscroll.nvim",
+    event = "BufReadPre",
     opts = {
-      scroll = {
-        enable = false,
-      },
+      hide_cursor = false,
     },
   },
 }

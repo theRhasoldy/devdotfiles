@@ -115,7 +115,6 @@ return {
       ft_to_parser("bash", "conf")
 
       require("nvim-treesitter.configs").setup(opts)
-      vim.g.skip_ts_context_commentstring_module = true
     end,
   },
   {

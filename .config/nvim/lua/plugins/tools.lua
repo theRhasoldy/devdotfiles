@@ -1,5 +1,4 @@
 return {
-  -- lazy.nvim
   {
     "chrisgrieser/nvim-early-retirement",
     event = "VeryLazy",
@@ -69,6 +68,6 @@ return {
   {
     "Zeioth/garbage-day.nvim",
     event = "BufReadPre",
-    opts = {},
+    opts = true,
   },
 }

@@ -16,7 +16,7 @@ return {
         json = { "fixjson" },
       },
       format_on_save = {
-        timeout_ms = 2000,
+        timeout_ms = 3000,
         async = false,
         lsp_fallback = true,
       },
