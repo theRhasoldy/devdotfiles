@@ -203,7 +203,16 @@ return {
         defaults,
         settings = {
           tailwindCSS = {
-            classAttributes = { "class", "className", "classNames", "class:list", "classList", "ngClass" },
+            classAttributes = {
+              "class",
+              "className",
+              "classNames",
+              "class:list",
+              "classList",
+              "ngClass",
+              "styles",
+              "style",
+            },
             emmetCompletions = true,
           },
         },
