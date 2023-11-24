@@ -15,6 +15,14 @@ return {
           view = "cmdline",
           filter = { event = "msg_showmode" },
         },
+        -- Supress annoying no info notifcation
+        {
+          filter = {
+            event = "notify",
+            find = "No information available",
+          },
+          opts = { skip = true },
+        },
       },
       lsp = {
         progress = {

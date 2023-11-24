@@ -35,7 +35,7 @@ lazy.setup("plugins", {
   },
   install = {
     -- Try to load one of these colorschemes when starting an installation
-    colorscheme = { "dahlia" },
+    colorscheme = { "oxocarbon" },
   },
   performance = {
     reset_packpath = true, -- reset the package path to improve startup time
