@@ -282,14 +282,6 @@ return {
         desc = "Code actions provided by LSP",
       },
       {
-        mode = "n",
-        "gr",
-        function()
-          vim.lsp.buf.rename()
-        end,
-        desc = "Rename under cursor",
-      },
-      {
         mode = "i",
         "<C-k>",
         function()

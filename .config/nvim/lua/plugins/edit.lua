@@ -60,8 +60,8 @@ return {
     end,
     keys = {
       {
-        "+",
         mode = { "v", "n" },
+        "+",
         function()
           return require("dial.map").inc_normal()
         end,
@@ -69,8 +69,8 @@ return {
         noremap = true,
       },
       {
-        "_",
         mode = { "v", "n" },
+        "_",
         function()
           return require("dial.map").dec_normal()
         end,
@@ -83,5 +83,23 @@ return {
     "sontungexpt/stcursorword",
     event = "VeryLazy",
     config = true,
+  },
+  {
+    "smjonas/inc-rename.nvim",
+    cmd = "IncRename",
+    opts = {
+      preview_empty_name = true, -- whether an empty new name should be previewed; if false the command preview will be cancelled instead
+    },
+    keys = {
+      {
+        mode = { "v", "n" },
+        "gr",
+        function()
+          return ":IncRename " .. vim.fn.expand("<cword>")
+        end,
+        expr = true,
+        noremap = true,
+      },
+    },
   },
 }
