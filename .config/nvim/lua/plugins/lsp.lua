@@ -170,7 +170,7 @@ return {
         filetypes = { "mdx" },
       })
 
-      lsp["remark_ls"].setup(defaults)
+      lsp["marksman"].setup(defaults)
 
       lsp["html"].setup({
         defaults,

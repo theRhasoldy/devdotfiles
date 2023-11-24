@@ -14,6 +14,7 @@ return {
         css = { "prettierd" },
         scss = { "prettierd" },
         json = { "fixjson" },
+        -- markdown = { "prettierd" },
       },
       format_on_save = {
         timeout_ms = 3000,
