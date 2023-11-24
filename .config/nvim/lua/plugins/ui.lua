@@ -110,4 +110,13 @@ return {
       },
     },
   },
+  {
+    "echasnovski/mini.animate",
+    event = "UIEnter",
+    opts = {
+      scroll = {
+        enable = false,
+      },
+    },
+  },
 }
