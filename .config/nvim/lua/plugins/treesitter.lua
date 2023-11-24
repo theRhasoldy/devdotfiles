@@ -57,10 +57,6 @@ return {
         "git_rebase",
         "git_config",
       },
-      context_commentstring = {
-        enable = true,
-        enable_autocmd = false,
-      },
       highlight = {
         custom_captures = {},
         enable = true,
@@ -113,6 +109,7 @@ return {
       ft_to_parser("bash", "conf")
 
       require("nvim-treesitter.configs").setup(opts)
+      vim.g.skip_ts_context_commentstring_module = true
     end,
   },
   {
