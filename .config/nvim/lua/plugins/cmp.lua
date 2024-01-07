@@ -109,7 +109,7 @@ return {
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
         }),
       },
-      mapping = cmp.mapping.preset.insert({
+      mapping = {
         ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
         ["<C-K>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
         ["<C-u>"] = cmp.mapping.scroll_docs(4),
@@ -133,10 +133,13 @@ return {
         ["<C-e>"] = cmp.mapping.abort(),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,
-      }),
+        ["<C-n>"] = nil,
+        ["<C-p>"] = nil,
+      },
       sources = cmp.config.sources({
         { name = "nvim_lsp" },
         { name = "nvim_lsp_signature_help" },
+        { name = "codeium" },
         { name = "luasnip" }, -- For luasnip users.
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
@@ -150,6 +153,7 @@ return {
             luasnip = "[LuaSnip]",
             nvim_lua = "[Lua]",
             latex_symbols = "[Latex]",
+            codeium = "[Codeium]",
           },
         }),
       },
@@ -159,6 +163,7 @@ return {
       sources = cmp.config.sources({
         { name = "nvim_lua" },
         { name = "nvim_lsp_signature_help" },
+        { name = "codeium" },
         { name = "nvim_lsp" },
         { name = "luasnip" }, -- For luasnip users.
         { name = "path" },
@@ -170,6 +175,7 @@ return {
     cmp.setup.filetype("gitcommit", {
       sources = cmp.config.sources({
         { name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+        { name = "codeium" },
         { name = "buffer" },
       }),
     })

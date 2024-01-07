@@ -65,9 +65,4 @@ return {
       },
     },
   },
-  {
-    "Zeioth/garbage-day.nvim",
-    event = "BufReadPre",
-    opts = true,
-  },
 }

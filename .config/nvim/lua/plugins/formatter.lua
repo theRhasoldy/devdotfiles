@@ -1,6 +1,6 @@
 return {
   "stevearc/conform.nvim",
-  -- enabled = false,
+  enabled = false,
   event = { "BufReadPre", "BufNewFile" },
   config = function()
     require("conform").setup({
@@ -13,8 +13,8 @@ return {
         html = { "prettierd" },
         css = { "prettierd" },
         scss = { "prettierd" },
-        json = { "fixjson" },
-        -- markdown = { "prettierd" },
+        json = { "prettierd" },
+        markdown = { "prettierd" },
       },
       format_on_save = {
         timeout_ms = 3000,

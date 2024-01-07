@@ -1,6 +1,6 @@
 return {
   "nvimtools/none-ls.nvim", -- configure formatters & linters
-  enabled = false,
+  -- enabled = false,
   event = "BufReadPre",
   config = function()
     local null = require("null-ls")
