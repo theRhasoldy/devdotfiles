@@ -62,6 +62,9 @@ set -gx _JAVA_OPTIONS "-Djava.util.prefs.userRoot=$XDG_CONFIG_HOME/java"
 # FUCK Gradle
 set -gx GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
 
+set -gx GOPATH "$XDG_DATA_HOME/go"
+set -gx GNUPGHOME "$XDG_DATA_HOME/gnupg"
+
 # Zsh search path for executable
 set -gx path /usr/local/bin /usr/local/sbin $path
 
