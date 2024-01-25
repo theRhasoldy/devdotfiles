@@ -47,7 +47,6 @@ set -gx LESSCHARSET utf-8
 
 # Env
 set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc
-set -gx CARGO_HOME "$XDG_DATA_HOME/cargo"
 set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 set -gx WINEPREFIX "$XDG_DATA_HOME/wine"
 
@@ -64,6 +63,13 @@ set -gx GRADLE_USER_HOME "$XDG_DATA_HOME/gradle"
 
 set -gx GOPATH "$XDG_DATA_HOME/go"
 set -gx GNUPGHOME "$XDG_DATA_HOME/gnupg"
+
+# Rust
+set -gx RUSTUP_HOME "$XDG_DATA_HOME/rustup"
+set -gx CARGO_HOME "$XDG_DATA_HOME/cargo"
+
+# w3m
+set -gx W3M_DIR "$XDG_CACHE_HOME/w3m"
 
 # Zsh search path for executable
 set -gx path /usr/local/bin /usr/local/sbin $path
