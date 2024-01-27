@@ -2,6 +2,7 @@ return {
   {
     "theRhasoldy/dahlia.nvim",
     name = "dahlia",
+    enabled = false,
   },
   {
     "theRhasoldy/oxocarbon.nvim",
