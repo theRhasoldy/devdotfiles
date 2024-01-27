@@ -139,11 +139,18 @@ return {
       sources = cmp.config.sources({
         { name = "nvim_lsp" },
         { name = "nvim_lsp_signature_help" },
-        { name = "codeium" },
         { name = "luasnip" }, -- For luasnip users.
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
       }),
+      performance = {
+        max_view_entries = 16,
+      },
+      view = {
+        docs = {
+          auto_open = true,
+        },
+      },
       formatting = {
         format = require("lspkind").cmp_format({
           mode = "symbol",
@@ -153,7 +160,6 @@ return {
             luasnip = "[LuaSnip]",
             nvim_lua = "[Lua]",
             latex_symbols = "[Latex]",
-            codeium = "[Codeium]",
           },
         }),
       },
@@ -163,7 +169,6 @@ return {
       sources = cmp.config.sources({
         { name = "nvim_lua" },
         { name = "nvim_lsp_signature_help" },
-        { name = "codeium" },
         { name = "nvim_lsp" },
         { name = "luasnip" }, -- For luasnip users.
         { name = "path" },
@@ -175,7 +180,6 @@ return {
     cmp.setup.filetype("gitcommit", {
       sources = cmp.config.sources({
         { name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-        { name = "codeium" },
         { name = "buffer" },
       }),
     })

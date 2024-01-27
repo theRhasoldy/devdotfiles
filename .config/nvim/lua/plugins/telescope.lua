@@ -8,11 +8,13 @@ return {
         require("telescope").load_extension("fzf")
         require("telescope").load_extension("refactoring")
         require("telescope").load_extension("harpoon")
+        require("telescope").load_extension("undo")
       end,
     },
     "nvim-telescope/telescope-live-grep-args.nvim",
     "nvim-telescope/telescope-file-browser.nvim",
     "ThePrimeagen/refactoring.nvim",
+    "debugloop/telescope-undo.nvim",
     {
       "luckasRanarison/nvim-devdocs",
       opts = {
@@ -98,6 +100,9 @@ return {
         theme = "ivy",
         prompt_path = true,
       },
+      undo = {
+        side_by_side = true,
+      },
     },
   },
   keys = {
@@ -152,6 +157,16 @@ return {
         require("telescope").extensions.refactoring.refactors()
       end,
       desc = "Refactor code",
+    },
+    {
+      "<Leader>u",
+      mode = { "n", "x" },
+      function()
+        require("telescope").extensions.undo.undo({
+          initial_mode = "normal",
+        })
+      end,
+      desc = "Open undo tree",
     },
   },
 }

@@ -17,7 +17,11 @@ return {
         formatting.prettierd.with({ extra_filetypes = { "astro" } }),
         formatting.fixjson,
         formatting.stylua,
-        diagnostics.luacheck,
+        diagnostics.luacheck.with({
+          condition = function(utils)
+            return utils.root_has_file({ ".luacheckrc" })
+          end,
+        }),
         diagnostics.eslint_d.with({
           diagnostics_format = "[eslint] #{m}\n(#{c})",
           extra_filetypes = { "astro" },

@@ -3,6 +3,9 @@ return {
   event = "BufEnter",
   config = function()
     vim.g.codeium_disable_bindings = 1
+    vim.g.codeium_idle_delay = 50
+    vim.g.codeium_render = true
+    vim.g.codeium_tab_fallback = ""
   end,
   keys = {
     {

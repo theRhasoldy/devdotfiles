@@ -81,6 +81,9 @@ return {
         single_file_support = true,
         settings = {
           Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
             hint = { enable = true },
             workspace = {
               runtime = {
@@ -88,11 +91,10 @@ return {
                 -- Setup your lua path
                 path = path,
               },
-              library = {
-                runtime = "~/.local/share/nvim/mason/packages",
-              },
-              -- maxPreload = 2000,
-              -- preloadFileSize = 50000,
+              -- library = {
+              --   "~/.local/share/nvim/mason/packages",
+              --   vim.api.nvim_get_runtime_file("", true),
+              -- },
               checkThirdParty = true,
             },
             completion = {
@@ -165,6 +167,8 @@ return {
         },
       })
 
+      lsp["custom_elements_ls"].setup(defaults)
+
       lsp["mdx_analyzer"].setup({
         defaults,
         filetypes = { "mdx" },
@@ -203,6 +207,12 @@ return {
         defaults,
         settings = {
           tailwindCSS = {
+            experimental = {
+              classRegex = {
+                { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                { "cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+              },
+            },
             classAttributes = {
               "class",
               "className",
@@ -225,8 +235,8 @@ return {
           source = "if_many",
         },
         virtual_text = {
-          spacing = 4,
-          source = "if_many",
+          spacing = 24,
+          source = "always",
           -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
           -- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
           prefix = "󰊠 ",
