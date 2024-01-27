@@ -58,7 +58,7 @@ return {
       },
     },
 
-    builtin = {
+    pickers = {
       find_files = {
         find_command = { "fd" },
         hidden = true,
@@ -87,11 +87,11 @@ return {
         hijack_netrw = true,
         cwd_to_path = true,
         hidden = true,
-        no_ignore = false,
+        no_ignore = true,
+        respect_gitignore = false,
         select_buffer = true,
         use_fd = true,
         file_ignore_patterns = {},
-        respect_gitignore = true,
         path = "%:p:h",
         dir_icon = "",
         grouped = true,
@@ -118,9 +118,7 @@ return {
     {
       "<leader>fg",
       function()
-        require("telescope").extensions.live_grep_args.live_grep_args({
-          previewer = true,
-        })
+        require("telescope").extensions.live_grep_args.live_grep_args()
       end,
       desc = "Search keyword",
     },
