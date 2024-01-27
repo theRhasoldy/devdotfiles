@@ -5,6 +5,7 @@ return {
     dependencies = {
       {
         "nvim-treesitter/nvim-treesitter-context",
+        -- TODO: Hello world
         name = "treesitter-context",
         opts = { separator = "", max_lines = 4 },
         keys = {
@@ -121,11 +122,37 @@ return {
     "andymass/vim-matchup",
     event = "BufReadPost",
     init = function()
-      vim.o.matchpairs = "(:),{:},[:],<:>"
+      vim.o.matchpairs = '(:),{:},[:],<:>,`:`,":",`:`'
     end,
     config = function()
       vim.g.matchup_matchparen_deferred = 1
       vim.g.matchup_matchparen_offscreen = { method = "status_manual" }
     end,
+  },
+  {
+    "folke/todo-comments.nvim",
+    event = { "BufReadPost", "BufNewFile" },
+    opts = {
+      highlight = {
+        before = nil,
+        keyword = "wide_bg",
+        after = "fg",
+      },
+    },
+    keys = {
+      {
+        "t]",
+        function()
+          require("todo-comments").jump_next()
+        end,
+        desc = "Next todo comment",
+      },
+      {
+        "t[",
+        function()
+          require("todo-comments").jump_prev()
+        end,
+      },
+    },
   },
 }
