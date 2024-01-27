@@ -174,8 +174,6 @@ return {
         },
       })
 
-      lsp["custom_elements_ls"].setup(defaults)
-
       lsp["mdx_analyzer"].setup({
         defaults,
         filetypes = { "mdx" },

@@ -27,12 +27,8 @@ return {
           },
         },
       },
-      {
-        "windwp/nvim-ts-autotag",
-      },
-      {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-      },
+      "windwp/nvim-ts-autotag",
+      "nvim-treesitter/nvim-treesitter-textobjects",
     },
     opts = {
       ensure_installed = {
