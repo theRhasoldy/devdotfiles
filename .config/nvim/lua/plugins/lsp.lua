@@ -40,8 +40,9 @@ return {
       capabilities.textDocument.completion.completionItem.snippetSupport = true
 
       local attach_settings = function(client)
-        client.server_capabilities.documentFormattingProvider = true
-        client.server_capabilities.documentRangeFormattingProvider = true
+        -- Handled by none ls
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
       end
 
       local defaults = {
@@ -139,6 +140,9 @@ return {
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
+            experimental = {
+              aiCodeActions = true,
+            },
           },
           javascript = {
             format = { enable = false },
@@ -156,6 +160,9 @@ return {
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
+            experimental = {
+              aiCodeActions = true,
+            },
           },
         },
       })
