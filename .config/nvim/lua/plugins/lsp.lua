@@ -232,7 +232,8 @@ return {
         underline = false,
         update_in_insert = true,
         float = {
-          source = "if_many",
+          source = "always",
+          severity_sort = true,
         },
         virtual_text = {
           spacing = 24,
