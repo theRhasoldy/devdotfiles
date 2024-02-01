@@ -143,9 +143,6 @@ return {
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
       }),
-      performance = {
-        max_view_entries = 16,
-      },
       view = {
         docs = {
           auto_open = true,
