@@ -9,6 +9,7 @@
 [core]
 	editor = nvim
 	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+  pager = delta
 
 [color]
 	ui = auto
@@ -30,3 +31,5 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[pull]
+	twohead = ort
