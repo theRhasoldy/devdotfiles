@@ -44,14 +44,14 @@ alias gpl "git pull"
 
 # Dotfiles
 alias dot "/usr/bin/git --git-dir $HOME/.config/dotfiles.git/ --work-tree $HOME"
-alias dots "dot status --untracked-files no"
+alias dots "dot status"
 alias dota "dot add"
 alias dotc "dot commit -m"
 alias dotps "dot push"
 
 # Dev Dotfiles
 alias devdot "/usr/bin/git --git-dir $HOME/.config/devdotfiles.git/ --work-tree $HOME"
-alias devdots "devdot status --untracked-files no"
+alias devdots "devdot status"
 alias devdota "devdot add"
 alias devdotc "devdot commit -m"
 alias devdotps "devdot push"
