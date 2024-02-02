@@ -1,12 +1,25 @@
 local path = vim.split(package.path, ";")
 
+local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
+
+local border = {
+  { "╭", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╮", "FloatBorder" },
+  { "│", "FloatBorder" },
+  { "╯", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╰", "FloatBorder" },
+  { "│", "FloatBorder" },
+}
+
 return {
   {
     "williamboman/mason.nvim",
     event = "BufReadPre",
     opts = {
       ui = {
-        check_outdated_packages_on_open = true,
+        check_outdated_packages_on_open = false,
         border = "single",
         icons = {
           package_installed = "✓",
@@ -20,7 +33,6 @@ return {
     "neovim/nvim-lspconfig",
     event = "BufReadPre",
     init = function()
-      -- disable lsp watcher. Too slow on linux
       local ok, wf = pcall(require, "vim.lsp._watchfiles")
       if ok then
         wf._watchfunc = function()
@@ -30,38 +42,11 @@ return {
     end,
     config = function()
       -- Set Custom Icons
-      local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
       for type, icon in pairs(signs) do
         local hl = "DiagnosticSign" .. type
         vim.fn.sign_define(hl, { text = icon, texthl = hl })
       end
 
-      local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-      capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-      local attach_settings = function(client)
-        -- Handled by none ls
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-      end
-
-      local defaults = {
-        capabilities = capabilities,
-        on_attach = attach_settings,
-      }
-
-      local border = {
-        { "╭", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╮", "FloatBorder" },
-        { "│", "FloatBorder" },
-        { "╯", "FloatBorder" },
-        { "─", "FloatBorder" },
-        { "╰", "FloatBorder" },
-        { "│", "FloatBorder" },
-      }
-
-      -- To instead override globally
       local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
       function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
         opts = opts or {}
@@ -69,16 +54,26 @@ return {
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
 
-      -- Language server configs
       local lsp = require("lspconfig")
-
       local lsp_defaults = lsp.util.default_config
 
-      lsp_defaults.capabilities =
-        vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+      -- Extend default lsp config
+      local attach_settings = function(client)
+        -- Handled by none ls
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        client.config.flags.debounce_text_changes = 150
+      end
 
+      lsp_defaults.on_attach = attach_settings
+
+      local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
+      lsp_defaults.capabilities = vim.tbl_deep_extend("force", lsp_defaults.capabilities, capabilities)
+
+      -- lsp setup
       lsp["lua_ls"].setup({
-        defaults,
+        lsp_defaults,
         single_file_support = true,
         settings = {
           Lua = {
@@ -113,7 +108,7 @@ return {
       })
 
       lsp["bashls"].setup({
-        defaults,
+        lsp_defaults,
         single_file_support = true,
         cmd = { "bash-language-server", "start" },
         filetypes = { "sh" },
@@ -122,7 +117,7 @@ return {
       -- lsp["eslint"].setup(defaults)
 
       lsp["tsserver"].setup({
-        defaults,
+        lsp_defaults,
         settings = {
           typescript = {
             format = { enable = false },
@@ -130,8 +125,8 @@ return {
               includeInlayEnumMemberValueHints = true,
               includeInlayFunctionLikeReturnTypeHints = true,
               includeInlayFunctionParameterTypeHints = true,
-              includeInlayParameterNameHints = "all",
-              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayParameterNameHints = "literal",
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
               includeInlayPropertyDeclarationTypeHints = true,
               includeInlayVariableTypeHints = true,
             },
@@ -140,9 +135,6 @@ return {
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
-            experimental = {
-              aiCodeActions = true,
-            },
           },
           javascript = {
             format = { enable = false },
@@ -151,7 +143,7 @@ return {
               includeInlayFunctionLikeReturnTypeHints = true,
               includeInlayFunctionParameterTypeHints = true,
               includeInlayParameterNameHints = "all",
-              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
               includeInlayPropertyDeclarationTypeHints = true,
               includeInlayVariableTypeHints = true,
             },
@@ -160,41 +152,38 @@ return {
             },
             referencesCodeLens = { enabled = true, showOnAllFunctions = true },
             implementationsCodeLens = { enabled = true },
-            experimental = {
-              aiCodeActions = true,
-            },
           },
         },
       })
 
       lsp["astro"].setup({
-        defaults,
+        lsp_defaults,
         format = {
           indentFrontmatter = true,
         },
       })
 
       lsp["mdx_analyzer"].setup({
-        defaults,
+        lsp_defaults,
         filetypes = { "mdx" },
       })
 
-      lsp["marksman"].setup(defaults)
+      lsp["marksman"].setup(lsp_defaults)
 
       lsp["html"].setup({
-        defaults,
+        lsp_defaults,
         single_file_support = true,
         filetypes = { "html" },
       })
 
-      lsp["emmet_ls"].setup(defaults)
+      lsp["emmet_ls"].setup(lsp_defaults)
 
-      lsp["yamlls"].setup(defaults)
+      lsp["yamlls"].setup(lsp_defaults)
 
-      lsp["jsonls"].setup(defaults)
+      lsp["jsonls"].setup(lsp_defaults)
 
       lsp["cssls"].setup({
-        defaults,
+        lsp_defaults,
         settings = {
           css = { validate = true, lint = {
             unknownAtRules = "ignore",
@@ -209,7 +198,7 @@ return {
       })
 
       lsp["tailwindcss"].setup({
-        defaults,
+        lsp_defaults,
         settings = {
           tailwindCSS = {
             experimental = {
