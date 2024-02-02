@@ -53,14 +53,15 @@ return {
     {
       "L3MON4D3/LuaSnip",
       opts = {
-        history = true,
+        keep_roots = true,
       },
       dependencies = {
         "rafamadriz/friendly-snippets",
         config = function()
           require("luasnip.loaders.from_vscode").lazy_load()
-          require("luasnip").filetype_extend("js" or "jsx", { "javascript" })
-          require("luasnip").filetype_extend("ts" or "tsx", { "typescript" })
+          require("luasnip").filetype_extend("js" or "jsx" or "astro", { "javascript" })
+          require("luasnip").filetype_extend("ts" or "tsx" or "astro", { "typescript" })
+          require("luasnip").filetype_extend("lua", { "lua" })
         end,
       },
       keys = {
@@ -126,10 +127,8 @@ return {
         }),
       },
       sources = cmp.config.sources({
-        {
-          { name = "nvim_lsp", group_index = 1 },
-          { name = "nvim_lsp_signature_help", group_index = 1 },
-        },
+        { name = "nvim_lsp", group_index = 1 },
+        { name = "nvim_lsp_signature_help", group_index = 1 },
         { name = "luasnip" },
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10, group_index = 3 },
@@ -164,11 +163,9 @@ return {
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
-        {
-          { name = "nvim_lua" },
-          { name = "nvim_lsp_signature_help" },
-          { name = "nvim_lsp" },
-        },
+        { name = "nvim_lua" },
+        { name = "nvim_lsp_signature_help" },
+        { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
