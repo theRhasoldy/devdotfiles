@@ -87,10 +87,10 @@ return {
                 -- Setup your lua path
                 path = path,
               },
-              -- library = {
-              --   "~/.local/share/nvim/mason/packages",
-              --   vim.api.nvim_get_runtime_file("", true),
-              -- },
+              library = {
+                -- "~/.local/share/nvim/mason/packages",
+                vim.api.nvim_get_runtime_file("", true),
+              },
               checkThirdParty = true,
             },
             completion = {

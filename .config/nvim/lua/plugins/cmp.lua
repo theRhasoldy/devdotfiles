@@ -96,10 +96,14 @@ return {
 
     cmp.setup({
       snippet = {
-        -- REQUIRED - you must specify a snippet engine
         expand = function(args)
-          require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
+          require("luasnip").lsp_expand(args.body)
         end,
+      },
+      view = {
+        docs = {
+          auto_open = true,
+        },
       },
       window = {
         documentation = cmp.config.window.bordered({
@@ -109,6 +113,27 @@ return {
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
         }),
       },
+      formatting = {
+        format = require("lspkind").cmp_format({
+          mode = "symbol",
+          menu = {
+            buffer = "[Buffer]",
+            nvim_lsp = "[LSP]",
+            luasnip = "[LuaSnip]",
+            nvim_lua = "[Lua]",
+            latex_symbols = "[Latex]",
+          },
+        }),
+      },
+      sources = cmp.config.sources({
+        {
+          { name = "nvim_lsp", group_index = 1 },
+          { name = "nvim_lsp_signature_help", group_index = 1 },
+        },
+        { name = "luasnip" },
+        { name = "path" },
+        { name = "buffer", keyword_length = 5, max_item_count = 10, group_index = 3 },
+      }),
       mapping = {
         ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
         ["<C-K>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
@@ -128,56 +153,25 @@ return {
             end
           end,
         }),
-        ["<C-s>"] = cmp.mapping.abort(),
+        ["<Esc>"] = cmp.mapping.abort(),
         ["<CR>"] = cmp.mapping.confirm({ select = true }),
-        ["<C-e>"] = cmp.mapping.abort(),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,
         ["<C-n>"] = nil,
         ["<C-p>"] = nil,
       },
-      sources = cmp.config.sources({
-        { name = "nvim_lsp" },
-        { name = "nvim_lsp_signature_help" },
-        { name = "luasnip" }, -- For luasnip users.
-        { name = "path" },
-        { name = "buffer", keyword_length = 5, max_item_count = 10 },
-      }),
-      view = {
-        docs = {
-          auto_open = true,
-        },
-      },
-      formatting = {
-        format = require("lspkind").cmp_format({
-          mode = "symbol",
-          menu = {
-            buffer = "[Buffer]",
-            nvim_lsp = "[LSP]",
-            luasnip = "[LuaSnip]",
-            nvim_lua = "[Lua]",
-            latex_symbols = "[Latex]",
-          },
-        }),
-      },
     })
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
-        { name = "nvim_lua" },
-        { name = "nvim_lsp_signature_help" },
-        { name = "nvim_lsp" },
-        { name = "luasnip" }, -- For luasnip users.
+        {
+          { name = "nvim_lua" },
+          { name = "nvim_lsp_signature_help" },
+          { name = "nvim_lsp" },
+        },
+        { name = "luasnip" },
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
-      }),
-    })
-
-    -- Set configuration for specific filetype.
-    cmp.setup.filetype("gitcommit", {
-      sources = cmp.config.sources({
-        { name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-        { name = "buffer" },
       }),
     })
 

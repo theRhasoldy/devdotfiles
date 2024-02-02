@@ -38,6 +38,9 @@ lazy.setup("plugins", {
     colorscheme = { "oxocarbon" },
   },
   performance = {
+    cache = {
+      enabled = true,
+    },
     reset_packpath = true, -- reset the package path to improve startup time
     rtp = {
       paths = {}, -- add any custom paths here that you want to includes in the rtp
