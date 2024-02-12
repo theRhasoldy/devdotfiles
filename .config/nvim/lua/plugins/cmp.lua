@@ -59,8 +59,9 @@ return {
         "rafamadriz/friendly-snippets",
         config = function()
           require("luasnip.loaders.from_vscode").lazy_load()
-          require("luasnip").filetype_extend("js" or "jsx" or "astro", { "javascript" })
-          require("luasnip").filetype_extend("ts" or "tsx" or "astro", { "typescript" })
+          require("luasnip").filetype_extend("js" or "jsx", { "javascript" })
+          require("luasnip").filetype_extend("ts" or "tsx", { "typescript" })
+          require("luasnip").filetype_extend("astro", { "typescript", "javascript" })
           require("luasnip").filetype_extend("lua", { "lua" })
         end,
       },
@@ -152,7 +153,7 @@ return {
             end
           end,
         }),
-        ["<Esc>"] = cmp.mapping.abort(),
+        -- ["<Esc>"] = cmp.mapping.abort(),
         ["<CR>"] = cmp.mapping.confirm({ select = true }),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,

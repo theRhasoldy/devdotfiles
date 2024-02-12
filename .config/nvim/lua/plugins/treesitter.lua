@@ -109,7 +109,7 @@ return {
 
       local ft_to_parser = vim.treesitter.language.register
       ft_to_parser("tsx", "mdx")
-      ft_to_parser("bash", "conf")
+      ft_to_parser("hyprlang", "conf")
 
       require("nvim-treesitter.configs").setup(opts)
     end,
