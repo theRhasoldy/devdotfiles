@@ -1,6 +1,7 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR --export BFETCH_CLASSIC_MODE:true
+SETUVAR --export SWAYSOCK:\x1d
 SETUVAR --export XDG_CACHE_HOME:/home/rhasoldy/\x2ecache
 SETUVAR --export XDG_CONFIG_HOME:/home/rhasoldy/\x2econfig/
 SETUVAR --export XDG_DATA_HOME:/home/rhasoldy/\x2elocal/share
