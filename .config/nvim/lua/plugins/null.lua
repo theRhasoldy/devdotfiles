@@ -9,26 +9,17 @@ return {
 
     local formatting = null.builtins.formatting
     local diagnostics = null.builtins.diagnostics
+    local completions = null.builtins.completion
+    local actions = null.builtins.code_actions
 
     null.setup({
       debounce = 150,
       sources = {
-        -- null.builtins.code_actions.gitsigns,
+        completions.luasnip.with({ filetypes = { "astro", "typescript", "javascript", "typescriptreact", "javascriptreact" } }),
+        actions.gitsigns,
+        diagnostics.selene,
         formatting.prettierd.with({ extra_filetypes = { "astro" } }),
-        formatting.fixjson,
         formatting.stylua,
-        diagnostics.luacheck.with({
-          condition = function(utils)
-            return utils.root_has_file({ ".luacheckrc" })
-          end,
-        }),
-        diagnostics.eslint_d.with({
-          diagnostics_format = "[eslint] #{m}\n(#{c})",
-          extra_filetypes = { "astro" },
-          condition = function(utils)
-            return utils.root_has_file({ ".eslintrc.cjs" or ".eslintrc" })
-          end,
-        }),
       },
       on_attach = function(client, bufnr)
         if client.supports_method("textDocument/formatting") then

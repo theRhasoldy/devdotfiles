@@ -114,7 +114,7 @@ return {
         filetypes = { "sh" },
       })
 
-      -- lsp["eslint"].setup(defaults)
+      lsp["eslint"].setup(lsp_defaults)
 
       lsp["tsserver"].setup({
         lsp_defaults,
