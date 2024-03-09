@@ -15,7 +15,9 @@ return {
     null.setup({
       debounce = 150,
       sources = {
-        completions.luasnip.with({ filetypes = { "astro", "typescript", "javascript", "typescriptreact", "javascriptreact" } }),
+        completions.luasnip.with({
+          filetypes = { "astro", "typescript", "javascript", "typescriptreact", "javascriptreact" },
+        }),
         actions.gitsigns,
         diagnostics.selene,
         formatting.prettierd.with({ extra_filetypes = { "astro" } }),
