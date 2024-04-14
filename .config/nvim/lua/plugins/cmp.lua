@@ -54,6 +54,7 @@ return {
       "L3MON4D3/LuaSnip",
       opts = {
         keep_roots = true,
+        update_events = { "TextChanged", "TextChangedI" },
       },
       dependencies = {
         "rafamadriz/friendly-snippets",
@@ -128,11 +129,10 @@ return {
         }),
       },
       sources = cmp.config.sources({
-        { name = "nvim_lsp", group_index = 1 },
-        { name = "nvim_lsp_signature_help", group_index = 1 },
+        { name = "nvim_lsp", priority = 5 },
         { name = "luasnip" },
         { name = "path" },
-        { name = "buffer", keyword_length = 5, max_item_count = 10, group_index = 3 },
+        { name = "buffer", keyword_length = 3, max_item_count = 10, group_index = 3 },
       }),
       mapping = {
         ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
@@ -164,8 +164,7 @@ return {
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
-        { name = "nvim_lua" },
-        { name = "nvim_lsp_signature_help" },
+        { name = "nvim_lsp", priority = 5 },
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },

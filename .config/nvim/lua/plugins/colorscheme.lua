@@ -6,6 +6,7 @@ return {
   },
   {
     "theRhasoldy/oxocarbon.nvim",
+    -- enabled = false,
     lazy = false,
     config = function()
       vim.cmd.colorscheme("oxocarbon")

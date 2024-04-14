@@ -40,7 +40,26 @@ return {
         end
       end
     end,
+
     config = function()
+      local lsp = require("lspconfig")
+      local lsp_defaults = lsp.util.default_config
+
+      -- LSP Capabilities
+      local cmp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+      local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
+
+      -- Extend default lsp config
+      local attach_settings = function(client)
+        -- Handled by none ls
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        client.config.flags.debounce_text_changes = 150
+      end
+
+      lsp_defaults.capabilities = vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
+      lsp_defaults.on_attach = attach_settings
+
       -- Set Custom Icons
       for type, icon in pairs(signs) do
         local hl = "DiagnosticSign" .. type
@@ -53,23 +72,6 @@ return {
         opts.border = opts.border or border
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
-
-      local lsp = require("lspconfig")
-      local lsp_defaults = lsp.util.default_config
-
-      -- Extend default lsp config
-      local attach_settings = function(client)
-        -- Handled by none ls
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        client.config.flags.debounce_text_changes = 150
-      end
-
-      lsp_defaults.on_attach = attach_settings
-
-      local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-      capabilities.textDocument.completion.completionItem.snippetSupport = true
-      lsp_defaults.capabilities = vim.tbl_deep_extend("force", lsp_defaults.capabilities, capabilities)
 
       -- lsp setup
       lsp["lua_ls"].setup({
@@ -133,8 +135,8 @@ return {
             suggest = {
               includeCompletionsForModuleExports = true,
             },
-            referencesCodeLens = { enabled = true, showOnAllFunctions = true },
-            implementationsCodeLens = { enabled = true },
+            referencesCodeLens = { enabled = false },
+            implementationsCodeLens = { enabled = false },
           },
           javascript = {
             format = { enable = false },
@@ -150,8 +152,8 @@ return {
             suggest = {
               includeCompletionsForModuleExports = true,
             },
-            referencesCodeLens = { enabled = true, showOnAllFunctions = true },
-            implementationsCodeLens = { enabled = true },
+            referencesCodeLens = { enabled = false },
+            implementationsCodeLens = { enabled = false },
           },
         },
       })

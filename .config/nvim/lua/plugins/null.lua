@@ -9,18 +9,14 @@ return {
 
     local formatting = null.builtins.formatting
     local diagnostics = null.builtins.diagnostics
-    local completions = null.builtins.completion
     local actions = null.builtins.code_actions
 
     null.setup({
       debounce = 150,
       sources = {
-        completions.luasnip.with({
-          filetypes = { "astro", "typescript", "javascript", "typescriptreact", "javascriptreact" },
-        }),
+        formatting.prettierd.with({ extra_filetypes = { "astro" } }),
         actions.gitsigns,
         diagnostics.selene,
-        formatting.prettierd.with({ extra_filetypes = { "astro" } }),
         formatting.stylua,
       },
       on_attach = function(client, bufnr)
@@ -30,7 +26,7 @@ return {
             group = augroup,
             buffer = bufnr,
             callback = function()
-              vim.lsp.buf.format({ async = false })
+              vim.lsp.buf.format({ async = true })
             end,
           })
         end

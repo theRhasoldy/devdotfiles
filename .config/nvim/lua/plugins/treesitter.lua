@@ -112,6 +112,8 @@ return {
       ft_to_parser("hyprlang", "conf")
 
       require("nvim-treesitter.configs").setup(opts)
+
+      --
     end,
   },
   {

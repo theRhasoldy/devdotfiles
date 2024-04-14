@@ -40,7 +40,7 @@ return {
 
       -- Optimizations
       cache_picker = true,
-      file_ignore_patterns = { "node_modules", ".git/" },
+      file_ignore_patterns = { "node_modules", ".git/", ".next/", "dist/", "build/", "bin/", ".storybook" },
 
       preview = {
         filesize_limit = 1,
