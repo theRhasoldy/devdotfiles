@@ -13,6 +13,9 @@ alias .... "../../.."
 alias ..... "../../../.."
 alias ...... "../../../../.."
 
+alias ta "tmux attach"
+alias tn "tmux new-session -s"
+
 # Convenient copy/remove/move
 alias rm "rm -vI"
 alias cp "rsync -ahv --info progress2"
