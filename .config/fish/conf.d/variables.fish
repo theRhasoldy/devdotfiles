@@ -79,3 +79,10 @@ set -gx PATH "$XDG_CONFIG_HOME/scripts" $PATH
 set -gx PATH "$GOPATH/bin" $PATH
 
 set -gx BFETCH_CLASSIC_MODE true 
+
+# FZF
+set -gx FZF_DEFAULT_COMMAND "fd --hidden --strip-cwd-prefix --exclude .git"
+
+# FZF FISH
+set -gx fzf_preview_dir_cmd "exa --icons --group-directories-first -l@ --git --time accessed --no-permissions"
+set -gx fzf_diff_highlighter "delta --paging=never"
