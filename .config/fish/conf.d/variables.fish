@@ -78,7 +78,11 @@ set -gx path /usr/local/bin /usr/local/sbin $path
 set -gx PATH "$XDG_CONFIG_HOME/scripts" $PATH
 set -gx PATH "$GOPATH/bin" $PATH
 
+# Bfetch
 set -gx BFETCH_CLASSIC_MODE true 
+
+# Zoxide
+set -gx _ZO_ECHO 1
 
 # FZF
 set -gx FZF_DEFAULT_COMMAND "fd --hidden --strip-cwd-prefix --exclude .git"
