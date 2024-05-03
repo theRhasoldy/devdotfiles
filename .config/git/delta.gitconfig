@@ -1,12 +1,11 @@
 [core]
-  pager = delta
+  pager = delta --side-by-side --features=interactive
 
 [interactive]
-    diffFilter = delta --color-only --features=interactive
+    diffFilter = delta --side-by-side --color-only --features=interactive
 
 [delta]
   navigate = true    # use n and N to move between diff sections
-  side-by-side = true
   syntax-theme = base16
   keep-plus-minus-markers = true
 
