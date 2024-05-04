@@ -24,6 +24,11 @@ return {
           opts = { skip = true },
         },
       },
+      hover = {
+        enabled = true,
+        silent = false, -- set to true to not show a message if hover is not available
+        view = nil, -- when nil, use defaults from documentation
+      },
       lsp = {
         progress = {
           enabled = false,
@@ -33,6 +38,16 @@ return {
           ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
           ["vim.lsp.util.stylize_markdown"] = true,
           ["cmp.entry.get_documentation"] = true,
+        },
+      },
+      documentation = {
+        view = "hover",
+        opts = {
+          lang = "markdown",
+          replace = true,
+          render = "plain",
+          format = { "{message}" },
+          win_options = { concealcursor = "n", conceallevel = 3 },
         },
       },
       -- you can enable a preset for easier configuration

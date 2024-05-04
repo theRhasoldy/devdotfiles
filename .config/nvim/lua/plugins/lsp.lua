@@ -120,6 +120,14 @@ return {
 
       lsp["tsserver"].setup({
         lsp_defaults,
+        filetypes = {
+          "typescript",
+          "typescriptreact",
+          "typescript.tsx",
+          "javascript",
+          "javascriptreact",
+          "javascript.jsx",
+        },
         settings = {
           typescript = {
             format = { enable = false },
@@ -154,6 +162,26 @@ return {
             },
             referencesCodeLens = { enabled = false },
             implementationsCodeLens = { enabled = false },
+          },
+        },
+      })
+
+      lsp["volar"].setup({
+        lsp_defaults,
+        filetypes = { "vue" },
+        settings = {
+          vue = {
+            complete = {
+              casing = {
+                props = "autoCamel",
+              },
+            },
+          },
+        },
+
+        init_options = {
+          vue = {
+            hybridMode = false,
           },
         },
       })
