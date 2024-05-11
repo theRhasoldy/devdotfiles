@@ -35,7 +35,7 @@ return {
       dynamic_preview_title = true,
       path_display = { "smart" },
       layout_strategy = "vertical",
-      prompt_prefix = "    ",
+      prompt_prefix = "   ",
       selection_caret = "  ",
 
       -- Optimizations
