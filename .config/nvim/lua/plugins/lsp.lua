@@ -52,9 +52,8 @@ return {
       -- Extend default lsp config
       local attach_settings = function(client)
         -- Handled by none ls
-        client.server_capabilities.documentFormattingProvider = false
-        client.server_capabilities.documentRangeFormattingProvider = false
-        client.config.flags.debounce_text_changes = 150
+        client.server_capabilities.documentFormattingProvider = true
+        client.server_capabilities.documentRangeFormattingProvider = true
       end
 
       lsp_defaults.capabilities = vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
@@ -206,7 +205,13 @@ return {
         filetypes = { "html" },
       })
 
-      lsp["emmet_ls"].setup(lsp_defaults)
+      lsp["emmet_language_server"].setup({
+        lsp_defaults.capabilities,
+        on_attach = function(client)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        end,
+      })
 
       lsp["yamlls"].setup(lsp_defaults)
 
