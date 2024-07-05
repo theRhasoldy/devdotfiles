@@ -1,8 +1,0 @@
-{
-  "diagnostics.globals": [
-    "vim",
-    "lfs"
-  ],
-  "runtime.version": "LuaJIT",
-    "workspace.checkThirdParty": "Disable"
-}
