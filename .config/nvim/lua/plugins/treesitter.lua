@@ -30,6 +30,7 @@ return {
       "astro",
       "javascript",
       "typescript",
+      "angular",
       "tsx",
       "json",
       "yaml",
@@ -44,7 +45,7 @@ return {
       "git_config",
     },
     -- Install parsers synchronously (only applied to `ensure_installed`)
-    sync_install = false,
+    sync_install = true,
 
     -- config for default modules
     indent = {
@@ -81,4 +82,7 @@ return {
       enabled = true,
     },
   },
+  config = function(_, opts)
+    require("nvim-treesitter.configs").setup(opts)
+  end,
 }

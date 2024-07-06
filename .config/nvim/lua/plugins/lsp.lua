@@ -36,11 +36,6 @@ return {
         "emmet_language_server",
         "yamlls",
         "jsonls",
-        -- formatters
-        "prettierd",
-        -- linters
-        "selene",
-        "stylua",
       },
     },
   },
