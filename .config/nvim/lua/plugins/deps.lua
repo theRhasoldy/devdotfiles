@@ -27,14 +27,9 @@ local symbols = {
 }
 
 return {
-  {
-    "nvim-lua/plenary.nvim",
-    event = "VeryLazy",
-  },
-  {
-    "nvim-tree/nvim-web-devicons",
-    event = "VeryLazy",
-  },
+  "MunifTanjim/nui.nvim",
+  "nvim-lua/plenary.nvim",
+  "nvim-tree/nvim-web-devicons",
   {
     "onsails/lspkind.nvim",
     event = "BufReadPre",

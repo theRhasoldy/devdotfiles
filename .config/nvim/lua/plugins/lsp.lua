@@ -1,5 +1,7 @@
 local path = vim.split(package.path, ";")
 
+local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
+
 return {
   {
     "williamboman/mason.nvim",
@@ -64,6 +66,12 @@ return {
           severity_skrt = true,
         },
       })
+
+      -- Set Custom Icons
+      for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl })
+      end
 
       -- override mason-lspconfig
       local default_setup = function(server)

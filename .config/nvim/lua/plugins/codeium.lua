@@ -1,7 +1,10 @@
 return {
   "Exafunction/codeium.vim",
   event = "BufReadPre",
-  config = function(_, opts)
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+  },
+  config = function()
     vim.g.codeium_disable_bindings = 1
     vim.g.codeium_no_map_tab = false
     vim.g.codeium_idle_delay = 50
@@ -33,7 +36,7 @@ return {
     },
     {
       mode = { "i" },
-      "<C-p>",
+      "<C-N>",
       function()
         return vim.fn["codeium#CycleCompletions"](-1)
       end,
