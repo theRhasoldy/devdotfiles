@@ -8,9 +8,20 @@ return {
     if(ok) then
       typewriter.setup({
         enable_horizontal_scroll = false,
+        enable_notifications = false,
       })
 
       vim.cmd('TWEnable')
     end
   end,
+  keys = {
+    {
+      "<leader>zz",
+      function()
+        vim.cmd('TWToggle')
+        print("toggled typewriter")
+      end,
+      desc = "toggle typewriter",
+    },
+  },
 }
