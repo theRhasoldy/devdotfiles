@@ -1,0 +1,10 @@
+{
+  "lazy.nvim": { "branch": "main", "commit": "d901d2166fef0304e360316e7a04316f11ab62d0" },
+  "nvim-autopairs": { "branch": "master", "commit": "c15de7e7981f1111642e7e53799e1211d4606cb9" },
+  "nvim-treesitter": { "branch": "master", "commit": "a8c082b4f5b3b70bde2ffb08cc112dfd7e515fb3" },
+  "nvim-treesitter-context": { "branch": "master", "commit": "7f695420543e5f1a1ca55c7f95c73df259491ec0" },
+  "nvim-treesitter-textobjects": { "branch": "master", "commit": "34867c69838078df7d6919b130c0541c0b400c47" },
+  "nvim-ts-autotag": { "branch": "main", "commit": "ddfccbf0df1b9349c2b9e9b17f4afa8f9b6c1ed1" },
+  "oxicarbon.nvim": { "branch": "main", "commit": "948d612abd5ce05b1a06a71c93cc06e90f728065" },
+  "vim-matchup": { "branch": "master", "commit": "1535a769d5dca851fe7d41b0be95f7c7203a4bef" }
+}
