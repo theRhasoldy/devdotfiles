@@ -67,7 +67,7 @@ return {
 
       -- override mason-lspconfig
       local default_setup = function(server)
-        require('lspconfig')[server].setup({
+        lsp[server].setup({
           capabilities = lsp_capabilities,
         })
       end
