@@ -2,55 +2,15 @@ return {
   "hrsh7th/nvim-cmp",
   event = { "InsertEnter", "CmdlineEnter" },
   dependencies = {
+    "onsails/lspkind-nvim",
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-nvim-lua",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-cmdline",
     "saadparwaiz1/cmp_luasnip",
-    {
-      "L3MON4D3/LuaSnip",
-      opts = {
-        keep_roots = true,
-        update_events = { "TextChanged", "TextChangedI" },
-      },
-      dependencies = {
-        "rafamadriz/friendly-snippets",
-        config = function()
-          require("luasnip.loaders.from_vscode").lazy_load()
-          require("luasnip").filetype_extend("js" or "jsx", { "javascript" })
-          require("luasnip").filetype_extend("ts" or "tsx", { "typescript" })
-          require("luasnip").filetype_extend("astro", { "typescript", "javascript" })
-          require("luasnip").filetype_extend("lua", { "lua" })
-        end,
-      },
-      keys = {
-        {
-          "<Tab>",
-          mode = { "i", "s" },
-          function()
-            if require("luasnip").expand_or_jumpable() then
-              require("luasnip").expand_or_jump()
-            else
-              return "<Tab>"
-            end
-          end,
-          expr = true,
-          silent = true,
-        },
-        {
-          "<s-Tab>",
-          mode = { "i", "s" },
-          function()
-            if require("luasnip").jumpable(-1) then
-              require("luasnip").jump(-1)
-            end
-          end,
-          expr = true,
-          silent = true,
-        },
-      },
-    },
+    "hrsh7th/cmp-nvim-lsp-signature-help",
+    "hrsh7th/cmp-nvim-lsp-document-symbol",
   },
   config = function()
     local cmp = require("cmp")
@@ -86,6 +46,7 @@ return {
         }),
       },
       sources = cmp.config.sources({
+        { name = 'nvim_lsp_signature_help' },
         { name = "nvim_lsp", priority = 5 },
         { name = "luasnip" },
         { name = "path" },
@@ -121,8 +82,8 @@ return {
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
+        { name = 'nvim_lsp_signature_help' },
         { name = "nvim_lsp", priority = 5 },
-        { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
@@ -133,6 +94,7 @@ return {
     cmp.setup.cmdline({ "/", "?" }, {
       mapping = cmp.mapping.preset.cmdline(),
       sources = {
+        { name = 'nvim_lsp_document_symbol' },
         { name = "nvim_lsp" },
         { name = "buffer" },
       },

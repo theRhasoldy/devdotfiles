@@ -70,9 +70,54 @@ return {
         bottom_search = true,
         command_palette = false,
         long_message_to_split = true,
-        inc_rename = true,
+        inc_rename = false,
         lsp_doc_border = true,
       },
     },
   },
+  {
+    "stevearc/dressing.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.ui.select = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.select(...)
+      end
+      vim.ui.input = function(...)
+        require("lazy").load({ plugins = { "dressing.nvim" } })
+        return vim.ui.input(...)
+      end
+    end,
+    opts = {
+      title_pos = "center",
+      insert_only = false,
+      border = "single",
+      backend = { "telescope", "nui", "fzf_lua", "fzf", "builtin" },
+      input = {
+        enabled = true,
+      },
+      nui = {
+        border = {
+          style = "single",
+        },
+      },
+      builtin = {
+        border = "single",
+      },
+      select = {
+        enabled = true,
+        get_config = function(opts)
+          if opts.kind == "codeaction" then
+            return {
+              backend = "builtin",
+              builtin = {
+                position = "10%",
+                relative = "editor",
+              },
+            }
+          end
+        end,
+      },
+    },
+  }
 }

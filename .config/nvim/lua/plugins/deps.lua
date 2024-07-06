@@ -32,6 +32,7 @@ return {
   "nvim-tree/nvim-web-devicons",
   {
     "onsails/lspkind.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     event = "BufReadPre",
     config = function()
       require("lspkind").init({
