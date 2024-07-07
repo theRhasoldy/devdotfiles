@@ -32,6 +32,7 @@
   "nvim-web-devicons": { "branch": "master", "commit": "c0cfc1738361b5da1cd0a962dd6f774cc444f856" },
   "oxicarbon.nvim": { "branch": "main", "commit": "948d612abd5ce05b1a06a71c93cc06e90f728065" },
   "plenary.nvim": { "branch": "master", "commit": "a3e3bc82a3f95c5ed0d7201546d5d2c19b20d683" },
+  "telescope.nvim": { "branch": "master", "commit": "bfcc7d5c6f12209139f175e6123a7b7de6d9c18a" },
   "typewriter.nvim": { "branch": "main", "commit": "0dee8f8ccbb0127c3d3d59bb141117d456df275d" },
   "vim-matchup": { "branch": "master", "commit": "1535a769d5dca851fe7d41b0be95f7c7203a4bef" }
 }

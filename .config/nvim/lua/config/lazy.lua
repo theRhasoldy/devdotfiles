@@ -30,7 +30,7 @@ lazy.setup("plugins", {
   defaults = {
     lazy = true,
     -- default `cond` you can use to globally disable a lot of plugins
-    cond = nil, ---@type boolean|fun(self:LazyPlugin):boolean|nil
+    cond = nil,
   },
   dev = {
     -- Directory for local plugin projects
@@ -48,10 +48,10 @@ lazy.setup("plugins", {
         "gzip",
         "matchit",
         "matchparen",
-        --"netrw",
-        --"netrwSettings",
-        --"netrwPlugin",
-        --"netrwFileHandlers",
+        "netrw",
+        "netrwSettings",
+        "netrwPlugin",
+        "netrwFileHandlers",
         "tar",
         "tarPlugin",
         "tohtml",

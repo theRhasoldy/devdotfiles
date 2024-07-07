@@ -17,7 +17,7 @@ return {
   },
   {
     "williamboman/mason-lspconfig.nvim",
-    lazy = false,
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       ensure_installed = {
         -- lsps
@@ -42,9 +42,8 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "williamboman/mason-lspconfig.nvim",
+        "williamboman/mason-lspconfig.nvim",
     },
-    event = { "BufReadPre", "BufNewFile" },
     config = function()
       local ok, lsp = pcall(require, "lspconfig")
 
