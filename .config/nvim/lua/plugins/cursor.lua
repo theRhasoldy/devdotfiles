@@ -6,20 +6,20 @@ return {
     config = function()
       local ok, typewriter = pcall(require, "typewriter")
 
-      if(ok) then
+      if ok then
         typewriter.setup({
           enable_horizontal_scroll = false,
           enable_notifications = false,
         })
 
-        vim.cmd('TWEnable')
+        vim.cmd("TWEnable")
       end
     end,
     keys = {
       {
         "<leader>zz",
         function()
-          vim.cmd('TWToggle')
+          vim.cmd("TWToggle")
           print("toggled typewriter")
         end,
         desc = "toggle typewriter",

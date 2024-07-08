@@ -55,14 +55,32 @@ return {
     "nvim-lua/plenary.nvim",
     "nvim-tree/nvim-web-devicons",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    "nvim-telescope/telescope-file-browser.nvim",
   },
   cmd = "Telescope",
   opts = {
     defaults = {
+      dynamic_preview_title = true,
+      path_display = { "smart" },
+      prompt_prefix = "  ",
+      selection_caret = " ",
       preview = {
         treesitter = true,
       },
+      layout_config = {
+        horizontal = {
+          height = 0.8,
+          width = 0.8,
+          preview_width = 0.7,
+        },
+        vertical = {
+          height = 0.8,
+          width = 0.95,
+          preview_height = 0.7,
+        },
+      },
     },
+    -- builtin pickers
     pickers = {
       find_files = {
         find_command = { "fd" },
@@ -77,10 +95,28 @@ return {
         layout_strategy = "vertical",
       },
     },
+    -- extensions
+    extensions = {
+      file_browser = {
+        initial_mode = "normal",
+        cwd_to_path = true,
+        hidden = true,
+        no_ignore = true,
+        respect_gitignore = false,
+        select_buffer = true,
+        use_fd = true,
+        file_ignore_patterns = {},
+        path = "%:p:h",
+        dir_icon = "",
+        grouped = true,
+        prompt_path = true,
+      },
+    },
   },
   config = function(_, opts)
     require("telescope").setup(opts)
     require("telescope").load_extension("fzf")
+    require("telescope").load_extension("file_browser")
   end,
   keys = {
     -- pickers
