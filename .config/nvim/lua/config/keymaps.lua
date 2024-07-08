@@ -11,15 +11,15 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
 -- reload config
-map("n", "<Leader>r", "<cmd>source<CR>")
+map("n", "<leader>r", "<cmd>source<CR>")
 
 -- add new line
-map("n", "<CR>", "o<Esc>")
-map("n", "<S-CR>", "O<Esc>")
+map("n", "<cr>", "o<Esc>")
+map("n", "<S-cr>", "O<Esc>")
 
 -- splits
-map("n", "<LocalLeader>-", "<cmd>split<CR>")
-map("n", "<LocalLeader>=", "<cmd>vsplit<CR>")
+map("n", "<LocalLeader>-", "<cmd>split<cr>")
+map("n", "<LocalLeader>=", "<cmd>vsplit<cr>")
 
 -- switch splits
 map("n", "<LocalLeader>h", "<C-W>H")
