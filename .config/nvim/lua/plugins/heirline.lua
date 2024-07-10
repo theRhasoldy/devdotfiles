@@ -1,3 +1,62 @@
+local M = {}
+
+M.diagnostic_icons = {
+  error_icon = " ",
+  warn_icon = " ",
+  info_icon = " ",
+  hint_icon = " ",
+}
+
+M.mode_names = {
+  n = "󰹇 ",
+  no = "󱠭 ",
+  nov = "󱠭 ",
+  noV = "󱠭 ",
+  ["no\22"] = "󱠭 ",
+  niI = "󰹇 i",
+  niR = "󰹇 r",
+  niV = "󰹇 v",
+  nt = "󰹇 t",
+  v = "󰛐 ",
+  vs = "󰛐 s",
+  V = "󰈈 ",
+  Vs = "󰈈 s",
+  ["\22"] = "󰡭 ",
+  ["\22s"] = "󰡭 ",
+  s = "S",
+  S = "S_",
+  ["\19"] = "^S",
+  i = "󰏫 ",
+  ic = "󰏫 c",
+  ix = "󰏫 ",
+  R = "",
+  r = " ",
+  Rc = "󱣩",
+  Rx = "󱣩",
+  Rv = "󱣩",
+  Rvc = "󱣩",
+  Rvx = "󱣩",
+  c = "󰹇 ",
+  cv = "󰹇 ",
+  rm = "...",
+  ["r?"] = "?",
+  ["!"] = "!",
+  t = "T",
+}
+
+M.git_icons = {
+  branch = " ",
+  added = " ",
+  removed = " ",
+  changed = " ",
+}
+
+M.sbar = { "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" }
+
+local Align = { provider = "%=" }
+local Space = { provider = "  " }
+local Padding = { provider = " " }
+
 return {
   "rebelot/heirline.nvim",
   -- enabled = false,
@@ -11,7 +70,7 @@ return {
       return
     end
 
-    local colors = {
+    M.colors = {
       gray = utils.get_highlight("Comment").fg,
       dark_gray = utils.get_highlight("NonText").fg,
       pink = utils.get_highlight("Operator").fg,
@@ -22,18 +81,25 @@ return {
       purple = utils.get_highlight("Keyword").fg,
     }
 
-    local Align = { provider = "%=" }
-    local Space = { provider = "  " }
-    local Padding = { provider = " " }
+    M.mode_colors = {
+      n = M.colors.orange,
+      i = M.colors.pink,
+      v = M.colors.purple,
+      V = M.colors.purple,
+      ["\22"] = M.colors.purple,
+      c = M.colors.orange,
+      s = M.colors.blue,
+      S = M.colors.blue,
+      ["\19"] = M.colors.blue,
+      R = M.colors.green,
+      r = M.colors.green,
+      ["!"] = M.colors.red,
+      t = M.colors.red,
+    }
 
     local Diagnostics = {
       condition = conditions.has_diagnostics,
-      static = {
-        error_icon = " ",
-        warn_icon = " ",
-        info_icon = " ",
-        hint_icon = "󰌵 ",
-      },
+      static = M.diagnostic_icons,
       init = function(self)
         self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
         self.warnings =
@@ -44,7 +110,7 @@ return {
       update = { "DiagnosticChanged", "BufEnter" },
       {
         provider = " [ ",
-        hl = { fg = colors.gray },
+        hl = { fg = M.colors.gray },
       },
       {
         provider = function(self)
@@ -73,7 +139,7 @@ return {
       },
       {
         provider = "]",
-        hl = { fg = colors.gray },
+        hl = { fg = M.colors.gray },
       },
     }
 
@@ -87,7 +153,7 @@ return {
         end
         return " [ " .. table.concat(names, " ") .. " ]"
       end,
-      hl = { fg = colors.gray },
+      hl = { fg = M.colors.gray },
     }
 
     local Git = {
@@ -100,9 +166,9 @@ return {
       end,
       { -- git branch name
         provider = function(self)
-          return " " .. self.status_dict.head .. " "
+          return M.git_icons.branch .. self.status_dict.head .. " "
         end,
-        hl = { fg = colors.purple, bold = true },
+        hl = { fg = M.colors.purple, bold = true },
       },
       -- You could handle delimiters, icons and counts similar to Diagnostics
     }
@@ -120,26 +186,26 @@ return {
           return self.has_changes
         end,
         provider = "[ ",
-        hl = { fg = colors.gray },
+        hl = { fg = M.colors.gray },
       },
       {
         provider = function(self)
           local count = self.status_dict.added or 0
-          return count > 0 and (" " .. count .. " ")
+          return count > 0 and (M.git_icons.added .. count .. " ")
         end,
         hl = "GitSignsAdd",
       },
       {
         provider = function(self)
           local count = self.status_dict.removed or 0
-          return count > 0 and (" " .. count .. " ")
+          return count > 0 and (M.git_icons.removed .. count .. " ")
         end,
         hl = "GitSignsDelete",
       },
       {
         provider = function(self)
           local count = self.status_dict.changed or 0
-          return count > 0 and (" " .. count .. " ")
+          return count > 0 and (M.git_icons.changed .. count .. " ")
         end,
         hl = "GitSignsChange",
       },
@@ -148,12 +214,15 @@ return {
           return self.has_changes
         end,
         provider = "]",
-        hl = { fg = colors.gray },
+        hl = { fg = M.colors.gray },
       },
     }
 
     -- Statusline
     local ViMode = {
+      update = {
+        "ModeChanged",
+      },
       -- get vim current mode
       init = function(self)
         self.mode = vim.fn.mode(1) -- :h mode()
@@ -167,57 +236,8 @@ return {
         end
       end,
       static = {
-        mode_names = {
-          n = "󰹇 ",
-          no = "󱠭 ",
-          nov = "󱠭 ",
-          noV = "󱠭 ",
-          ["no\22"] = "󱠭 ",
-          niI = "󰹇 i",
-          niR = "󰹇 r",
-          niV = "󰹇 v",
-          nt = "󰹇 t",
-          v = "󰛐 ",
-          vs = "󰛐 s",
-          V = "󰈈 ",
-          Vs = "󰈈 s",
-          ["\22"] = "󰡭 ",
-          ["\22s"] = "󰡭 ",
-          s = "S",
-          S = "S_",
-          ["\19"] = "^S",
-          i = "󰏫 ",
-          ic = "󰏫 c",
-          ix = "󰏫 ",
-          R = "",
-          r = " ",
-          Rc = "󱣩",
-          Rx = "󱣩",
-          Rv = "󱣩",
-          Rvc = "󱣩",
-          Rvx = "󱣩",
-          c = "󰹇 ",
-          cv = "󰹇 ",
-          rm = "...",
-          ["r?"] = "?",
-          ["!"] = "!",
-          t = "T",
-        },
-        mode_colors = {
-          n = colors.orange,
-          i = colors.pink,
-          v = colors.purple,
-          V = colors.purple,
-          ["\22"] = colors.purple,
-          c = colors.orange,
-          s = colors.blue,
-          S = colors.blue,
-          ["\19"] = colors.blue,
-          R = colors.green,
-          r = colors.green,
-          ["!"] = colors.red,
-          t = colors.red,
-        },
+        mode_names = M.mode_names,
+        mode_colors = M.mode_colors,
       },
       provider = function(self)
         return self.mode_names[self.mode] .. "%)"
@@ -226,10 +246,6 @@ return {
         local mode = self.mode:sub(1, 1) -- get only the first mode character
         return { fg = self.mode_colors[mode], bold = true }
       end,
-      -- performance improvement.
-      update = {
-        "ModeChanged",
-      },
     }
 
     -- file name parent
@@ -277,15 +293,14 @@ return {
         condition = function()
           return vim.bo.modified
         end,
-        provider = "  ",
-        hl = { fg = colors.gray, bold = true },
+        provider = " ",
+      hl = { fg = M.colors.orange },
       },
       {
         condition = function()
           return not vim.bo.modifiable or vim.bo.readonly
         end,
-        provider = " ",
-        hl = colors.orange,
+        provider = " ",
       },
     }
 
@@ -293,7 +308,7 @@ return {
       hl = function()
         if vim.bo.modified then
           -- use `force` because we need to override the child's hl foreground
-          return { fg = colors.purple, bold = true, force = true }
+          return { fg = M.colors.purple, bold = true, force = true }
         end
       end,
     }
@@ -318,7 +333,7 @@ return {
         end
         return icon .. "[ " .. cwd .. " ]"
       end,
-      hl = { fg = colors.gray },
+      hl = { fg = M.colors.gray },
     }
 
     local Ruler = {
@@ -327,12 +342,12 @@ return {
       -- %c = column number
       -- %P = percentage through file of displayed window
       provider = "(%L) | %l:%2c | %P",
-      hl = { fg = colors.gray },
+      hl = { fg = M.colors.gray },
     }
 
     local ScrollBar = {
       static = {
-        sbar = { "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" },
+        sbar = M.sbar,
       },
       provider = function(self)
         local curr_line = vim.api.nvim_win_get_cursor(0)[1]
@@ -340,7 +355,7 @@ return {
         local i = math.floor((curr_line - 1) / lines * #self.sbar) + 1
         return string.rep(self.sbar[i], 2) -- width
       end,
-      hl = { fg = colors.gray, bg = colors.dark_gray },
+      hl = { fg = M.colors.gray, bg = M.colors.dark_gray },
     }
 
     -- Final heirline layout
