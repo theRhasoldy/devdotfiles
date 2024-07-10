@@ -14,6 +14,7 @@ opt.clipboard = "unnamedplus"
 -- statusline
 opt.signcolumn = "yes"
 opt.laststatus = 3 -- Global Statusline
+opt.showmode = false
 
 -- tabs & indents
 opt.tabstop = 2
