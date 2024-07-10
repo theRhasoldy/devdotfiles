@@ -1,16 +1,19 @@
 return {
   "smjonas/inc-rename.nvim",
   cmd = "IncRename",
-  config = function ()
+  config = function()
     local ok, inc_rename = pcall(require, "inc_rename")
 
-    if ok then
-      vim.opt.inccommand = "split"
-      inc_rename.setup({
-        preview_empty_name = false,
-        input_buffer_type = "dressing",
-      })
+    if not ok then
+      print("error loading inc-rename")
+      return
     end
+
+    vim.opt.inccommand = "split"
+    inc_rename.setup({
+      preview_empty_name = false,
+      input_buffer_type = "dressing",
+    })
   end,
   keys = {
     {
