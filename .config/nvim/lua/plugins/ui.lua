@@ -13,10 +13,14 @@ return {
           search_down = { kind = "search", pattern = "^/", icon = "", lang = "regex" },
           search_up = { kind = "search", pattern = "^%?", icon = "", lang = "regex" },
           filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-          lua = { pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" }, icon = "", lang = "lua" },
+          lua = {
+            pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" },
+            icon = "",
+            lang = "lua",
+          },
           help = { pattern = "^:%s*he?l?p?%s+", icon = "󰋖" },
           input = { view = "cmdline_input", icon = "󰥻" },
-        }
+        },
       },
       routes = {
         {
@@ -79,12 +83,13 @@ return {
     "stevearc/dressing.nvim",
     event = "VeryLazy",
     init = function()
+      local lazy = require("lazy")
       vim.ui.select = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
+        lazy.load({ plugins = { "dressing.nvim" } })
         return vim.ui.select(...)
       end
       vim.ui.input = function(...)
-        require("lazy").load({ plugins = { "dressing.nvim" } })
+        lazy.load({ plugins = { "dressing.nvim" } })
         return vim.ui.input(...)
       end
     end,
@@ -119,5 +124,5 @@ return {
         end,
       },
     },
-  }
+  },
 }
