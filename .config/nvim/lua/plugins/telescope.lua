@@ -1,10 +1,11 @@
 -- Implement delta as previewer for diffs
 local ok_builtin, builtin = pcall(require, "telescope.builtin")
 local ok_previewers, previewers = pcall(require, "telescope.previewers")
+local ok_telescope, telescope = pcall(require, "telescope")
 
-local E = {}
+local M = {}
 
-if not ok_builtin or not ok_previewers then
+if not ok_builtin or not ok_previewers or not ok_telescope then
   print("error loading telescope")
   return
 end
@@ -35,14 +36,14 @@ local delta = previewers.new_termopen_previewer({
   end,
 })
 
-E.my_git_commits = function(opts)
+M.my_git_commits = function(opts)
   opts = opts or {}
   opts.previewer = delta
 
   builtin.git_commits(opts)
 end
 
-E.my_git_status = function(opts)
+M.my_git_status = function(opts)
   opts = opts or {}
   opts.previewer = delta
 
@@ -114,23 +115,23 @@ return {
     },
   },
   config = function(_, opts)
-    require("telescope").setup(opts)
-    require("telescope").load_extension("fzf")
-    require("telescope").load_extension("file_browser")
+    telescope.setup(opts)
+    telescope.load_extension("fzf")
+    telescope.load_extension("file_browser")
   end,
   keys = {
     -- pickers
     {
       "<leader>ff",
       function()
-        require("telescope.builtin").find_files()
+        builtin.find_files()
       end,
       desc = "Search files",
     },
     {
       "<leader>fg",
       function()
-        require("telescope.builtin").live_grep()
+        builtin.live_grep()
       end,
       desc = "Search keyword",
     },
@@ -153,14 +154,14 @@ return {
     {
       "<leader>gc",
       function()
-        E.my_git_commits()
+        M.my_git_commits()
       end,
       desc = "Show git commits",
     },
     {
       "<leader>gs",
       function()
-        E.my_git_status()
+        M.my_git_status()
       end,
       desc = "Show git status",
     },

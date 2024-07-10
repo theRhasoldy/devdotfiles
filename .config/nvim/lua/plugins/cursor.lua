@@ -12,6 +12,7 @@ return {
           enable_notifications = false,
         })
 
+        -- enable on load
         vim.cmd("TWEnable")
       end
     end,

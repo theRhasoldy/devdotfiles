@@ -1,15 +1,23 @@
+local signs = {
+  add = "│",
+  change = "│",
+  delete = "_",
+  topdelete = " ̅",
+  changedelete = "~",
+}
+
 return {
   {
     "lewis6991/gitsigns.nvim",
     event = "BufReadPre",
     opts = {
       signs = {
-        add = { text = "│" },
-        change = { text = "│" },
-        delete = { text = "_" },
-        topdelete = { text = "‾" },
+        add = { text = signs.add },
+        change = { text = signs.change },
+        delete = { text = signs.delete },
+        topdelete = { text = signs.topdelete },
         changedelete = {
-          text = "/",
+          text = signs.changedelete,
         },
       },
       signcolumn = true,
