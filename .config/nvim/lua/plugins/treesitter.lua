@@ -85,8 +85,11 @@ return {
   config = function(_, opts)
     local ok, treesitter = pcall(require, "nvim-treesitter.configs")
 
-    if ok then
-      treesitter.setup(opts)
+    if not ok then
+      print("error loading treesitter")
+      return
     end
+
+    treesitter.setup(opts)
   end,
 }
