@@ -1,5 +1,7 @@
 local opt = vim.opt
 
+vim.opt.termguicolors = true
+
 -- files
 opt.hidden = true
 opt.confirm = true
