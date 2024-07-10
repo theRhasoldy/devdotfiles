@@ -11,11 +11,6 @@ return {
       return
     end
 
-    -- General
-    local Align = { provider = "%=" }
-    local Space = { provider = "  " }
-
-    -- Winbar
     local colors = {
       gray = utils.get_highlight("Comment").fg,
       dark_gray = utils.get_highlight("NonText").fg,
@@ -26,6 +21,10 @@ return {
       orange = utils.get_highlight("Exception").fg,
       purple = utils.get_highlight("Keyword").fg,
     }
+
+    local Align = { provider = "%=" }
+    local Space = { provider = "  " }
+    local Padding = { provider = " " }
 
     local Diagnostics = {
       condition = conditions.has_diagnostics,
@@ -42,7 +41,7 @@ return {
         self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
         self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
       end,
-      update = { "DiagnosticChanged", "BufModifiedSet", "BufEnter" },
+      update = { "DiagnosticChanged", "BufEnter" },
       {
         provider = " [ ",
         hl = { fg = colors.gray },
@@ -83,7 +82,7 @@ return {
       update = { "LspAttach", "LspDetach" },
       provider = function()
         local names = {}
-        for i, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+        for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
           table.insert(names, server.name)
         end
         return " [ " .. table.concat(names, " ") .. " ]"
@@ -233,14 +232,14 @@ return {
       },
     }
 
-    -- Block to be used
+    -- file name parent
     local FileNameBlock = {
       init = function(self)
         self.filename = vim.api.nvim_buf_get_name(0)
       end,
     }
 
-    -- Children
+    -- children
     local FileIcon = {
       init = function(self)
         local filename = self.filename
@@ -304,9 +303,11 @@ return {
       FileIcon,
       utils.insert(FileNameModifer, FileName),
       FileFlags,
+      Padding,
       { provider = "%<" } -- this means that the statusline is cut here when there's not enough space
     )
 
+    -- cwd in statusline
     local WorkDir = {
       provider = function()
         local icon = (vim.fn.haslocaldir(0) == 1 and " " or " ")
@@ -346,27 +347,26 @@ return {
     local heir = {
       winbar = {
         Diagnostics,
-
         Align,
-        GitChanges,
         Space,
         FileNameBlock,
+        Padding,
       },
       statusline = {
+        Padding,
         ViMode,
         Space,
         WorkDir,
         Space,
-
-        Align,
         Git,
-
+        GitChanges,
         Align,
         LSPActive,
         Space,
         Ruler,
         Space,
         ScrollBar,
+        Padding,
       },
       opts = {
         -- if the callback returns true, the winbar will be disabled for that window
