@@ -11,15 +11,11 @@ return {
     end,
   },
   {
-    "windwp/nvim-autopairs",
+    "hrsh7th/nvim-insx",
     event = "InsertEnter",
-    opts = {
-      check_ts = true,
-      fast_wrap = {
-        highlight = "Comment",
-        highlight_grey = "Comment",
-      },
-    },
+    config = function()
+      require("insx.preset.standard").setup()
+    end,
   },
   {
     "windwp/nvim-ts-autotag",
