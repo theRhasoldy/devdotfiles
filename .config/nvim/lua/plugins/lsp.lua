@@ -1,3 +1,4 @@
+local utils = require("config.utils")
 local path = vim.split(package.path, ";")
 
 local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
@@ -55,6 +56,26 @@ local get_keybinds_on_lsp = function()
       )
 
       vim.keymap.set("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+    end,
+  })
+end
+
+-- display virtual text in normal only
+local hide_virtual_in_insert = function()
+  utils.create_autocmd("InsertEnter", {
+    pattern = "*",
+    callback = function()
+      vim.diagnostic.config({
+        virtual_text = false,
+      })
+    end,
+  })
+  utils.create_autocmd("InsertLeave", {
+    pattern = "*",
+    callback = function()
+      vim.diagnostic.config({
+        virtual_text = true,
+      })
     end,
   })
 end
@@ -125,7 +146,7 @@ return {
           spacing = 24,
           source = "always",
           prefix = "󰊠",
-          severity_skrt = true,
+          severity_sort = true,
         },
       })
 
@@ -236,6 +257,7 @@ return {
       })
 
       get_keybinds_on_lsp()
+      hide_virtual_in_insert()
     end,
   },
 }

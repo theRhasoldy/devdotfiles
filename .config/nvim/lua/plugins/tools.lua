@@ -15,9 +15,9 @@ return {
     end,
     opts = {
       key_labels = {
-        ["<space>"] = "SPC",
-        ["<CR>"] = "RET",
-        ["<tab>"] = "TAB",
+        ["<space>"] = "<space>",
+        ["<CR>"] = "<cr",
+        ["<tab>"] = "<tab>",
       },
       window = {
         border = "single",

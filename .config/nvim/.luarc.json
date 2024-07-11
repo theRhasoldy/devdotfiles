@@ -1,7 +1,8 @@
 {
   "diagnostics.globals": [
     "vim",
-    "lfs"
+    "lfs",
+        "create_autocmd"
   ],
   "runtime.version": "LuaJIT",
   "workspace.checkThirdParty": "Disable"
