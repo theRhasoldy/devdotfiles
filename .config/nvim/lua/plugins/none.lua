@@ -28,13 +28,11 @@ return {
 
     local formatting = none.builtins.formatting
     local diagnostics = none.builtins.diagnostics
-    local actions = none.builtins.code_actions
 
     none.setup({
       debounce = 150,
       sources = {
         formatting.prettierd.with({ extra_filetypes = { "astro" } }),
-        actions.gitsigns,
         diagnostics.selene,
         formatting.stylua,
       },

@@ -31,17 +31,18 @@ return {
       enhanced_diff_hl = true,
       view = {
         default = {
-          layout = "diff2_horizontal",
           winbar_info = true,
+          disable_diagnostics = false,
         },
         merge_tool = {
           -- Config for conflicted files in diff views during a merge or rebase.
-          layout = "diff4_mixed",
           disable_diagnostics = false,
+          layout = "diff4_mixed",
           winbar_info = false,
         },
         file_history = {
           -- Config for changed files in file history views.
+          disable_diagnostics = false,
           layout = "diff2_horizontal",
           winbar_info = false,
         },
@@ -53,7 +54,13 @@ return {
     keys = {
       {
         "<leader>gd",
-        "<cmd>DiffviewOpen<CR>",
+        function()
+          if next(require("diffview.lib").views) == nil then
+            vim.cmd("DiffviewOpen")
+          else
+            vim.cmd("DiffviewClose")
+          end
+        end,
         desc = "Open diff view window",
       },
       {
