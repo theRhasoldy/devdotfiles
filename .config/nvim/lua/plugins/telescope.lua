@@ -80,6 +80,12 @@ return {
           preview_height = 0.7,
         },
       },
+      mappings = {
+        i = {
+          ["<C-j>"] = "move_selection_next",
+          ["<C-k>"] = "move_selection_previous",
+        },
+      },
     },
     -- builtin pickers
     pickers = {
