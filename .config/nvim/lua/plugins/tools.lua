@@ -46,6 +46,9 @@ return {
           winbar_info = false,
         },
       },
+      file_panel = {
+        listing_style = "list",
+      },
     },
     keys = {
       {
