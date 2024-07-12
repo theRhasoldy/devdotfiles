@@ -32,3 +32,13 @@ map("n", "<LocalLeader>L", "<C-W>>")
 map("x", "<leader>p", [["_dP]])
 map({ "n", "v" }, "<leader>y", [["+y]])
 map("n", "<leader>Y", [["+Y]])
+
+map(
+  "n",
+  "<leader>sr",
+  function()
+    local word = vim.fn.input("Word: ")
+    local replacement = vim.fn.input("Replace with: ")
+    vim.api.nvim_command("cfdo %s/" .. word .. "/" .. replacement .. "/g | update | bd")
+  end
+)
