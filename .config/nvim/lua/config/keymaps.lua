@@ -33,12 +33,26 @@ map("x", "<leader>p", [["_dP]])
 map({ "n", "v" }, "<leader>y", [["+y]])
 map("n", "<leader>Y", [["+Y]])
 
+-- search and replace
 map(
   "n",
   "<leader>sr",
+  -- multiple files using quickfix list
   function()
     local word = vim.fn.input("Word: ")
     local replacement = vim.fn.input("Replace with: ")
     vim.api.nvim_command("cfdo %s/" .. word .. "/" .. replacement .. "/g | update | bd")
+  end
+)
+
+-- find and replace
+map(
+  "n",
+  "<leader>r",
+  -- multiple files using quickfix list
+  function()
+    local word = vim.fn.input("Word: ")
+    local replacement = vim.fn.input("Replace with: ")
+    vim.api.nvim_command("%s/" .. word .. "/" .. replacement)
   end
 )
