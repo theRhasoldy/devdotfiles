@@ -1,12 +1,7 @@
+local utils = require("config.utils")
+local map = utils.map
+
 -- make all keymaps silent by default
-local map = vim.keymap.set
-
-vim.keymap.set = function(mode, lhs, rhs, opts)
-  opts = opts or {}
-  opts.silent = opts.silent ~= false
-  return map(mode, lhs, rhs, opts)
-end
-
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 

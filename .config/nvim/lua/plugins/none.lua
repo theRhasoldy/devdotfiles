@@ -9,7 +9,7 @@ local format_autocmd = function(client, bufnr)
       group = augroup,
       buffer = bufnr,
       callback = function()
-        vim.lsp.buf.format({ async = true })
+        vim.lsp.buf.format({ async = false })
       end,
     })
   end

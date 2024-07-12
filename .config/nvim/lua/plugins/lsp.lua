@@ -12,50 +12,50 @@ local get_keybinds_on_lsp = function()
     return
   end
 
-  vim.keymap.set("n", "<Leader><Leader>", "<cmd>lua vim.diagnostic.open_float()<cr>")
+  utils.map("n", "<Leader><Leader>", "<cmd>lua vim.diagnostic.open_float()<cr>")
 
-  vim.keymap.set("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>")
-  vim.keymap.set("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>")
+  utils.map("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>")
+  utils.map("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>")
 
   -- attach these keybinds only if there is an active lsp server
   vim.api.nvim_create_autocmd("LspAttach", {
     desc = "LSP actions",
     callback = function(event)
-      local opts = { buffer = event.buf, noremap = true }
+      local opts = { buffer = event.buf }
       local telescope_opts = { reuse_win = true }
 
-      vim.keymap.set("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-      vim.keymap.set("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+      utils.map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
+      utils.map("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
 
       -- go to (with telescope)
-      vim.keymap.set("n", "gd", function()
+      utils.map("n", "gd", function()
         telescope.lsp_definitions(telescope_opts)
       end, opts)
 
-      vim.keymap.set("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+      utils.map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
 
-      vim.keymap.set("n", "gi", function()
+      utils.map("n", "gi", function()
         telescope.lsp_implementations(telescope_opts)
       end, opts)
-      vim.keymap.set("n", "gt", function()
+      utils.map("n", "gt", function()
         telescope.lsp_type_definitions(telescope_opts)
       end, opts)
-      vim.keymap.set("n", "gr", function()
+      utils.map("n", "gr", function()
         telescope.lsp_references(telescope_opts)
       end, opts)
 
       -- code actions and modif
-      -- vim.keymap.set('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<cr>', opts) // handled by inc-rename.nvim
+      -- utils.map('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<cr>', opts) // handled by inc-rename.nvim
 
       -- format buffer
-      vim.keymap.set(
+      utils.map(
         { "n", "x" },
         "==",
         "<cmd>lua vim.lsp.buf.format({async = true})<cr>",
         opts
       )
 
-      vim.keymap.set("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+      utils.map("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
     end,
   })
 end
