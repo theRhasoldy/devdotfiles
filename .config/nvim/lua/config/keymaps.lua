@@ -6,27 +6,27 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
 -- reload config
-map("n", "<leader>r", "<cmd>source<CR>")
+map("n", "<leader>r", "<cmd>source<CR>", { desc = "Reload config" })
 
 -- add new line
 map("n", "<cr>", "o<Esc>")
 map("n", "<S-cr>", "O<Esc>")
 
 -- splits
-map("n", "<LocalLeader>-", "<cmd>split<cr>")
-map("n", "<LocalLeader>=", "<cmd>vsplit<cr>")
+map("n", "<LocalLeader>-", "<cmd>split<cr>", { desc = "Split horizontal" })
+map("n", "<LocalLeader>=", "<cmd>vsplit<cr>", { desc = "Split vertical" })
 
 -- switch splits
-map("n", "<LocalLeader>h", "<C-W>H")
-map("n", "<LocalLeader>j", "<C-W>J")
-map("n", "<LocalLeader>k", "<C-W>K")
-map("n", "<LocalLeader>l", "<C-W>L")
+map("n", "<LocalLeader>h", "<C-W>H", { desc = "Switch to left split" })
+map("n", "<LocalLeader>j", "<C-W>J", { desc = "Switch to bottom split" })
+map("n", "<LocalLeader>k", "<C-W>K", { desc = "Switch to top split" })
+map("n", "<LocalLeader>l", "<C-W>L", { desc = "Switch to right split" })
 
 -- resize splits
-map("n", "<LocalLeader>H", "<C-W><")
-map("n", "<LocalLeader>J", "<C-W>+")
-map("n", "<LocalLeader>K", "<C-W>-")
-map("n", "<LocalLeader>L", "<C-W>>")
+map("n", "<LocalLeader>H", "<C-W><", { desc = "Resize split left" })
+map("n", "<LocalLeader>J", "<C-W>+", { desc = "Resize split down" })
+map("n", "<LocalLeader>K", "<C-W>-", { desc = "Resize split up" })
+map("n", "<LocalLeader>L", "<C-W>>", { desc = "Resize split right" })
 
 -- yanking
 map("x", "<leader>p", [["_dP]])
@@ -42,7 +42,8 @@ map(
     local word = vim.fn.input("Word: ")
     local replacement = vim.fn.input("Replace with: ")
     vim.api.nvim_command("cfdo %s/" .. word .. "/" .. replacement .. "/g | update | bd")
-  end
+  end,
+  { desc = "Find and replace for files in quicklist" }
 )
 
 -- find and replace
@@ -54,5 +55,6 @@ map(
     local word = vim.fn.input("Word: ")
     local replacement = vim.fn.input("Replace with: ")
     vim.api.nvim_command("%s/" .. word .. "/" .. replacement)
-  end
+  end,
+  { desc = "Find and replace in current file" }
 )

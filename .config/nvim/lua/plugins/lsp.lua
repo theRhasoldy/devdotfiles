@@ -21,28 +21,42 @@ local get_keybinds_on_lsp = function()
   vim.api.nvim_create_autocmd("LspAttach", {
     desc = "LSP actions",
     callback = function(event)
-      local opts = { buffer = event.buf }
       local telescope_opts = { reuse_win = true }
 
-      utils.map("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>", opts)
-      utils.map("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>", opts)
+      utils.map(
+        "n",
+        "K",
+        "<cmd>lua vim.lsp.buf.hover()<cr>",
+        { buffer = event.buf, desc = "Hover doc" }
+      )
+      utils.map(
+        "n",
+        "gs",
+        "<cmd>lua vim.lsp.buf.signature_help()<cr>",
+        { buffer = event.buf, desc = "Signature help" }
+      )
 
       -- go to (with telescope)
       utils.map("n", "gd", function()
         telescope.lsp_definitions(telescope_opts)
-      end, opts)
+      end, { buffer = event.buf, desc = "Go to definition" })
 
-      utils.map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>", opts)
+      utils.map(
+        "n",
+        "gD",
+        "<cmd>lua vim.lsp.buf.declaration()<cr>",
+        { buffer = event.buf, desc = "Go to declaration" }
+      )
 
       utils.map("n", "gi", function()
         telescope.lsp_implementations(telescope_opts)
-      end, opts)
+      end, { buffer = event.buf, desc = "Go to implementation" })
       utils.map("n", "gt", function()
         telescope.lsp_type_definitions(telescope_opts)
-      end, opts)
+      end, { buffer = event.buf, desc = "Go to type definition" })
       utils.map("n", "gr", function()
         telescope.lsp_references(telescope_opts)
-      end, opts)
+      end, { buffer = event.buf, desc = "Go to references" })
 
       -- code actions and modif
       -- utils.map('n', 'gR', '<cmd>lua vim.lsp.buf.rename()<cr>', opts) // handled by inc-rename.nvim
@@ -52,10 +66,15 @@ local get_keybinds_on_lsp = function()
         { "n", "x" },
         "==",
         "<cmd>lua vim.lsp.buf.format({async = true})<cr>",
-        opts
+        { buffer = event.buf, desc = "Format buffer" }
       )
 
-      utils.map("n", "ga", "<cmd>lua vim.lsp.buf.code_action()<cr>", opts)
+      utils.map(
+        "n",
+        "ga",
+        "<cmd>lua vim.lsp.buf.code_action()<cr>",
+        { buffer = event.buf, desc = "Code action" }
+      )
     end,
   })
 end
