@@ -1,8 +1,8 @@
 local utils = require("config.utils")
 
-local format_autocmd = function(client, bufnr)
-  local augroup = utils.create_group("LspFormatting", {})
+local augroup = utils.create_group("LspFormatting", {})
 
+local format_autocmd = function(client, bufnr)
   if client.supports_method("textDocument/formatting") then
     utils.clear_autocmd({ group = augroup, buffer = bufnr })
     utils.create_autocmd("BufWritePre", {
@@ -17,7 +17,7 @@ end
 
 return {
   "nvimtools/none-ls.nvim",
-  event = { "BufReadPre", "BufNewFile" },
+  event = "LSPAttach",
   config = function()
     local ok, none = pcall(require, "null-ls")
 
