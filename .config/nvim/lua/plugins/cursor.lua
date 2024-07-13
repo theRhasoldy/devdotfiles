@@ -23,7 +23,7 @@ return {
           vim.cmd("TWToggle")
           print("toggled typewriter")
         end,
-        desc = "toggle typewriter",
+        desc = "Toggle typewriter",
       },
     },
   },
