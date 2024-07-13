@@ -1,5 +1,6 @@
 return {
   "L3MON4D3/LuaSnip",
+  build = "make install_jsregexp",
   opts = {
     keep_roots = true,
     update_events = { "TextChanged", "TextChangedI" },

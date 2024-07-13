@@ -26,6 +26,10 @@ return {
           auto_open = true,
         },
       },
+      performance = {
+        debounce = 150,
+        throttle = 100,
+      },
       window = {
         documentation = cmp.config.window.bordered({
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
@@ -46,22 +50,21 @@ return {
         }),
       },
       sources = cmp.config.sources({
-        { name = 'nvim_lsp_signature_help' },
+        { name = "nvim_lsp_signature_help" },
         { name = "nvim_lsp", priority = 5 },
         { name = "luasnip" },
         { name = "path" },
         { name = "buffer", keyword_length = 3, max_item_count = 10, group_index = 3 },
       }),
+      confirmation = {
+        get_commit_characters = function()
+          return {}
+        end,
+      },
       mapping = {
-        ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-        ["<C-K>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-        ["<C-u>"] = cmp.mapping.scroll_docs(4),
-        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
         ["<C-c>"] = cmp.mapping({
           i = cmp.mapping.complete(),
-          c = function(
-            _ --[[fallback]]
-            )
+          c = function()
             if cmp.visible() then
               if not cmp.confirm({ select = true }) then
                 return
@@ -71,8 +74,16 @@ return {
             end
           end,
         }),
+        ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+        ["<C-K>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+        ["<C-u>"] = cmp.mapping.scroll_docs(4),
+        ["<C-d>"] = cmp.mapping.scroll_docs(-4),
         -- ["<Esc>"] = cmp.mapping.abort(),
-        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<CR>"] = cmp.mapping.confirm({
+          select = true,
+          behavior = cmp.ConfirmBehavior.Replace,
+        }),
+        ["<C-Space>"] = cmp.mapping.complete(),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,
         ["<C-n>"] = nil,
@@ -82,9 +93,9 @@ return {
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
-        { name = 'nvim_lsp_signature_help' },
+        { name = "nvim_lsp_signature_help" },
         { name = "nvim_lsp", priority = 5 },
-        { name = "luasnip" },
+        { name = "luasnip", keyword_length = 2, max_item_count = 10, group_index = 3 },
         { name = "path" },
         { name = "buffer", keyword_length = 5, max_item_count = 10 },
       }),
@@ -94,7 +105,7 @@ return {
     cmp.setup.cmdline({ "/", "?" }, {
       mapping = cmp.mapping.preset.cmdline(),
       sources = {
-        { name = 'nvim_lsp_document_symbol' },
+        { name = "nvim_lsp_document_symbol" },
         { name = "nvim_lsp" },
         { name = "buffer" },
       },

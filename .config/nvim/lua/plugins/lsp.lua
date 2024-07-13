@@ -115,6 +115,14 @@ return {
   {
     "williamboman/mason-lspconfig.nvim",
     event = { "BufReadPre", "BufNewFile" },
+    init = function()
+      local ok, wf = pcall(require, "vim.lsp._watchfiles")
+      if ok then
+        wf._watchfunc = function()
+          return function() end
+        end
+      end
+    end,
     opts = {
       ensure_installed = {
         -- lsps
@@ -157,7 +165,7 @@ return {
 
       local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
 
-      local lsp_defaults =
+      local capabilities =
         vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
 
       -- builtin vim diagnostics options
@@ -185,7 +193,7 @@ return {
       -- override mason-lspconfig
       local default_setup = function(server)
         lsp[server].setup({
-          capabilities = lsp_defaults,
+          capabilities = capabilities,
         })
       end
 
@@ -196,7 +204,7 @@ return {
           -- custom overrides
           lua_ls = function()
             lsp.lua_ls.setup({
-              capabilities = lsp_capabilities,
+              capabilities = capabilities,
               single_file_support = true,
               settings = {
                 Lua = {
@@ -232,7 +240,7 @@ return {
           end,
           tsserver = function()
             lsp.tsserver.setup({
-              capabilities = lsp_capabilities,
+              capabilities = capabilities,
               filetypes = {
                 "typescript",
                 "typescriptreact",
