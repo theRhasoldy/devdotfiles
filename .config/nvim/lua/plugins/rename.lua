@@ -24,6 +24,7 @@ return {
       end,
       expr = true,
       noremap = true,
+      desc = "Rename under cursor",
     },
   },
 }

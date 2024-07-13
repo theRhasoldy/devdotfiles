@@ -143,15 +143,22 @@ return {
     },
     config = function()
       local ok_lsp, lsp = pcall(require, "lspconfig")
-      local ok_cmp_nvim_lsp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
       local ok_mason, mason = pcall(require, "mason-lspconfig")
 
-      if not ok_lsp or not ok_cmp_nvim_lsp or not ok_mason then
+      if not ok_lsp or not ok_mason then
         print("error loading lsp config")
         return
       end
 
-      local lsp_capabilities = cmp_nvim_lsp.default_capabilities()
+      local cmp_capabilities = nil
+      if pcall(require, "cmp_nvim_lsp") then
+        cmp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+      end
+
+      local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
+
+      local lsp_defaults =
+        vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
 
       -- builtin vim diagnostics options
       vim.diagnostic.config({
@@ -178,7 +185,7 @@ return {
       -- override mason-lspconfig
       local default_setup = function(server)
         lsp[server].setup({
-          capabilities = lsp_capabilities,
+          capabilities = lsp_defaults,
         })
       end
 
