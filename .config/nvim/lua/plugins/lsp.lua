@@ -69,12 +69,12 @@ local get_keybinds_on_lsp = function()
         { buffer = event.buf, desc = "Format buffer" }
       )
 
-      utils.map(
-        "n",
-        "ga",
-        "<cmd>lua vim.lsp.buf.code_action()<cr>",
-        { buffer = event.buf, desc = "Code action" }
-      )
+      -- utils.map(
+      --   "n",
+      --   "ga",
+      --   "<cmd>lua vim.lsp.buf.code_action()<cr>",
+      --   { buffer = event.buf, desc = "Code action" }
+      -- ) -- handled by fastaction.nvim
     end,
   })
 end
