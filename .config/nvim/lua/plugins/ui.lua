@@ -84,6 +84,7 @@ return {
     event = "VeryLazy",
     init = function()
       local lazy = require("lazy")
+
       vim.ui.select = function(...)
         lazy.load({ plugins = { "dressing.nvim" } })
         return vim.ui.select(...)
@@ -139,7 +140,6 @@ return {
         return math.floor(vim.o.columns * 0.75)
       end,
       top_down = false,
-
     },
   },
 }

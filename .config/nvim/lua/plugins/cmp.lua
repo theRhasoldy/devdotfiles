@@ -38,6 +38,9 @@ return {
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
         }),
       },
+      completion = {
+        autocomplete = false,
+      },
       formatting = {
         format = require("lspkind").cmp_format({
           menu = {
