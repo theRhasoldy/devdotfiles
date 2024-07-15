@@ -9,7 +9,6 @@ return {
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-cmdline",
     "saadparwaiz1/cmp_luasnip",
-    "hrsh7th/cmp-nvim-lsp-signature-help",
     "hrsh7th/cmp-nvim-lsp-document-symbol",
   },
   config = function()
@@ -38,9 +37,6 @@ return {
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
         }),
       },
-      completion = {
-        autocomplete = false,
-      },
       formatting = {
         format = require("lspkind").cmp_format({
           menu = {
@@ -53,7 +49,6 @@ return {
         }),
       },
       sources = cmp.config.sources({
-        { name = "nvim_lsp_signature_help" },
         { name = "nvim_lsp", priority = 5 },
         { name = "luasnip" },
         { name = "path" },
@@ -96,7 +91,6 @@ return {
 
     cmp.setup.filetype("lua", {
       sources = cmp.config.sources({
-        { name = "nvim_lsp_signature_help" },
         { name = "nvim_lsp", priority = 5 },
         { name = "luasnip", keyword_length = 2, max_item_count = 10, group_index = 3 },
         { name = "path" },
