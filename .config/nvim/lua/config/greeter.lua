@@ -125,15 +125,16 @@ function M.draw(buf)
   local draw_height = #ascii + GAP_LINES + 1 -- Including version line
   local pad_height = math.floor((screen_height - draw_height) / 2) - VERTICAL_OFFSET
 
-  if
-    not (
-      screen_width >= draw_width + 2
-      and screen_height >= draw_height + 2 + VERTICAL_OFFSET
-    )
-  then
-    -- Only display if there is enough space
-    return
-  end
+  -- todo: create another art for smaller screens
+  -- if
+  --   not (
+  --     screen_width >= draw_width + 2
+  --     and screen_height >= draw_height + 2 + VERTICAL_OFFSET
+  --   )
+  -- then
+  --   -- Only display if there is enough space
+  --   return
+  -- end
 
   local centered_ascii = calc_ascii(screen_width, pad_height, pad_width)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, centered_ascii)
