@@ -6,7 +6,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
 -- reload config
-map("n", "<leader>r", "<cmd>source<CR>", { desc = "Reload config" })
+map("n", "<leader>R", "<cmd>source<CR>", { desc = "Reload config" })
 
 -- add new line
 map("n", "<cr>", "o<Esc>")

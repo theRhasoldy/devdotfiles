@@ -29,6 +29,8 @@ opt.autoindent = true
 
 opt.backspace = { "start", "eol", "indent" }
 
+opt.cursorline = true
+
 -- nvim files
 opt.swapfile = false
 opt.backup = true
@@ -44,3 +46,8 @@ opt.hlsearch = false
 opt.ignorecase = true
 opt.smartcase = true
 opt.incsearch = true
+
+opt.wrap = false
+opt.equalalways = true
+
+vim.g.markdown_fenced_languages = { "javascript", "typescript", "scss", "css", "html" }
