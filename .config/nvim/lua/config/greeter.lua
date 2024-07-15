@@ -16,10 +16,19 @@ local ascii_str = [[
 ______________________________________________________________________________________________________________     
 ]]
 
+local small_ascii_str = [[
+    _/\/\/\/\/\___
+    _/\/\____/\/\_
+    _/\/\/\/\/\___
+    _/\/\__/\/\___
+    _/\/\____/\/\_
+]]
+
 -- Module
 local M = {}
 
 local ascii = vim.split(ascii_str, "\n")
+local small_ascii = vim.split(small_ascii_str, "\n")
 local vers = vim.version()
 local commit = vers.build ~= vim.NIL and ("+" .. vers.build) or ""
 local nvim_version = "NVIM v"
@@ -70,9 +79,16 @@ local function set_options(buf)
   vim.api.nvim_set_current_buf(buf)
 end
 
-local function apply_highlights(buf, vertical_pad)
+local function apply_highlights(buf, vertical_pad, is_small)
+  local art = nil
+  if is_small then
+    art = small_ascii
+  else
+    art = ascii
+  end
+
   -- Apply highlight to each line of ASCII art
-  for i = vertical_pad + 1, vertical_pad + #ascii do
+  for i = vertical_pad + 1, vertical_pad + #art do
     vim.api.nvim_buf_add_highlight(buf, -1, "GreeterAsciiArt", i - 1, 0, -1)
   end
 
@@ -81,13 +97,13 @@ local function apply_highlights(buf, vertical_pad)
     buf,
     -1,
     "GreeterNvimVer",
-    vertical_pad + #ascii + GAP_LINES,
+    vertical_pad + #art + GAP_LINES,
     0,
     -1
   )
 end
 
-local function calc_ascii(width, vertical_pad, pad_cols)
+local function calc_ascii(width, vertical_pad, pad_cols, art)
   local centered_ascii = {}
 
   -- Add empty lines for vertical padding
@@ -96,7 +112,7 @@ local function calc_ascii(width, vertical_pad, pad_cols)
   end
 
   -- Add ASCII lines with padding
-  for _, line in ipairs(ascii) do
+  for _, line in ipairs(art) do
     local padded_line = pad_str(pad_cols, line)
     table.insert(centered_ascii, padded_line)
   end
@@ -118,27 +134,37 @@ function M.draw(buf)
   set_options(buf)
   -- width
   local screen_width = vim.api.nvim_get_option("columns")
-  local draw_width = math.max(count_utf_chars(ascii[1]), #nvim_version)
-  local pad_width = math.floor((screen_width - draw_width) / 2)
-  -- height
   local screen_height = vim.api.nvim_get_option("lines")
+
+  local draw_width = math.max(count_utf_chars(ascii[1]), #nvim_version)
+  local small_draw_width = math.max(count_utf_chars(small_ascii[1]), #nvim_version)
+  local pad_width = math.floor((screen_width - draw_width) / 2)
+  local small_pad_width = math.floor((screen_width - small_draw_width) / 2)
+
+  -- height
   local draw_height = #ascii + GAP_LINES + 1 -- Including version line
   local pad_height = math.floor((screen_height - draw_height) / 2) - VERTICAL_OFFSET
+  local small_draw_height = #small_ascii + GAP_LINES + 1 -- Including version line
+  local small_pad_height = math.floor((screen_height - small_draw_height) / 2)
+    - VERTICAL_OFFSET
 
-  -- todo: create another art for smaller screens
-  -- if
-  --   not (
-  --     screen_width >= draw_width + 2
-  --     and screen_height >= draw_height + 2 + VERTICAL_OFFSET
-  --   )
-  -- then
-  --   -- Only display if there is enough space
-  --   return
-  -- end
+  -- create another art for smaller screens
+  if
+    not (
+      screen_width >= draw_width + 2
+      and screen_height >= draw_height + 2 + VERTICAL_OFFSET
+    )
+  then
+    local centered_ascii =
+      calc_ascii(screen_width, small_pad_height, small_pad_width, small_ascii)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, centered_ascii)
+    apply_highlights(buf, pad_height, true)
+    return
+  end
 
-  local centered_ascii = calc_ascii(screen_width, pad_height, pad_width)
+  local centered_ascii = calc_ascii(screen_width, pad_height, pad_width, ascii)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, centered_ascii)
-  apply_highlights(buf, pad_height)
+  apply_highlights(buf, pad_height, false)
 end
 
 function M.create_new_buffer_for_insert(greeter_buf)
