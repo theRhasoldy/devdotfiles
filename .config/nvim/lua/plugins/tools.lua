@@ -15,13 +15,13 @@ return {
     end,
     opts = {
       preset = "modern",
-      key_labels = {
-        ["<space>"] = "<space>",
-        ["<CR>"] = "<cr",
-        ["<tab>"] = "<tab>",
-      },
-      window = {
-        border = "single",
+      icons = {
+        keys = {
+          Space = "󱁐",
+          CR = "⏎",
+          Tab = "",
+          Esc = "󱊷",
+        },
       },
     },
   },
