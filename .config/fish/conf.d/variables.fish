@@ -15,6 +15,8 @@ if test -z "$XDG_STATE_HOME"
     set -gx XDG_STATE_HOME "$HOME/.local/state"
 end
 
+set -gx XDG_DATA_DIRS "/usr/local/share:/usr/share"
+
 # Language Settings
 if test -z "$LANG"
   set -gx LANG 'en_US.UTF-8'
@@ -90,3 +92,6 @@ set -gx FZF_DEFAULT_COMMAND "fd --hidden --strip-cwd-prefix --exclude .git"
 # FZF FISH
 set -gx fzf_preview_dir_cmd "exa --icons --group-directories-first -l@ --git --time accessed --no-permissions"
 set -gx fzf_diff_highlighter "delta --paging=never"
+
+# QT
+set -gx QT_QPA_PLATFORMTHEME "qt5ct"
