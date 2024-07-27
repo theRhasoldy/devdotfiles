@@ -1,3 +1,14 @@
+local border = {
+  { "╭", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╮", "FloatBorder" },
+  { "│", "FloatBorder" },
+  { "╯", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╰", "FloatBorder" },
+  { "│", "FloatBorder" },
+}
+
 local utils = require("config.utils")
 local path = vim.split(package.path, ";")
 
@@ -184,10 +195,18 @@ return {
         },
       })
 
-      -- Set Custom Icons
+      -- set custom icons
       for type, icon in pairs(signs) do
         local hl = "DiagnosticSign" .. type
         vim.fn.sign_define(hl, { text = icon, texthl = hl })
+      end
+
+      -- add borders to floating windows
+      local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+        opts = opts or {}
+        opts.border = opts.border or border
+        return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
 
       -- override mason-lspconfig
@@ -283,6 +302,57 @@ return {
                   },
                   referencesCodeLens = { enabled = false },
                   implementationsCodeLens = { enabled = false },
+                },
+              },
+            })
+          end,
+          cssls = function()
+            lsp.cssls.setup({
+              capabilities = capabilities,
+              settings = {
+                css = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+                scss = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+                less = {
+                  validate = true,
+                  lint = {
+                    unknownAtRules = "ignore",
+                  },
+                },
+              },
+            })
+          end,
+          tailwindcss = function()
+            lsp.tailwindcss.setup({
+              capabilities = capabilities,
+              settings = {
+                tailwindCSS = {
+                  experimental = {
+                    classRegex = {
+                      { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+                      { "cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                    },
+                  },
+                  classAttributes = {
+                    "class",
+                    "className",
+                    "classNames",
+                    "class:list",
+                    "classList",
+                    "ngClass",
+                    "styles",
+                    "style",
+                  },
+                  emmetCompletions = true,
                 },
               },
             })
