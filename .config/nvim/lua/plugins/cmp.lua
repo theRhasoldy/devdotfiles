@@ -79,9 +79,8 @@ return {
         -- ["<Esc>"] = cmp.mapping.abort(),
         ["<CR>"] = cmp.mapping.confirm({
           select = true,
-          behavior = cmp.ConfirmBehavior.Replace,
+          behavior = cmp.ConfirmBehavior.Insert,
         }),
-        ["<C-Space>"] = cmp.mapping.complete(),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,
         ["<C-n>"] = nil,
