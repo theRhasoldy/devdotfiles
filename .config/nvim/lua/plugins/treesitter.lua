@@ -114,10 +114,10 @@ return {
           ["[]"] = "@class.outer",
         },
         goto_next = {
-          ["]d"] = "@conditional.outer",
+          ["]c"] = "@conditional.outer",
         },
         goto_previous = {
-          ["[d"] = "@conditional.outer",
+          ["[c"] = "@conditional.outer",
         },
       },
       lsp_interop = {

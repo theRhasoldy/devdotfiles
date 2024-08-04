@@ -4,6 +4,9 @@ return {
   opts = {
     keep_roots = true,
     update_events = { "TextChanged", "TextChangedI" },
+    region_check_events = "InsertEnter,CursorMoved", -- "CursorMoved", "CursorHold", "InsertEnter"
+    delete_check_events = "TextChanged,CursorMoved",
+    enable_autosnippets = true,
   },
   dependencies = {
     "hrsh7th/nvim-cmp",
@@ -13,6 +16,10 @@ return {
         friendly_snippets = true,
       },
       config = function()
+        require("luasnip").filetype_extend("javascript", { "javascriptreact" })
+        require("luasnip").filetype_extend("javascript", { "html" })
+        require("luasnip").filetype_extend("typescript", { "typescriptreact" })
+        require("luasnip").filetype_extend("typescript", { "html" })
         require("luasnip.loaders.from_vscode").lazy_load()
       end,
       dependencies = { "rafamadriz/friendly-snippets" },
