@@ -38,7 +38,6 @@ local nvim_version = "NVIM v"
   .. "."
   .. vers.patch
   .. "-"
-  .. vers.prerelease
   .. commit
 
 local function pad_str(padding, string)

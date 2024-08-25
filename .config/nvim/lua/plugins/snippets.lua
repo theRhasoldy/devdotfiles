@@ -2,11 +2,7 @@ return {
   "L3MON4D3/LuaSnip",
   build = "make install_jsregexp",
   opts = {
-    keep_roots = true,
     update_events = { "TextChanged", "TextChangedI" },
-    region_check_events = "InsertEnter,CursorMoved", -- "CursorMoved", "CursorHold", "InsertEnter"
-    delete_check_events = "TextChanged,CursorMoved",
-    enable_autosnippets = true,
   },
   dependencies = {
     "hrsh7th/nvim-cmp",
