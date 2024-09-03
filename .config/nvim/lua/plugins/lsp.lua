@@ -280,7 +280,11 @@ return {
                   },
                   referencesCodeLens = { enabled = false },
                   implementationsCodeLens = { enabled = false },
+                  preferences = {
+                    importModuleSpecifier = "relative",
+                  },
                 },
+
                 javascript = {
                   format = { enable = false },
                   inlayHints = {
@@ -294,6 +298,9 @@ return {
                   },
                   suggest = {
                     includeCompletionsForModuleExports = true,
+                  },
+                  preferences = {
+                    importModuleSpecifier = "relative",
                   },
                   referencesCodeLens = { enabled = false },
                   implementationsCodeLens = { enabled = false },
