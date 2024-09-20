@@ -3,42 +3,101 @@ return {
     "declancm/cinnamon.nvim",
     version = "*", -- use latest release
     opts = {
-      -- change default options here
-      -- Enable all provided keymaps
       keymaps = {
         basic = true,
         extra = true,
       },
-      -- Custom scroll options
       options = {
         mode = "cursor", -- Animate cursor and window scrolling for any movement
-        delay = 5, -- Delay between each movement step (in ms)
         step_size = {
-          vertical = 1, -- Number of cursor/window lines moved per step
-          horizontal = 2, -- Number of cursor/window columns moved per step
+          -- Number of cursor/window lines moved per step
+          vertical = 1.5,
+          -- Number of cursor/window columns moved per step
+          horizontal = 4,
         },
-        max_delta = {
-          line = false, -- Maximum distance for line movements before scroll animation is skipped
-          column = false, -- Maximum distance for column movements before scroll animation is skipped
-          time = 1000, -- Maximum duration for a movement (in ms)
-        },
-        -- Optional post-movement callback
-        callback = function()
-          -- print("Scrolling done!")
-        end,
       },
     },
-    keys = {
-      { "<c-d>", "<cmd>lua require(\"cinnamon\").scroll(\"<C-d>\")<cr>", mode = "n" },
-      { "<c-u>", "<cmd>lua require(\"cinnamon\").scroll(\"<C-u>\")<cr>", mode = "n" },
-      { "<c-f>", "<cmd>lua require(\"cinnamon\").scroll(\"<C-f>\")<cr>", mode = "n" },
-      { "<c-b>", "<cmd>lua require(\"cinnamon\").scroll(\"<C-b>\")<cr>", mode = "n" },
-      { "zz", "<cmd>lua require(\"cinnamon\").scroll(\"zz\")<cr>", mode = "n" },
-      { "zz", "<cmd>lua require(\"cinnamon\").scroll(\"zz\")<cr>", mode = "n" },
-      { "zt", "<cmd>lua require(\"cinnamon\").scroll(\"zt\")<cr>", mode = "n" },
-      { "zb", "<cmd>lua require(\"cinnamon\").scroll(\"zb\")<cr>", mode = "n" },
-      { "gg", "<cmd>lua require(\"cinnamon\").scroll(\"gg\")<cr>", mode = "n" },
-      { "G", "<cmd>lua require(\"cinnamon\").scroll(\"G\")<cr>", mode = "n" },
-    },
+    keys = function()
+      local cinnamon = require("cinnamon")
+      return {
+        {
+          "<c-d>",
+          function()
+            cinnamon.scroll("<C-d>")
+          end,
+          mode = "n",
+        },
+        {
+          "<c-u>",
+          function()
+            cinnamon.scroll("<C-u>")
+          end,
+          mode = "n",
+        },
+        {
+          "<c-f>",
+          function()
+            cinnamon.scroll("<C-f>")
+          end,
+          mode = "n",
+        },
+        {
+          "<c-b>",
+          function()
+            cinnamon.scroll("<C-b>")
+          end,
+          mode = "n",
+        },
+        {
+          "zz",
+          function()
+            cinnamon.scroll("zz")
+          end,
+          mode = "n",
+        },
+        {
+          "zz",
+          function()
+            cinnamon.scroll("zz")
+          end,
+          mode = "n",
+        },
+        {
+          "zt",
+          function()
+            cinnamon.scroll("zt")
+          end,
+          mode = "n",
+        },
+        {
+          "zb",
+          function()
+            cinnamon.scroll("zb")
+          end,
+          mode = "n",
+        },
+        {
+          "gg",
+          function()
+            cinnamon.scroll("gg")
+          end,
+          mode = "n",
+        },
+        {
+          "G",
+          function()
+            cinnamon.scroll("G")
+          end,
+          mode = "n",
+        },
+        {
+          "%",
+          function()
+            cinnamon.scroll("%")
+          end,
+          mode = "n",
+        },
+      }
+    end,
   },
 }
