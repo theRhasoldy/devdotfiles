@@ -135,7 +135,7 @@ return {
         "lua_ls",
         "bashls",
         "eslint",
-        "tsserver",
+        "ts_ls",
         "volar",
         "astro",
         "angularls",
@@ -252,8 +252,8 @@ return {
               },
             })
           end,
-          tsserver = function()
-            lsp.tsserver.setup({
+          ts_ls = function()
+            lsp.ts_ls.setup({
               capabilities = capabilities,
               filetypes = {
                 "typescript",
