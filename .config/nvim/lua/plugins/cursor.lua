@@ -90,13 +90,6 @@ return {
           end,
           mode = "n",
         },
-        {
-          "%",
-          function()
-            cinnamon.scroll("%")
-          end,
-          mode = "n",
-        },
       }
     end,
   },
