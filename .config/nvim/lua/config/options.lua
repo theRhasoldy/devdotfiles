@@ -10,6 +10,11 @@ opt.autoread = true
 -- line numbers
 opt.rnu = true
 opt.nu = true
+opt.so = 9999
+opt.ss = 20
+opt.siso = 9999
+opt.sbo = "ver,hor,jump"
+opt.sms = true
 
 opt.clipboard = "unnamedplus"
 
