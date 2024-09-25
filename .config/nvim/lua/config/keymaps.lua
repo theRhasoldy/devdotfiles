@@ -12,6 +12,9 @@ map("n", "<leader>R", "<cmd>source<CR>", { desc = "Reload config" })
 map("n", "<cr>", "o<Esc>")
 map("n", "<S-cr>", "O<Esc>")
 
+map("i", "<C-j>", "")
+map("i", "<C-k>", "")
+
 -- splits
 map("n", "<LocalLeader>-", "<cmd>split<cr>", { desc = "Split horizontal" })
 map("n", "<LocalLeader>=", "<cmd>vsplit<cr>", { desc = "Split vertical" })
