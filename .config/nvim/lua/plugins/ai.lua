@@ -26,7 +26,7 @@ return {
           gemini = function()
             return require("codecompanion.adapters").extend("gemini", {
               env = {
-                api_key = "AIzaSyC026zuOL4D9VDeUHu-qg0HK1IOcJ-i6Lw",
+                api_key = os.getenv("GEMINI_API_KEY"),
               },
             })
           end,
@@ -37,11 +37,15 @@ return {
   {
     "monkoose/neocodeium",
     event = "VeryLazy",
+    opts = {
+      show_labels = false,
+      max_lines = 1000,
+    },
     keys = function()
       local neocodeium = require("neocodeium")
       return {
         {
-          "<A-f>",
+          "<A-g>",
           function()
             neocodeium.accept()
           end,
@@ -55,21 +59,21 @@ return {
           mode = "i",
         },
         {
-          "<A-a>",
+          "<A-l>",
           function()
             neocodeium.accept_line()
           end,
           mode = "i",
         },
         {
-          "<A-e>",
+          "<A-n>",
           function()
             neocodeium.cycle_or_complete()
           end,
           mode = "i",
         },
         {
-          "<A-r>",
+          "<A-p>",
           function()
             neocodeium.cycle_or_complete(-1)
           end,
