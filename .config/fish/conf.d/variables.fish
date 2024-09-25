@@ -95,3 +95,5 @@ set -gx fzf_diff_highlighter "delta --paging=never"
 
 # QT
 set -gx QT_QPA_PLATFORMTHEME "qt5ct"
+
+set -gx GEMINI_API_KEY (sed -n '/^key =/s/.*key = //p' $XDG_CONFIG_HOME/geminicommit/config.toml | sed "s/'//g")
