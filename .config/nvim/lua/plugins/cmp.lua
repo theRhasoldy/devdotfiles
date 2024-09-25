@@ -59,7 +59,7 @@ return {
           return {}
         end,
       },
-      mapping = {
+      mapping = cmp.mapping.preset.insert({
         ["<C-c>"] = cmp.mapping({
           i = cmp.mapping.complete(),
           c = function()
@@ -72,20 +72,30 @@ return {
             end
           end,
         }),
-        ["<C-J>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-        ["<C-K>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+        ["<C-n>"] = cmp.mapping(function()
+          if cmp.visible() then
+            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+          else
+            cmp.complete()
+          end
+        end, { "i", "s" }),
+        ["<C-p>"] = cmp.mapping(function()
+          if cmp.visible() then
+            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+          else
+            cmp.complete()
+          end
+        end, { "i", "s" }),
         ["<C-u>"] = cmp.mapping.scroll_docs(4),
         ["<C-d>"] = cmp.mapping.scroll_docs(-4),
         -- ["<Esc>"] = cmp.mapping.abort(),
         ["<CR>"] = cmp.mapping.confirm({
           select = true,
-          behavior = cmp.ConfirmBehavior.Insert,
+          behavior = cmp.ConfirmBehavior.Replace,
         }),
         ["<Tab>"] = nil,
         ["<S-Tab>"] = nil,
-        ["<C-n>"] = nil,
-        ["<C-p>"] = nil,
-      },
+      }),
     })
 
     cmp.setup.filetype("lua", {
