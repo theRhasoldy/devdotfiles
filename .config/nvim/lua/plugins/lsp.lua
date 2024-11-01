@@ -314,6 +314,29 @@ return {
               },
             })
           end,
+          volar = function()
+            lsp.volar.setup({
+              capabilities = capabilities,
+              filetypes = {
+                "vue",
+              },
+              settings = {
+                vue = {
+                  complete = {
+                    casing = {
+                      props = "autoCamel",
+                    },
+                  },
+                },
+              },
+
+              init_options = {
+                vue = {
+                  hybridMode = false,
+                },
+              },
+            })
+          end,
           cssls = function()
             lsp.cssls.setup({
               capabilities = capabilities,
