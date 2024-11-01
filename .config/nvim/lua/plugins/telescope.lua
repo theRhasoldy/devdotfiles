@@ -65,6 +65,15 @@ return {
       path_display = { "smart" },
       prompt_prefix = "  ",
       selection_caret = " ",
+      cache_picker = true,
+      file_ignore_patterns = {
+        "node_modules",
+        ".git/",
+        ".next/",
+        "dist/",
+        "build/",
+        "bin/",
+      },
       preview = {
         treesitter = true,
       },
