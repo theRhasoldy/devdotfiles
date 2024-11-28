@@ -1,13 +1,20 @@
+local utils = require("config.utils")
+
+vim.cmd([[cab cc CodeCompanion]])
+
 return {
   {
     "olimorris/codecompanion.nvim",
-    event = "VeryLazy",
+    cmd = { "CodeCompanion", "CodeCompanionChat" },
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "hrsh7th/nvim-cmp",
       "nvim-telescope/telescope.nvim",
       "stevearc/dressing.nvim",
+      {
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = { "markdown", "codecompanion" },
+      },
     },
     config = function()
       require("codecompanion").setup({
@@ -22,6 +29,11 @@ return {
             adapter = "gemini",
           },
         },
+        display = {
+          chat = {
+            render_headers = false,
+          },
+        },
         adapters = {
           gemini = function()
             return require("codecompanion.adapters").extend("gemini", {
@@ -32,6 +44,18 @@ return {
           end,
         },
       })
+
+      -- format after response is done
+      local group = utils.create_group("CodeCompanionHooks", {})
+      utils.create_autocmd({ "User" }, {
+        pattern = "CodeCompanionInline*",
+        group = group,
+        callback = function(request)
+          if request.match == "CodeCompanionInlineFinished" then
+            vim.lsp.buf.format({ async = true, bufnr = request.buf })
+          end
+        end,
+      })
     end,
   },
   {
@@ -40,6 +64,12 @@ return {
     opts = {
       show_labels = false,
       max_lines = 1000,
+      filetypes = {
+        help = false,
+        gitcommit = false,
+        gitrebase = false,
+        ["."] = false,
+      },
     },
     keys = function()
       local neocodeium = require("neocodeium")

@@ -7,7 +7,36 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
   return map(mode, lhs, rhs, opts)
 end
 
+local symbols = {
+  Text = "󰚞",
+  Method = "󰆩",
+  Function = "󰊕",
+  Constructor = "",
+  Field = "",
+  Variable = "",
+  Class = "",
+  Interface = "",
+  Module = "",
+  Property = "",
+  Unit = "󱉸",
+  Value = "󱢏",
+  Enum = "",
+  Keyword = "",
+  Snippet = "󰆐",
+  Color = "󰌁",
+  File = "󰈔",
+  Reference = "",
+  Folder = "",
+  EnumMember = "",
+  Constant = "",
+  Struct = "",
+  Event = "",
+  Operator = "󱌣",
+  TypeParameter = "󰉺",
+}
+
 return {
+  sympols = symbols,
   create_autocmd = vim.api.nvim_create_autocmd,
   create_group = vim.api.nvim_create_augroup,
   clear_autocmd = vim.api.nvim_clear_autocmds,

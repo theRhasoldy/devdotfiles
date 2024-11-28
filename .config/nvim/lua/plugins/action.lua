@@ -1,34 +1,22 @@
 return {
-  "luckasRanarison/clear-action.nvim",
+  "Chaitanyabsprip/fastaction.nvim",
   event = "LSPAttach",
   opts = {
+    dismiss_keys = { "j", "k", "<C-c>", "<Esc>", "q" },
+    keys = "qwertyuiopasdfghlzxcvbnm",
     popup = {
-      enable = true,
       border = "rounded",
       hide_cursor = true,
-      highlights = {
-        header = "Function",
-        label = "Statement",
-        title = "Normal",
-      },
+      title = "Code Actions:",
     },
-    signs = {
-      highlights = {
-        quickfix = "Statement",
-        refactor = "Delimiter",
-        source = "Function",
-        combined = "Type",
-        label = "Comment",
-      },
-      icons = {
-        quickfix = "󰖷",
-        refactor = "󱐋",
-        source = "",
-        combined = "󰌵", -- used when combine is set to true or as a fallback when there is no action kind
-      },
-    },
-    mappings = {
-      code_action = { key = "ga", mode = { "n" }, options = { desc = "Code Action" } },
+  },
+  keys = {
+    {
+      "ga",
+      function()
+        require("fastaction").code_action()
+      end,
+      desc = "Search files",
     },
   },
 }

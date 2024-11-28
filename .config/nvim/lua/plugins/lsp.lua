@@ -159,6 +159,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
+      "saghen/blink.cmp",
       "williamboman/mason-lspconfig.nvim",
     },
     config = function()
@@ -171,8 +172,8 @@ return {
       end
 
       local cmp_capabilities = nil
-      if pcall(require, "cmp_nvim_lsp") then
-        cmp_capabilities = require("cmp_nvim_lsp").default_capabilities()
+      if pcall(require, "blink.cmp") then
+        cmp_capabilities = require("blink.cmp").get_lsp_capabilities()
       end
 
       local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
