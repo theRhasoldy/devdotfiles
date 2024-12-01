@@ -30,7 +30,17 @@ return {
     },
     sources = {
       completion = {
-        enabled_providers = { "lsp", "path", "snippets", "buffer" },
+        -- Static list of providers to enable, or a function to dynamically enable/disable providers based on the context
+        enabled_providers = function(ctx)
+          local node = vim.treesitter.get_node()
+          if
+            node and vim.tbl_contains({ "comment", "line_comment", "block_comment" })
+          then
+            return { "buffer" }
+          else
+            return { "lsp", "path", "snippets", "buffer" }
+          end
+        end,
       },
     },
     windows = {
@@ -62,6 +72,9 @@ return {
     },
     -- don't show completions or signature help for these filetypes. Keymaps are also disabled.
     blocked_filetypes = {},
-    kind_icons = symbols,
+    appearance = {
+      nerd_font_variant = "mono",
+      kind_icons = symbols,
+    },
   },
 }
