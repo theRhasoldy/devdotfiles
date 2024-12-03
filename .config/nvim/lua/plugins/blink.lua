@@ -17,20 +17,65 @@ return {
       ["<Tab>"] = { "snippet_forward", "fallback" },
       ["<S-Tab>"] = { "snippet_backward", "fallback" },
     },
-    accept = {
-      auto_brackets = {
+    completion = {
+      list = {
+        -- Maximum number of items to display
+        max_items = 200,
+        -- Controls if completion items will be selected automatically,
+        -- and whether selection automatically inserts
+        selection = "manual",
+      },
+      accept = {
+        -- Experimental auto-brackets support
+        auto_brackets = {
+          enabled = true,
+          default_brackets = { "(", ")" },
+          kind_resolution = {
+            enabled = true,
+            blocked_filetypes = { "typescriptreact", "javascriptreact", "vue" },
+          },
+          semantic_token_resolution = {
+            enabled = true,
+            blocked_filetypes = {},
+            timeout_ms = 400,
+          },
+        },
+      },
+      menu = {
         enabled = true,
-        default_brackets = { "(", ")" },
+        min_width = 20,
+        max_height = 15,
+        border = "rounded",
+        winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
+        scrolloff = 2,
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200,
+        treesitter_highlighting = true,
+        window = {
+          min_width = 20,
+          max_width = 60,
+          max_height = 30,
+          border = "rounded",
+          winblend = 0,
+          winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
+          scrollbar = true,
+        },
       },
     },
-    trigger = {
-      signature_help = {
-        enabled = true,
+    -- Experimental signature help support
+    signature = {
+      enabled = true,
+      window = {
+        min_width = 1,
+        max_width = 100,
+        max_height = 10,
+        border = "rounded",
       },
     },
     sources = {
       completion = {
-        -- Static list of providers to enable, or a function to dynamically enable/disable providers based on the context
         enabled_providers = function()
           local node = vim.treesitter.get_node()
           if
@@ -43,37 +88,7 @@ return {
         end,
       },
     },
-    windows = {
-      autocomplete = {
-        min_width = 30,
-        max_height = 15,
-        border = "rounded",
-        auto_show = true,
-        selection = "manual",
-        draw = {
-          columns = { { "kind_icon" }, { "label", "label_description", gap = 1 } },
-        },
-      },
-      documentation = {
-        min_width = 10,
-        max_width = 60,
-        max_height = 30,
-        border = "rounded",
-        winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
-        auto_show = true,
-      },
-      signature_help = {
-        min_width = 1,
-        max_width = 100,
-        max_height = 10,
-        border = "rounded",
-        winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
-      },
-    },
-    -- don't show completions or signature help for these filetypes. Keymaps are also disabled.
-    blocked_filetypes = {},
     appearance = {
-      nerd_font_variant = "mono",
       kind_icons = symbols,
     },
   },
