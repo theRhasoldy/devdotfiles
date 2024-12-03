@@ -1,3 +1,5 @@
+local utils = require("config.utils")
+
 local opt = vim.opt
 
 vim.opt.termguicolors = true
@@ -56,3 +58,11 @@ opt.wrap = false
 opt.equalalways = true
 
 vim.g.markdown_fenced_languages = { "javascript", "typescript", "scss", "css", "html" }
+
+-- add borders to floating windows
+local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or utils.border
+  return orig_util_open_floating_preview(contents, syntax, opts, ...)
+end

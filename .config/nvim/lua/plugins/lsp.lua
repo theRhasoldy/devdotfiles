@@ -1,18 +1,29 @@
-local border = {
-  { "╭", "FloatBorder" },
-  { "─", "FloatBorder" },
-  { "╮", "FloatBorder" },
-  { "│", "FloatBorder" },
-  { "╯", "FloatBorder" },
-  { "─", "FloatBorder" },
-  { "╰", "FloatBorder" },
-  { "│", "FloatBorder" },
-}
-
 local utils = require("config.utils")
 local path = vim.split(package.path, ";")
 
-local signs = { Error = " ", Warn = " ", Hint = "󰌵 ", Info = " " }
+-- builtin vim diagnostics options
+vim.diagnostic.config({
+  underline = true,
+  update_in_insert = true,
+  float = {
+    source = "always",
+    severity_sort = true,
+  },
+  virtual_text = {
+    spacing = 8,
+    source = "always",
+    prefix = "󰊠",
+    severity_sort = true,
+  },
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = utils.signs.ERROR,
+      [vim.diagnostic.severity.WARN] = utils.signs.WARN,
+      [vim.diagnostic.severity.HINT] = utils.signs.HINT,
+      [vim.diagnostic.severity.INFO] = utils.signs.INFO,
+    },
+  },
+})
 
 -- global keybinds
 local get_keybinds_on_lsp = function()
@@ -140,8 +151,8 @@ return {
         -- lsps
         "lua_ls",
         "bashls",
-        "eslint",
         "ts_ls",
+        "eslint",
         "volar",
         "astro",
         "angularls",
@@ -181,37 +192,6 @@ return {
       local capabilities =
         vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
 
-      -- builtin vim diagnostics options
-      vim.diagnostic.config({
-        underline = true,
-        update_in_insert = true,
-        float = {
-          source = "always",
-          severity_sort = true,
-        },
-        virtual_text = {
-          spacing = 24,
-          source = "always",
-          prefix = "󰊠",
-          severity_sort = true,
-        },
-      })
-
-      -- set custom icons
-      for type, icon in pairs(signs) do
-        local hl = "DiagnosticSign" .. type
-        vim.fn.sign_define(hl, { text = icon, texthl = hl })
-      end
-
-      -- add borders to floating windows
-      local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-        opts = opts or {}
-        opts.border = opts.border or border
-        return orig_util_open_floating_preview(contents, syntax, opts, ...)
-      end
-
-      -- override mason-lspconfig
       local default_setup = function(server)
         lsp[server].setup({
           capabilities = capabilities,

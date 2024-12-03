@@ -52,7 +52,7 @@ return {
         group = group,
         callback = function(request)
           if request.match == "CodeCompanionInlineFinished" then
-            vim.lsp.buf.format({ async = true, bufnr = request.buf })
+            vim.lsp.buf.format({ async = false, bufnr = request.buf })
           end
         end,
       })
@@ -62,6 +62,7 @@ return {
     "monkoose/neocodeium",
     event = "VeryLazy",
     opts = {
+      silent = true,
       show_labels = false,
       max_lines = 1000,
       filetypes = {

@@ -12,11 +12,20 @@ return {
   },
   keys = {
     {
+      mode = { "n" },
       "ga",
       function()
         require("fastaction").code_action()
       end,
-      desc = "Search files",
+      desc = "Code actions for current file",
+    },
+    {
+      mode = { "v" },
+      "ga",
+      function()
+        require("fastaction").range_code_action()
+      end,
+      desc = "Code actions for current selection",
     },
   },
 }

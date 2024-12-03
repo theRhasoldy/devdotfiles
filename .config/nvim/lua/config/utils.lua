@@ -35,8 +35,28 @@ local symbols = {
   TypeParameter = "󰉺",
 }
 
+local border = {
+  { "╭", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╮", "FloatBorder" },
+  { "│", "FloatBorder" },
+  { "╯", "FloatBorder" },
+  { "─", "FloatBorder" },
+  { "╰", "FloatBorder" },
+  { "│", "FloatBorder" },
+}
+
+local signs = {
+  ERROR = " ",
+  WARN = " ",
+  HINT = "󰌵 ",
+  INFO = " "
+}
+
 return {
   sympols = symbols,
+  border = border,
+  signs = signs,
   create_autocmd = vim.api.nvim_create_autocmd,
   create_group = vim.api.nvim_create_augroup,
   clear_autocmd = vim.api.nvim_clear_autocmds,

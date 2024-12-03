@@ -3,7 +3,7 @@ local symbols = require("config.utils").symbols
 return {
   "saghen/blink.cmp",
   version = "v0.*",
-  event = "InsertEnter",
+  event = { "LSPAttach", "BufReadPost", "BufNewFile" },
   dependencies = "rafamadriz/friendly-snippets",
   opts = {
     keymap = {
@@ -31,7 +31,7 @@ return {
     sources = {
       completion = {
         -- Static list of providers to enable, or a function to dynamically enable/disable providers based on the context
-        enabled_providers = function(ctx)
+        enabled_providers = function()
           local node = vim.treesitter.get_node()
           if
             node and vim.tbl_contains({ "comment", "line_comment", "block_comment" })

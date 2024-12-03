@@ -1,11 +1,6 @@
-local M = {}
+local config_utils = require("config.utils")
 
-M.diagnostic_icons = {
-  error_icon = " ",
-  warn_icon = " ",
-  info_icon = " ",
-  hint_icon = " ",
-}
+local M = {}
 
 M.mode_names = {
   n = "󰹇 ",
@@ -99,7 +94,12 @@ return {
 
     local Diagnostics = {
       condition = conditions.has_diagnostics,
-      static = M.diagnostic_icons,
+      static = {
+        error_icon = config_utils.signs.ERROR,
+        warn_icon = config_utils.signs.WARN,
+        info_icon = config_utils.signs.INFO,
+        hint_icon = config_utils.signs.HINT,
+      },
       init = function(self)
         self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
         self.warnings =
@@ -148,7 +148,7 @@ return {
       update = { "LspAttach", "LspDetach" },
       provider = function()
         local names = {}
-        for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+        for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
           table.insert(names, server.name)
         end
         return " [ " .. table.concat(names, " ") .. " ]"
@@ -294,7 +294,7 @@ return {
           return vim.bo.modified
         end,
         provider = " ",
-      hl = { fg = M.colors.orange },
+        hl = { fg = M.colors.orange },
       },
       {
         condition = function()
