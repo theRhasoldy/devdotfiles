@@ -1,7 +1,7 @@
 return {
   {
     "andymass/vim-matchup",
-    event = "VeryLazy",
+    event = { "BufReadPost", "BufNewFile" },
     config = function()
       vim.g.matchup_matchparen_offscreen = { method = "status_manual" }
       vim.g.matchup_surround_enabled = 1
@@ -19,7 +19,8 @@ return {
   },
   {
     "windwp/nvim-ts-autotag",
-    event = { "BufReadPre", "BufNewFile" },
+    ft = { "html", "javascript", "typescript", "javascriptreact", "typescriptreact" },
+    event = "TextChangedI *.js,*.jsx,*.ts,*.tsx",
     config = function()
       require("nvim-ts-autotag").setup({
         opts = {

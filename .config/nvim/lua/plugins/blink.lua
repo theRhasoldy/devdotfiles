@@ -3,7 +3,7 @@ local symbols = require("config.utils").symbols
 return {
   "saghen/blink.cmp",
   version = "v0.*",
-  event = { "LSPAttach", "BufReadPost", "BufNewFile" },
+  event = "InsertEnter",
   dependencies = "rafamadriz/friendly-snippets",
   opts = {
     keymap = {

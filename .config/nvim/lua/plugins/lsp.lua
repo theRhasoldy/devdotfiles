@@ -125,53 +125,60 @@ end
 return {
   {
     "williamboman/mason.nvim",
-    lazy = false,
-    opts = {
-      border = "single",
-      icons = {
-        package_installed = "✓",
-        package_pending = "➜",
-        package_uninstalled = "✗",
-      },
+    cmd = {
+      "Mason",
+      "MasonLog",
+      "MasonInstall",
+      "MasonUninstall",
+      "MasonUninstallAll",
+      "MasonUpdate",
     },
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    init = function()
-      local ok, wf = pcall(require, "vim.lsp._watchfiles")
-      if ok then
-        wf._watchfunc = function()
-          return function() end
-        end
-      end
-    end,
     opts = {
-      ensure_installed = {
-        -- lsps
-        "lua_ls",
-        "bashls",
-        "ts_ls",
-        "eslint",
-        "volar",
-        "astro",
-        "angularls",
-        "mdx_analyzer",
-        "marksman",
-        "html",
-        "cssls",
-        "tailwindcss",
-        "emmet_language_server",
-        "yamlls",
-        "jsonls",
+      ui = {
+        border = "rounded",
+        icons = {
+          package_installed = "✓",
+          package_pending = "➜",
+          package_uninstalled = "✗",
+        },
       },
     },
   },
   {
     "neovim/nvim-lspconfig",
+    event = "BufRead",
     dependencies = {
-      "saghen/blink.cmp",
-      "williamboman/mason-lspconfig.nvim",
+      {
+        "williamboman/mason-lspconfig.nvim",
+        init = function()
+          local ok, wf = pcall(require, "vim.lsp._watchfiles")
+          if ok then
+            wf._watchfunc = function()
+              return function() end
+            end
+          end
+        end,
+        opts = {
+          ensure_installed = {
+            -- lsps
+            "lua_ls",
+            "bashls",
+            "ts_ls",
+            "eslint",
+            "volar",
+            "astro",
+            "angularls",
+            "mdx_analyzer",
+            "marksman",
+            "html",
+            "cssls",
+            "tailwindcss",
+            "emmet_language_server",
+            "yamlls",
+            "jsonls",
+          },
+        },
+      },
     },
     config = function()
       local ok_lsp, lsp = pcall(require, "lspconfig")

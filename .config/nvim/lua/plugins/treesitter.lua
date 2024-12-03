@@ -29,10 +29,9 @@ local ensure_installed = {
 
 return {
   "nvim-treesitter/nvim-treesitter",
-  event = "VeryLazy",
+  event = { "BufReadPre", "BufNewFile" },
   build = ":TSUpdate",
   lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
-  cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
   -- additional modules
   dependencies = {
     "nvim-treesitter/nvim-treesitter-textobjects",

@@ -1,7 +1,6 @@
 return {
   {
     "numToStr/Comment.nvim",
-    event = { "BufReadPre", "BufNewFile" },
     config = function()
       local ok, comment_string =
         pcall(require, "ts_context_commentstring.integrations.comment_nvim")
@@ -16,15 +15,20 @@ return {
         pre_hook = comment_string.create_pre_hook(),
       })
     end,
+    keys = {
+      { "gc", mode = { "v" }, desc = "Comment toggle for selection" },
+      { "gb", mode = { "v" }, desc = "Block comment toggle for selection" },
+      { "gcc", mode = { "n" }, desc = "Line comment toggle" },
+      { "gbc", mode = { "n" }, desc = "Block comment toggle" },
+    },
   },
   {
     "JoosepAlviste/nvim-ts-context-commentstring",
-    event = "VeryLazy",
+    event = "LSPAttach",
   },
   {
     "folke/todo-comments.nvim",
     event = { "BufReadPre", "BufNewFile" },
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       highlight = {
         before = "", -- "fg" or "bg" or empty
