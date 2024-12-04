@@ -1,30 +1,6 @@
 local utils = require("config.utils")
 local path = vim.split(package.path, ";")
 
--- builtin vim diagnostics options
-vim.diagnostic.config({
-  underline = true,
-  update_in_insert = true,
-  float = {
-    source = "always",
-    severity_sort = true,
-  },
-  virtual_text = {
-    spacing = 8,
-    source = "always",
-    prefix = "󰊠",
-    severity_sort = true,
-  },
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = utils.signs.ERROR,
-      [vim.diagnostic.severity.WARN] = utils.signs.WARN,
-      [vim.diagnostic.severity.HINT] = utils.signs.HINT,
-      [vim.diagnostic.severity.INFO] = utils.signs.INFO,
-    },
-  },
-})
-
 -- global keybinds
 local get_keybinds_on_lsp = function()
   local ok, telescope = pcall(require, "telescope.builtin")
@@ -125,14 +101,7 @@ end
 return {
   {
     "williamboman/mason.nvim",
-    cmd = {
-      "Mason",
-      "MasonLog",
-      "MasonInstall",
-      "MasonUninstall",
-      "MasonUninstallAll",
-      "MasonUpdate",
-    },
+    cmd = "Mason",
     opts = {
       ui = {
         border = "rounded",
@@ -376,6 +345,30 @@ return {
               },
             })
           end,
+        },
+      })
+
+      -- builtin vim diagnostics options
+      vim.diagnostic.config({
+        underline = true,
+        update_in_insert = true,
+        float = {
+          source = "always",
+          severity_sort = true,
+        },
+        virtual_text = {
+          spacing = 8,
+          source = "always",
+          prefix = "󰊠",
+          severity_sort = true,
+        },
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = utils.signs.ERROR,
+            [vim.diagnostic.severity.WARN] = utils.signs.WARN,
+            [vim.diagnostic.severity.HINT] = utils.signs.HINT,
+            [vim.diagnostic.severity.INFO] = utils.signs.INFO,
+          },
         },
       })
 
