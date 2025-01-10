@@ -11,10 +11,6 @@ return {
       "nvim-treesitter/nvim-treesitter",
       "nvim-telescope/telescope.nvim",
       "stevearc/dressing.nvim",
-      {
-        "MeanderingProgrammer/render-markdown.nvim",
-        ft = { "markdown", "codecompanion" },
-      },
     },
     config = function()
       require("codecompanion").setup({
@@ -27,11 +23,6 @@ return {
           },
           agent = {
             adapter = "gemini",
-          },
-        },
-        display = {
-          chat = {
-            render_headers = false,
           },
         },
         adapters = {

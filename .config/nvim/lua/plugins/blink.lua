@@ -4,7 +4,33 @@ return {
   "saghen/blink.cmp",
   version = "v0.*",
   event = "InsertEnter",
-  dependencies = "rafamadriz/friendly-snippets",
+  dependencies = {
+    "rafamadriz/friendly-snippets",
+    {
+      "jsongerber/nvim-px-to-rem",
+      opts = {
+        root_font_size = 16,
+        decimal_count = 4,
+        show_virtual_text = true,
+        add_cmp_source = false,
+        filetypes = {
+          "css",
+          "scss",
+          "sass",
+          "js",
+          "jsx",
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact",
+          "ts",
+          "tsx",
+          "vue",
+          "html",
+        },
+      },
+    },
+  },
   opts = {
     keymap = {
       ["<C-c>"] = { "show", "show_documentation", "hide_documentation" },
@@ -75,17 +101,19 @@ return {
       },
     },
     sources = {
-      completion = {
-        enabled_providers = function()
-          local node = vim.treesitter.get_node()
-          if
-            node and vim.tbl_contains({ "comment", "line_comment", "block_comment" })
-          then
-            return { "buffer" }
-          else
-            return { "lsp", "path", "snippets", "buffer" }
-          end
-        end,
+      default = function()
+        local node = vim.treesitter.get_node()
+        if node and vim.tbl_contains({ "comment", "line_comment", "block_comment" }) then
+          return { "buffer" }
+        else
+          return { "nvim-px-to-rem", "lsp", "path", "snippets", "buffer" }
+        end
+      end,
+      providers = {
+        ["nvim-px-to-rem"] = {
+          module = "nvim-px-to-rem.integrations.blink",
+          name = "nvim-px-to-rem",
+        },
       },
     },
     appearance = {

@@ -294,6 +294,20 @@ return {
               },
             })
           end,
+          emmet_language_server = function()
+            lsp.emmet_language_server.setup({
+              capabilities = capabilities,
+              init_options = {
+                showAbbreviationSuggestions = true,
+                showExpandedAbbreviation = "always",
+                showSuggestionsAsSnippets = false,
+              },
+              on_attach = function(client)
+                client.server_capabilities.documentFormattingProvider = false
+                client.server_capabilities.documentRangeFormattingProvider = false
+              end,
+            })
+          end,
           cssls = function()
             lsp.cssls.setup({
               capabilities = capabilities,
@@ -317,6 +331,25 @@ return {
                   },
                 },
               },
+            })
+          end,
+          eslint = function()
+            lsp.eslint.setup({
+              capabilities = capabilities,
+              settings = {
+                eslint = {
+                  autoFixOnSave = true,
+                },
+              },
+              root_dir = lsp.util.root_pattern(
+                ".eslintrc.js",
+                ".eslintrc.yaml",
+                ".eslintrc.yml",
+                ".eslintrc.json",
+                ".eslintrc.cjs",
+                ".eslintrc.mjs",
+                ".eslintrc"
+              ),
             })
           end,
           tailwindcss = function()
