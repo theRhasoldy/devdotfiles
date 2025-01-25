@@ -1,27 +1,13 @@
 # XDG Environment Variables
-if test -z "$XDG_CONFIG_HOME"
-    set -gx XDG_CONFIG_HOME "$HOME/.config"
-end
-
-if test -z "$XDG_DATA_HOME"
-    set -gx XDG_DATA_HOME "$HOME/.local/share"
-end
-
-if test -z "$XDG_CACHE_HOME"
-    set -gx XDG_CACHE_HOME "$HOME/.cache"
-end
-
-if test -z "$XDG_STATE_HOME"
-    set -gx XDG_STATE_HOME "$HOME/.local/state"
-end
-
+set -gx XDG_CONFIG_HOME "$HOME/.config"
+set -gx XDG_DATA_HOME "$HOME/.local/share"
+set -gx XDG_CACHE_HOME "$HOME/.cache"
+set -gx XDG_STATE_HOME "$HOME/.local/state"
 set -gx XDG_DATA_DIRS "/usr/local/share:/usr/share"
 
 # Language Settings
-if test -z "$LANG"
   set -gx LANG 'en_US.UTF-8'
   set -gx LANGUAGE 'en_US.UTF-8'
-end
 
 set -gx VIMCONFIG "$XDG_CONFIG_HOME/nvim"
 set -gx VIMRUNTIME "/usr/share/nvim/runtime"
@@ -79,6 +65,9 @@ set -gx path /usr/local/bin /usr/local/sbin $path
 # Add all scripts in scripts/ executable
 set -gx PATH "$XDG_CONFIG_HOME/scripts" $PATH
 set -gx PATH "$GOPATH/bin" $PATH
+
+# Add all npm packages to the path
+set -gx PATH "$XDG_DATA_HOME/npm/bin" $PATH
 
 # Bfetch
 set -gx BFETCH_CLASSIC_MODE true 
