@@ -58,7 +58,6 @@ return {
           default_brackets = { "(", ")" },
           kind_resolution = {
             enabled = true,
-            blocked_filetypes = { "typescriptreact", "javascriptreact", "vue" },
           },
           semantic_token_resolution = {
             enabled = true,
@@ -101,14 +100,7 @@ return {
       },
     },
     sources = {
-      default = function()
-        local node = vim.treesitter.get_node()
-        if node and vim.tbl_contains({ "comment", "line_comment", "block_comment" }) then
-          return { "buffer" }
-        else
-          return { "nvim-px-to-rem", "lsp", "path", "snippets", "buffer" }
-        end
-      end,
+      default = { "nvim-px-to-rem", "lsp", "path", "snippets", "buffer" },
       providers = {
         ["nvim-px-to-rem"] = {
           module = "nvim-px-to-rem.integrations.blink",

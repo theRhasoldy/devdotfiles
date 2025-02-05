@@ -16,7 +16,7 @@ return {
     local formatting = none.builtins.formatting
     local diagnostics = none.builtins.diagnostics
 
-    vim.cmd([[cabbrev wq execute "lua vim.lsp.buf.format()" <bar> wq]])
+    -- vim.cmd([[cabbrev wq execute "lua vim.lsp.buf.format()" <bar> wq]])
 
     none.setup({
       debounce = 150,
@@ -27,12 +27,12 @@ return {
       },
       on_attach = function(_, bufnr)
         utils.clear_autocmd({ group = augroup, buffer = bufnr })
-        utils.create_autocmd("BufWritePost", {
+        utils.create_autocmd("BufWrite", {
           group = augroup,
           buffer = bufnr,
           callback = function()
             vim.lsp.buf.format({
-              async = true,
+              async = false,
             })
           end,
         })

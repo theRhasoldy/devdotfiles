@@ -21,6 +21,7 @@ local ensure_installed = {
   "markdown_inline",
   "vimdoc",
   "diff",
+  "hyprlang",
   "gitignore",
   "gitcommit",
   "git_rebase",

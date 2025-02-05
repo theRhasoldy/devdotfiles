@@ -166,11 +166,15 @@ return {
       local lsp_capabilities = vim.lsp.protocol.make_client_capabilities()
 
       local capabilities =
-        vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
+          vim.tbl_deep_extend("force", lsp_capabilities, cmp_capabilities)
 
       local default_setup = function(server)
         lsp[server].setup({
           capabilities = capabilities,
+          on_attach = function(client)
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+          end,
         })
       end
 
@@ -206,7 +210,7 @@ return {
                     callSnippet = "Replace",
                   },
                   format = {
-                    enable = false,
+                    enable = true,
                   },
                   telemetry = {
                     enable = false,
@@ -348,7 +352,9 @@ return {
                 ".eslintrc.json",
                 ".eslintrc.cjs",
                 ".eslintrc.mjs",
-                ".eslintrc"
+                ".eslintrc",
+                "eslint.config.js",
+                "eslint.config.cjs"
               ),
             })
           end,
@@ -360,7 +366,7 @@ return {
                   experimental = {
                     classRegex = {
                       { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
-                      { "cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+                      { "cx\\(([^)]*)\\)",  "(?:'|\"|`)([^']*)(?:'|\"|`)" },
                     },
                   },
                   classAttributes = {
