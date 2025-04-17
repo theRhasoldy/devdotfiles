@@ -9,7 +9,7 @@ SETUVAR --export XDG_CACHE_HOME:/home/rhasoldy/\x2ecache
 SETUVAR --export XDG_CONFIG_HOME:/home/rhasoldy/\x2econfig/
 SETUVAR --export XDG_DATA_HOME:/home/rhasoldy/\x2elocal/share
 SETUVAR --export XDG_STATE_HOME:/home/rhasoldy/\x2elocal/state
-SETUVAR __fish_initialized:3400
+SETUVAR __fish_initialized:3800
 SETUVAR _fisher_upgraded_to_4_4:\x1d
 SETUVAR --export cdpath:fpath\x1epath
 SETUVAR fish_color_autosuggestion:555\x1ebrblack
@@ -29,7 +29,7 @@ SETUVAR fish_color_operator:brcyan
 SETUVAR fish_color_param:cyan
 SETUVAR fish_color_quote:yellow
 SETUVAR fish_color_redirection:cyan\x1e\x2d\x2dbold
-SETUVAR fish_color_search_match:bryellow\x1e\x2d\x2dbackground\x3dbrblack
+SETUVAR fish_color_search_match:white\x1e\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_color_selection:white\x1e\x2d\x2dbold\x1e\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_color_status:red
 SETUVAR fish_color_user:brgreen

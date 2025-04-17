@@ -49,7 +49,7 @@ return {
         max_items = 200,
         -- Controls if completion items will be selected automatically,
         -- and whether selection automatically inserts
-        selection = "manual",
+        selection = { preselect = false, auto_insert = false },
       },
       accept = {
         -- Experimental auto-brackets support
