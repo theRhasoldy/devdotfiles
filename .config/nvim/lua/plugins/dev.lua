@@ -2,13 +2,7 @@ return {
   "folke/lazydev.nvim",
   ft = "lua",
   ---@module "lazydev"
-  ---@type lazydev.Config
   opts = {
-    runtime = {
-      lazy = true,
-    },
-    library = {},
-    debug = false,
     integrations = {
       cmp = false,
       coq = false,

@@ -1,19 +1,19 @@
 -- thanks https://www.reddit.com/r/neovim/comments/1e1avrx/create_you_own_greeter_by_just_chosing_your_ascii/
 
 -- Configuarion Variabales
-local GAP_LINES = 2 -- Number of empty lines between ASCII art and version line
-local VERTICAL_OFFSET = 2 -- Number of lines to push the art up by (centered looks a little too low)
+local GAP_LINES = 2                                           -- Number of empty lines between ASCII art and version line
+local VERTICAL_OFFSET = 2                                     -- Number of lines to push the art up by (centered looks a little too low)
 vim.api.nvim_set_hl(0, "GreeterAsciiArt", { fg = "#FF74B8" }) -- The ascii art color
-vim.api.nvim_set_hl(0, "GreeterNvimVer", { fg = "#6F6F6F" }) -- The Neovim version color
+vim.api.nvim_set_hl(0, "GreeterNvimVer", { fg = "#6F6F6F" })  -- The Neovim version color
 
 -- Rhasoldy
 local ascii_str = [[
      _/\/\/\/\/\____/\/\____/\/\______/\/\________/\/\/\/\/\____/\/\/\/\____/\/\________/\/\/\/\/\____/\/\____/\/\_
-    _/\/\____/\/\__/\/\____/\/\____/\/\/\/\____/\/\__________/\/\____/\/\__/\/\________/\/\____/\/\__/\/\____/\/\_ 
-   _/\/\/\/\/\____/\/\/\/\/\/\__/\/\____/\/\____/\/\/\/\____/\/\____/\/\__/\/\________/\/\____/\/\____/\/\/\/\___  
-  _/\/\__/\/\____/\/\____/\/\__/\/\/\/\/\/\__________/\/\__/\/\____/\/\__/\/\________/\/\____/\/\______/\/\_____   
- _/\/\____/\/\__/\/\____/\/\__/\/\____/\/\__/\/\/\/\/\______/\/\/\/\____/\/\/\/\/\__/\/\/\/\/\________/\/\_____    
-______________________________________________________________________________________________________________     
+    _/\/\____/\/\__/\/\____/\/\____/\/\/\/\____/\/\__________/\/\____/\/\__/\/\________/\/\____/\/\__/\/\____/\/\_
+   _/\/\/\/\/\____/\/\/\/\/\/\__/\/\____/\/\____/\/\/\/\____/\/\____/\/\__/\/\________/\/\____/\/\____/\/\/\/\___
+  _/\/\__/\/\____/\/\____/\/\__/\/\/\/\/\/\__________/\/\__/\/\____/\/\__/\/\________/\/\____/\/\______/\/\_____
+ _/\/\____/\/\__/\/\____/\/\__/\/\____/\/\__/\/\/\/\/\______/\/\/\/\____/\/\/\/\/\__/\/\/\/\/\________/\/\_____
+______________________________________________________________________________________________________________
 ]]
 
 local small_ascii_str = [[
@@ -32,13 +32,13 @@ local small_ascii = vim.split(small_ascii_str, "\n")
 local vers = vim.version()
 local commit = vers.build ~= vim.NIL and ("+" .. vers.build) or ""
 local nvim_version = "NVIM v"
-  .. vers.major
-  .. "."
-  .. vers.minor
-  .. "."
-  .. vers.patch
-  .. "-"
-  .. commit
+    .. vers.major
+    .. "."
+    .. vers.minor
+    .. "."
+    .. vers.patch
+    .. "-"
+    .. commit
 
 local function pad_str(padding, string)
   return string.rep(" ", padding) .. string
@@ -141,21 +141,21 @@ function M.draw(buf)
   local small_pad_width = math.floor((screen_width - small_draw_width) / 2)
 
   -- height
-  local draw_height = #ascii + GAP_LINES + 1 -- Including version line
+  local draw_height = #ascii + GAP_LINES + 1             -- Including version line
   local pad_height = math.floor((screen_height - draw_height) / 2) - VERTICAL_OFFSET
   local small_draw_height = #small_ascii + GAP_LINES + 1 -- Including version line
   local small_pad_height = math.floor((screen_height - small_draw_height) / 2)
-    - VERTICAL_OFFSET
+      - VERTICAL_OFFSET
 
   -- create another art for smaller screens
   if
-    not (
-      screen_width >= draw_width + 2
-      and screen_height >= draw_height + 2 + VERTICAL_OFFSET
-    )
+      not (
+        screen_width >= draw_width + 2
+        and screen_height >= draw_height + 2 + VERTICAL_OFFSET
+      )
   then
     local centered_ascii =
-      calc_ascii(screen_width, small_pad_height, small_pad_width, small_ascii)
+        calc_ascii(screen_width, small_pad_height, small_pad_width, small_ascii)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, centered_ascii)
     apply_highlights(buf, pad_height, true)
     return
