@@ -10,6 +10,8 @@ return {
   {
     "lewis6991/gitsigns.nvim",
     event = { "BufRead", "BufNewFile" },
+    ---@type Gitsigns.config
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       signs = {
         add = { text = signs.add },
@@ -40,6 +42,7 @@ return {
   {
     "isakbm/gitgraph.nvim",
     dependencies = { "sindrets/diffview.nvim" },
+    ---@module "gitgraph.config"
     opts = {
       symbols = {
         merge_commit = "M",

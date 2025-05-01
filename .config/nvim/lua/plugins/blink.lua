@@ -31,6 +31,8 @@ return {
       },
     },
   },
+  ---@module 'blink.cmp'
+  ---@type blink.cmp.Config
   opts = {
     keymap = {
       ["<C-c>"] = { "show", "show_documentation", "hide_documentation" },
@@ -45,10 +47,11 @@ return {
     },
     completion = {
       list = {
-        -- Maximum number of items to display
+        cycle = {
+          from_bottom = true,
+          from_top = true,
+        },
         max_items = 200,
-        -- Controls if completion items will be selected automatically,
-        -- and whether selection automatically inserts
         selection = { preselect = false, auto_insert = false },
       },
       accept = {
@@ -61,7 +64,6 @@ return {
           },
           semantic_token_resolution = {
             enabled = true,
-            blocked_filetypes = {},
             timeout_ms = 400,
           },
         },
@@ -70,7 +72,7 @@ return {
         enabled = true,
         min_width = 20,
         max_height = 15,
-        border = "rounded",
+        border = "single",
         winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
         scrolloff = 2,
       },
@@ -82,7 +84,7 @@ return {
           min_width = 20,
           max_width = 60,
           max_height = 30,
-          border = "rounded",
+          border = "single",
           winblend = 0,
           winhighlight = "Normal:Normal,CursorLine:PmenuSel,Search:None",
           scrollbar = true,
@@ -93,22 +95,17 @@ return {
     signature = {
       enabled = true,
       window = {
-        min_width = 1,
+        min_width = 20,
         max_width = 100,
         max_height = 10,
-        border = "rounded",
+        border = "single",
       },
     },
     sources = {
-      default = { "nvim-px-to-rem", "lsp", "path", "snippets", "buffer" },
-      providers = {
-        ["nvim-px-to-rem"] = {
-          module = "nvim-px-to-rem.integrations.blink",
-          name = "nvim-px-to-rem",
-        },
-      },
+      default = { "lsp", "snippets", "path", "buffer" },
     },
     appearance = {
+      use_nvim_cmp_as_default = true,
       kind_icons = symbols,
     },
   },

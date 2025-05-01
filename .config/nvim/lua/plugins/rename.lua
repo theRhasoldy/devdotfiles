@@ -11,6 +11,7 @@ return {
 
     vim.opt.inccommand = "split"
     inc_rename.setup({
+      show_message = true,
       preview_empty_name = false,
       input_buffer_type = "dressing",
     })

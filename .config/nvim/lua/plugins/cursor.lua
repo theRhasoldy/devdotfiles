@@ -2,6 +2,8 @@ return {
   {
     "declancm/cinnamon.nvim",
     version = "*", -- use latest release
+    ---@module "cinnamon"
+    ---@type CinnamonOptions
     opts = {
       keymaps = {
         basic = true,
@@ -95,7 +97,8 @@ return {
   },
   {
     "rachartier/tiny-glimmer.nvim",
-    event = "VeryLazy",
+    event = "InsertEnter",
+    ---@module "tiny-glimmer"
     opts = {
       overwrite = {
         paste = {

@@ -5,7 +5,7 @@ vim.cmd([[cab cc CodeCompanion]])
 return {
   {
     "olimorris/codecompanion.nvim",
-    cmd = { "CodeCompanion", "CodeCompanionChat" },
+    cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
@@ -34,6 +34,30 @@ return {
             })
           end,
         },
+        prompt_library = {
+          ["Commit Changes"] = {
+            strategy = "chat",
+            description = "Generate some boilerplate HTML",
+            opts = {
+              mapping = "<Leader>ch",
+            },
+            prompts = {
+              {
+                name = "Commit Changes",
+                role = "user",
+                opts = { auto_submit = true },
+                content = function()
+                  -- Leverage auto_tool_mode which disables the requirement of approvals and automatically saves any edited buffer
+                  vim.g.codecompanion_auto_tool_mode = true
+
+                  return [[
+          /commit @editor commit this message
+        ]]
+                end,
+              },
+            },
+          },
+        },
       })
 
       -- format after response is done
@@ -48,10 +72,19 @@ return {
         end,
       })
     end,
+    keys = {
+      { "<leader>cc", "<cmd>CodeCompanionChat<cr>", desc = "Code Companion" },
+      {
+        "<leader>cg",
+        "<cmd>CodeCompanion /commit<cr>",
+        desc = "Commit using code companion",
+      },
+    },
   },
   {
     "monkoose/neocodeium",
     event = "VeryLazy",
+    ---@module "neocodeium.options"
     opts = {
       silent = true,
       show_labels = false,
@@ -60,7 +93,7 @@ return {
         help = false,
         gitcommit = false,
         gitrebase = false,
-        ["."] = false,
+        telescope_prompt = false,
       },
     },
     keys = function()

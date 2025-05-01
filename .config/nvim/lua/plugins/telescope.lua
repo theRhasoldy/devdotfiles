@@ -1,10 +1,10 @@
--- Implement delta as previewer for diffs
 return {
   "nvim-telescope/telescope.nvim",
   dependencies = {
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     "nvim-telescope/telescope-file-browser.nvim",
   },
+  ---@module "telescope"
   opts = {
     defaults = {
       dynamic_preview_title = true,

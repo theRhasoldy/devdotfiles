@@ -2,6 +2,7 @@ return {
   {
     "chrisgrieser/nvim-early-retirement",
     event = "VeryLazy",
+    ---@module "early-retirement"
     opts = {
       ignoreSpecialBuftypes = false,
     },
@@ -13,6 +14,8 @@ return {
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
+    ---@module "which-key.config"
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       preset = "modern",
       icons = {
@@ -28,6 +31,9 @@ return {
   {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewFileHistory" },
+    ---@module "diffview.config"
+    ---@type DiffviewConfig
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       enhanced_diff_hl = true,
       view = {

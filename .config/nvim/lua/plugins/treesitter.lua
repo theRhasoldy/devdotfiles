@@ -30,10 +30,14 @@ local ensure_installed = {
 
 return {
   "nvim-treesitter/nvim-treesitter",
-  event = { "BufReadPre", "BufNewFile" },
+  version = false,
   build = ":TSUpdate",
+  event = { "BufReadPre", "BufNewFile" },
   lazy = vim.fn.argc(-1) == 0, -- load treesitter early when opening a file from the cmdline
-  -- additional modules
+  init = function(plugin)
+    require("lazy.core.loader").add_to_rtp(plugin)
+    require("nvim-treesitter.query_predicates")
+  end,
   dependencies = {
     "nvim-treesitter/nvim-treesitter-textobjects",
     {
@@ -44,18 +48,19 @@ return {
       },
     },
   },
+  ---@module "nvim-treesitter.configs"
+  ---@type TSConfig
   opts = {
-    ensure_installed,
-    -- Install parsers synchronously (only applied to `ensure_installed`)
+    modules = {},
+    ignore_install = {},
+    auto_install = true,
+    ensure_installed = ensure_installed,
     sync_install = true,
-
-    -- config for default modules
     indent = {
       enable = true,
     },
     highlight = {
       enable = true,
-      -- disable for large files
       disable = function(_, buf)
         local max_filesize = 600 * 1024 -- 600 kb
         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
@@ -64,7 +69,6 @@ return {
         end
       end,
     },
-    -- config for additional modules
     textobjects = {
       select = {
         enable = true,

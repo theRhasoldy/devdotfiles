@@ -5,6 +5,9 @@ return {
     dependencies = {
       "MunifTanjim/nui.nvim",
     },
+    ---@module "noice"
+    ---@type NoiceConfig
+    ---@diagnostic disable-next-line: missing-fields
     opts = {
       cmdline = {
         view = "cmdline",
@@ -56,7 +59,6 @@ return {
         auto_open = {
           enabled = true,
           trigger = true,
-          luasnip = true,
         },
       },
       documentation = {
@@ -88,11 +90,14 @@ return {
         lazy.load({ plugins = { "dressing.nvim" } })
         return vim.ui.select(...)
       end
+
       vim.ui.input = function(...)
         lazy.load({ plugins = { "dressing.nvim" } })
         return vim.ui.input(...)
       end
     end,
+    ---@module "dressing"
+    ---@type dressing.InputConfig
     opts = {
       title_pos = "center",
       insert_only = false,
@@ -128,7 +133,10 @@ return {
   {
     "rcarriga/nvim-notify",
     event = "VeryLazy",
+    ---@module "notify"
+    ---@type notify.Config
     opts = {
+      merge_duplicates = true,
       timeout = 3000,
       render = "compact",
       fps = 24,

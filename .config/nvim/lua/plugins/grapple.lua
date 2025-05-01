@@ -9,7 +9,14 @@ return {
       "m",
       function()
         require("grapple").tag()
-        require("notify").notify("File tagged")
+        require("notify").notify(
+          "File tagged",
+          "info",
+          ---@diagnostic disable-next-line: missing-fields
+          {
+            title = "Grapple",
+          }
+        )
       end,
       noremap = true,
       desc = "Grapple tag file",

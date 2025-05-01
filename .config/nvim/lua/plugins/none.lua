@@ -22,8 +22,10 @@ return {
       debounce = 150,
       sources = {
         formatting.prettierd,
+        -- formatting.sql_formatter.with({ command = { "sleek" } }),
         diagnostics.selene,
         formatting.stylua,
+        formatting.sql_formatter,
       },
       on_attach = function(_, bufnr)
         utils.clear_autocmd({ group = augroup, buffer = bufnr })

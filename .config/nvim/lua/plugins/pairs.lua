@@ -22,6 +22,9 @@ return {
     event = "TextChangedI *.js,*.jsx,*.ts,*.tsx",
     config = function()
       require("nvim-ts-autotag").setup({
+        did_setup = false,
+        setup = true,
+        get_opts = nil,
         opts = {
           enable_close = true,
           enable_rename = true,

@@ -1,6 +1,7 @@
 return {
   "Chaitanyabsprip/fastaction.nvim",
   event = "LSPAttach",
+  ---@type FastActionConfig
   opts = {
     dismiss_keys = { "j", "k", "<C-c>", "<Esc>", "q" },
     keys = "qwertyuiopasdfghlzxcvbnm",
