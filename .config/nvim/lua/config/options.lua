@@ -37,6 +37,8 @@ opt.autoindent = true
 opt.backspace = { "start", "eol", "indent" }
 
 opt.cursorline = true
+--- disable blinking
+opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20"
 
 -- nvim files
 opt.swapfile = false
@@ -58,6 +60,7 @@ opt.wrap = false
 opt.equalalways = true
 
 vim.g.markdown_fenced_languages = { "javascript", "typescript", "scss", "css", "html" }
+vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
 -- add borders to floating windows
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview

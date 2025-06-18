@@ -5,5 +5,8 @@
         "create_autocmd"
   ],
   "runtime.version": "LuaJIT",
-  "workspace.checkThirdParty": "Disable"
+  "workspace.checkThirdParty": "Disable",
+    "diagnostics.disable": [
+        "missing-fields"
+    ]
 }

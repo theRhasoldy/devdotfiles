@@ -13,7 +13,7 @@ set -gx VIMCONFIG "$XDG_CONFIG_HOME/nvim"
 set -gx VIMRUNTIME "/usr/share/nvim/runtime"
 
 # Defaults
-set -gx TERM xterm-kitty
+set -gx TERM xterm-256color
 
 set -gx EDITOR nvim
 set -gx VISUAL nvim

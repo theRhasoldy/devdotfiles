@@ -1,8 +1,7 @@
 local utils = require("config.utils")
 local path = vim.split(package.path, ";")
 
--- global keybinds
-local get_keybinds_on_lsp = function(event)
+local lsp_keybinds = function(event)
   local cinnamon_ok, cinnamon = pcall(require, "cinnamon")
   local telescope_ok, telescope = pcall(require, "telescope.builtin")
 
@@ -62,26 +61,6 @@ local get_keybinds_on_lsp = function(event)
   end, { buffer = event.buf, desc = "Format buffer" })
 end
 
--- display virtual text in normal only
-local hide_virtual_in_insert = function()
-  utils.create_autocmd("InsertEnter", {
-    pattern = "*",
-    callback = function()
-      vim.diagnostic.config({
-        virtual_text = false,
-      })
-    end,
-  })
-  utils.create_autocmd("InsertLeave", {
-    pattern = "*",
-    callback = function()
-      vim.diagnostic.config({
-        virtual_text = true,
-      })
-    end,
-  })
-end
-
 return {
   "neovim/nvim-lspconfig",
   event = "BufReadPre",
@@ -135,6 +114,7 @@ return {
   },
   opts = function()
     local ret = {
+      inlay_hints = { enabled = false },
       ---@type vim.diagnostic.Opts
       diagnostics = {
         underline = true,
@@ -159,12 +139,12 @@ return {
       },
       capabilities = {
         workspace = {
-          fileOperations = {
-            didRename = true,
-            willRename = true,
+          didChangeWatchedFiles = {
+            dynamicRegistration = false,
           },
         },
       },
+      ---@module "lspconfig.configs"
       servers = {
         lua_ls = {
           single_file_support = true,
@@ -207,6 +187,9 @@ return {
           },
         },
         ts_ls = {
+          root_dir = function(...)
+            return require("lspconfig.util").root_pattern(".git")(...)
+          end,
           filetypes = {
             "typescript",
             "typescriptreact",
@@ -215,6 +198,8 @@ return {
             "javascriptreact",
             "javascript.jsx",
           },
+          cmd = { "typescript-language-server", "--stdio" },
+          single_file_support = true,
           handlers = {
             ["textDocument/publishDiagnostics"] = function(_, result, ctx)
               if result.diagnostics == nil then
@@ -241,48 +226,20 @@ return {
               vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx)
             end,
           },
+          init_options = {
+            preferences = {
+              disableSuggestions = false,
+              quotePreference = "auto",
+            },
+          },
           settings = {
             typescript = {
               updateImportsOnFileMove = { enabled = "always" },
               format = { enable = false },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                parameterNames = { enabled = "literals" },
-                parameterTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = false },
-              },
+              inlayHints = false,
               suggest = {
                 includeCompletionsForModuleExports = true,
                 completeFunctionCalls = true,
-              },
-              referencesCodeLens = { enabled = false },
-              implementationsCodeLens = { enabled = false },
-              preferences = {
-                importModuleSpecifier = "relative",
-              },
-            },
-
-            javascript = {
-              updateImportsOnFileMove = { enabled = "always" },
-              format = { enable = false },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                parameterNames = { enabled = "literals" },
-                parameterTypes = { enabled = true },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = false },
-              },
-              suggest = {
-                includeCompletionsForModuleExports = true,
-                completeFunctionCalls = true,
-              },
-              referencesCodeLens = { enabled = false },
-              implementationsCodeLens = { enabled = false },
-              preferences = {
-                importModuleSpecifier = "relative",
               },
             },
           },
@@ -340,6 +297,7 @@ return {
           settings = {
             eslint = {
               autoFixOnSave = true,
+              workingDirectory = { mode = "location" },
             },
           },
           root_dir = require("lspconfig").util.root_pattern(
@@ -381,7 +339,7 @@ return {
                 "styles",
                 "style",
               },
-              emmetCompletions = true,
+              emmetCompletions = false,
             },
           },
         },
@@ -400,6 +358,7 @@ return {
     return ret
   end,
   config = function(_, opts)
+    -- global keybinds
     vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
 
     local servers = opts.servers
@@ -421,6 +380,9 @@ return {
     local function setup(server)
       local server_opts = vim.tbl_deep_extend("force", {
         capabilities = vim.deepcopy(capabilities),
+        on_attach = vim.deepcopy(opts.on_attach),
+        on_init = opts.on_init,
+        on_exit = opts.on_exit,
       }, servers[server] or {})
       if server_opts.enabled == false then
         return
@@ -451,12 +413,20 @@ return {
       automatic_installation = false,
     })
 
+    -- autocmd to run vim.lsp.buf.format on file save
+    utils.create_autocmd("BufWritePre", {
+      desc = "Auto format before save",
+      pattern = "*",
+      callback = function()
+        vim.lsp.buf.format({ async = false })
+      end,
+    })
+
     -- attach these keybinds only if there is an active lsp server
-    vim.api.nvim_create_autocmd("LspAttach", {
+    utils.create_autocmd("LspAttach", {
       desc = "LSP actions",
       callback = function(event)
-        get_keybinds_on_lsp(event)
-        hide_virtual_in_insert()
+        lsp_keybinds(event)
       end,
     })
   end,

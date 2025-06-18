@@ -5,6 +5,7 @@ local augroup = utils.create_group("LspFormatting", {})
 return {
   "nvimtools/none-ls.nvim",
   event = { "BufReadPre", "BufNewFile" },
+  enabled = false,
   config = function()
     local ok, none = pcall(require, "null-ls")
 
