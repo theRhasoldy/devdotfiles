@@ -1,10 +1,9 @@
+-- Implement delta as previewer for diffs
 return {
   "nvim-telescope/telescope.nvim",
   dependencies = {
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    "nvim-telescope/telescope-file-browser.nvim",
   },
-  ---@module "telescope"
   opts = {
     defaults = {
       dynamic_preview_title = true,
@@ -55,23 +54,6 @@ return {
       },
       git_commits = {
         layout_strategy = "vertical",
-      },
-    },
-    -- extensions
-    extensions = {
-      file_browser = {
-        initial_mode = "normal",
-        cwd_to_path = true,
-        hidden = true,
-        no_ignore = true,
-        respect_gitignore = false,
-        select_buffer = true,
-        use_fd = true,
-        file_ignore_patterns = {},
-        path = "%:p:h",
-        dir_icon = "",
-        grouped = true,
-        prompt_path = true,
       },
     },
   },
@@ -149,13 +131,6 @@ return {
           builtin.live_grep()
         end,
         desc = "Search keyword",
-      },
-      {
-        "<leader>n",
-        function()
-          require("telescope").extensions.file_browser.file_browser()
-        end,
-        desc = "Open file browser",
       },
       {
         "<leader>fd",

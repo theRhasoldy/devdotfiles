@@ -96,7 +96,6 @@ return {
           "bashls",
           "ts_ls",
           "eslint",
-          "volar",
           "astro",
           "angularls",
           "sqls",
@@ -241,26 +240,6 @@ return {
                 includeCompletionsForModuleExports = true,
                 completeFunctionCalls = true,
               },
-            },
-          },
-        },
-        volar = {
-          filetypes = {
-            "vue",
-          },
-          settings = {
-            vue = {
-              complete = {
-                casing = {
-                  props = "autoCamel",
-                },
-              },
-            },
-          },
-
-          init_options = {
-            vue = {
-              hybridMode = false,
             },
           },
         },

@@ -34,6 +34,8 @@ opt.shiftround = true
 opt.smartindent = true
 opt.autoindent = true
 
+opt.splitright = true
+
 opt.backspace = { "start", "eol", "indent" }
 
 opt.cursorline = true
