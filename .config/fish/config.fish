@@ -5,6 +5,10 @@ starship init fish | source
 if status is-interactive
   pfetch
   zoxide init fish | source
+
+  if not set -q SSH_AUTH_SOCK
+      eval (ssh-agent -c)
+  end
 end
 
 # tabtab source for packages

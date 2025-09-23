@@ -18,9 +18,9 @@ set -gx TERM xterm-256color
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 
-set -gx PAGER moar
-set -gx MANPAGER moar
-set -gx MOAR "--statusbar=bold --style=doom-one"
+set -gx PAGER moor
+set -gx MANPAGER moor
+set -gx MOOR "--statusbar=bold --style=base16-snazzy"
 set -gx QT_STYLE_OVERRIDE kvantum
 
 # Locales
@@ -34,7 +34,6 @@ set -gx LC_ALL en_US.UTF-8
 set -gx LESSCHARSET utf-8
 
 # Env
-set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc
 set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 set -gx WINEPREFIX "$XDG_DATA_HOME/wine"
 
@@ -86,3 +85,9 @@ set -gx fzf_diff_highlighter "delta --paging=never"
 set -gx QT_QPA_PLATFORMTHEME "qt5ct"
 
 set -gx GEMINI_API_KEY (sed -n '/^key =/s/.*key = //p' $XDG_CONFIG_HOME/geminicommit/config.toml | sed "s/'//g")
+
+# npm
+set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc
+set -gx NPM_CONFIG_INIT_MODULE "$XDG_CONFIG_HOME"/npm/config/npm-init.js
+set -gx NPM_CONFIG_CACHE "$XDG_CACHE_HOME"/npm
+set -gx NPM_CONFIG_TMP "$XDG_RUNTIME_DIR"/npm

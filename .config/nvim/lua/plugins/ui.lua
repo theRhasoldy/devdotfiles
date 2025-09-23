@@ -137,7 +137,7 @@ return {
     ---@type notify.Config
     opts = {
       merge_duplicates = true,
-      timeout = 3000,
+      timeout = 2000,
       render = "compact",
       fps = 24,
       max_height = function()
@@ -146,7 +146,7 @@ return {
       max_width = function()
         return math.floor(vim.o.columns * 0.75)
       end,
-      top_down = false,
+      top_down = true,
     },
   },
 }

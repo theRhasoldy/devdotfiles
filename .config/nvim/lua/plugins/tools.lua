@@ -44,8 +44,8 @@ return {
         merge_tool = {
           -- Config for conflicted files in diff views during a merge or rebase.
           disable_diagnostics = false,
-          layout = "diff4_mixed",
-          winbar_info = false,
+          layout = "diff3_mixed",
+          winbar_info = true,
         },
         file_history = {
           -- Config for changed files in file history views.
