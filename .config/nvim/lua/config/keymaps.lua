@@ -1,9 +1,4 @@
-local utils = require("config.utils")
-local map = utils.map
-
--- make all keymaps silent by default
-vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+local map = vim.keymap.set
 
 -- reload config
 map("n", "<leader>R", "<cmd>source<CR>", { desc = "Reload config" })

@@ -1,15 +1,7 @@
--- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "--branch=stable",
-    lazyrepo,
-    lazypath,
-  })
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
@@ -20,93 +12,42 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     os.exit(1)
   end
 end
-
 vim.opt.rtp:prepend(lazypath)
 
-local lazy = require("lazy")
-
--- Lazy options
-lazy.setup("plugins", {
+require("lazy").setup({
+  spec = {
+    -- add LazyVim and import its plugins
+    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- import/override with your plugins
+    { import = "plugins" },
+  },
   defaults = {
-    lazy = true,
-    -- default `cond` you can use to globally disable a lot of plugins
-    cond = nil,
+    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
+    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
+    lazy = false,
+    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
+    -- have outdated releases, which may break your Neovim install.
+    version = false, -- always use the latest git commit
+    -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  dev = {
-    -- Directory for local plugin projects
-    path = "~/Projects/Lua",
-  },
-  install = {
-    colorscheme = { "oxicarbon" },
-  },
+  install = { colorscheme = { "tokyonight", "habamax" } },
+  checker = {
+    enabled = true, -- check for plugin updates periodically
+    notify = false, -- notify on update
+  }, -- automatically check for plugin updates
   performance = {
-    cache = {
-      enabled = true,
-    },
     rtp = {
+      -- disable some rtp plugins
       disabled_plugins = {
         "gzip",
-        "matchit",
-        "matchparen",
-        "netrw",
-        "netrwSettings",
-        "netrwPlugin",
-        "netrwFileHandlers",
-        "tar",
+        -- "matchit",
+        -- "matchparen",
+        -- "netrwPlugin",
         "tarPlugin",
         "tohtml",
-        "2html_plugin",
         "tutor",
-        "tutor_mode_plugin",
-        "zip",
         "zipPlugin",
-        "getscript",
-        "getscriptPlugin",
-        "vimball",
-        "vimballPlugin",
-        "logiPat",
-        "rrhelper",
-        "rplugin",
-      },
-    },
-  },
-  diff = {
-    cmd = "diffview.nvim",
-  },
-  ui = {
-    browser = nil,
-    border = "single",
-    title = "Lazy Config",
-    title_pos = "center",
-    icons = {
-      cmd = " ",
-      config = "",
-      event = "",
-      ft = " ",
-      init = " ",
-      import = " ",
-      keys = " ",
-      lazy = "󰒲 ",
-      loaded = "●",
-      not_loaded = "○",
-      plugin = " ",
-      runtime = " ",
-      source = " ",
-      start = "",
-      task = "✔ ",
-      list = {
-        "●",
-        "➜",
-        "★",
-        "‒",
       },
     },
   },
 })
-
--- disable plugins and providers
-vim.go.loadplugins = false
-vim.g.loaded_python3_provider = 0
-vim.g.loaded_perl_provider = 0
-vim.g.loaded_ruby_provider = 0
-vim.g.loaded_node_provider = 0
