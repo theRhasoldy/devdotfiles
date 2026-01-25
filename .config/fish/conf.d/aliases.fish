@@ -35,7 +35,7 @@ alias cat "bat"
 alias g "git"
 alias gs "git status"
 alias ga "git add"
-alias gc " git commit -m"
+alias gc "gemini -m gemini-2.5-flash -i 'commit current changes'"
 
 alias gcz "git cz"
 alias glcz "git cz && gitleaks detect"

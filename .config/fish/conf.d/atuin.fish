@@ -76,7 +76,7 @@ bind \eOA _atuin_bind_up
 bind \e\[A _atuin_bind_up
 if bind -M insert > /dev/null 2>&1
 bind -M insert \cr _atuin_search
-bind -M insert -k up _atuin_bind_up
+bind -M insert up _atuin_bind_up
 bind -M insert \eOA _atuin_bind_up
 bind -M insert \e\[A _atuin_bind_up
 end
