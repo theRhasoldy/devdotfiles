@@ -22,20 +22,21 @@ alias cp "rsync -ahv --info progress2"
 alias mv "mv -vi"
 
 # Nvim
-alias vim "nvim"
-alias vi "nvim"
-alias nano "nvim" # Nano can suck deez nuts
+alias vim nvim
+alias vi nvim
+alias nano nvim # Nano can suck deez nuts
 
 alias rg "rg --sort path"
 
 # Legacy
-alias cat "bat"
+alias cat bat
 
 # Git
-alias g "git"
+alias g git
 alias gs "git status"
 alias ga "git add"
-alias gc "gemini -m gemini-2.5-flash -i 'commit current changes'"
+alias gc "gemini -m gemini-2.5-flash --approval-mode default -i 'Act as a software engineer. read the current staged items, make diff for the last three commits and write a temporary file with a comprehensive title and description for the changes made in the commit, commit these changes and remove the temporary file'"
+alias ggh "ggh.sh"
 
 alias gcz "git cz"
 alias glcz "git cz && gitleaks detect"
@@ -65,42 +66,42 @@ alias pacclean "paru -Rns (paru -Qtdq)"
 # ex = EXtractor for all kinds of archives
 # usage: ex <file>
 function ex
-  if test -f $argv[1]
-    switch $argv[1]
-      case *.tar.bz2
-        tar xjf $argv[1]
-      case *.tar.gz
-        tar xzf $argv[1]
-      case *.bz2
-        bunzip2 $argv[1]
-      case *.rar
-        unrar x $argv[1]
-      case *.gz
-        gunzip $argv[1]
-      case *.tar
-        tar xf $argv[1]
-      case *.tbz2
-        tar xjf $argv[1]
-      case *.tgz
-        tar xzf $argv[1]
-      case *.zip
-        unzip $argv[1]
-      case *.Z
-        uncompress $argv[1]
-      case *.7z
-        7z x $argv[1]
-      case *.deb
-        ar x $argv[1]
-      case *.tar.xz
-        tar xf $argv[1]
-      case *.tar.zst
-        tar xf $argv[1]
-      case '*'
-        echo "'$argv[1]' cannot be extracted via ex()"
+    if test -f $argv[1]
+        switch $argv[1]
+            case *.tar.bz2
+                tar xjf $argv[1]
+            case *.tar.gz
+                tar xzf $argv[1]
+            case *.bz2
+                bunzip2 $argv[1]
+            case *.rar
+                unrar x $argv[1]
+            case *.gz
+                gunzip $argv[1]
+            case *.tar
+                tar xf $argv[1]
+            case *.tbz2
+                tar xjf $argv[1]
+            case *.tgz
+                tar xzf $argv[1]
+            case *.zip
+                unzip $argv[1]
+            case *.Z
+                uncompress $argv[1]
+            case *.7z
+                7z x $argv[1]
+            case *.deb
+                ar x $argv[1]
+            case *.tar.xz
+                tar xf $argv[1]
+            case *.tar.zst
+                tar xf $argv[1]
+            case '*'
+                echo "'$argv[1]' cannot be extracted via ex()"
+        end
+    else
+        echo "'$argv[1]' is not a valid file"
     end
-  else
-    echo "'$argv[1]' is not a valid file"
-  end
 end
 
-alias screenshare "xwaylandvideobridge"
+alias screenshare xwaylandvideobridge
