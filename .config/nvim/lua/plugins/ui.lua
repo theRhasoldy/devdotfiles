@@ -283,6 +283,39 @@ ________________________________________________________________________________
           { section = "startup" },
         },
       },
+      explorer = {
+        auto_close = false,
+        replace_netrw = true,
+        trash = true,
+      },
+      picker = {
+        matcher = {
+          frecency = true,
+          history_bonus = true,
+        },
+        sources = {
+          explorer = {
+            hidden = true,
+            ignored = true,
+          },
+        },
+      },
+    },
+    keys = {
+      {
+        "<leader>E",
+        function()
+          Snacks.explorer.open({ cwd = Snacks.git.get_root() })
+        end,
+        desc = "File Explorer in project root",
+      },
+      {
+        "<leader>e",
+        function()
+          Snacks.explorer.open()
+        end,
+        desc = "File Explorer in cwd",
+      },
     },
   },
   {

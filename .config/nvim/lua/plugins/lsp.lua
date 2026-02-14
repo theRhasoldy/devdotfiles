@@ -29,10 +29,6 @@ return {
           map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
           map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
         end,
-        handlers = {
-          ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" }),
-          ["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signatureHelp, { border = "rounded" }),
-        },
       },
       lua_ls = {
         settings = {

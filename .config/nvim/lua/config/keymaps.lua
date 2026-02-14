@@ -45,14 +45,8 @@ map(
 )
 
 -- find and replace
-map(
-  "n",
-  "<leader>r",
-  -- multiple files using quickfix list
-  function()
-    local word = vim.fn.input("Word: ")
-    local replacement = vim.fn.input("Replace with: ")
-    vim.api.nvim_command("%s/" .. word .. "/" .. replacement)
-  end,
-  { desc = "Find and replace in current file" }
-)
+map("n", "<leader>r", function()
+  local word = vim.fn.input("Word: ")
+  local replacement = vim.fn.input("Replace with: ")
+  vim.api.nvim_command("%s/" .. word .. "/" .. replacement)
+end, { desc = "Find and replace in current file" })

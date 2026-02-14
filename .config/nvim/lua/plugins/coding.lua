@@ -1,6 +1,5 @@
 return {
   {
-
     "saghen/blink.cmp",
     dependencies = {
       {
@@ -126,5 +125,25 @@ return {
         lsp_format = "never",
       },
     },
+  },
+  {
+    "nvim-mini/mini.splitjoin",
+    version = "*",
+    config = function()
+      local sj = require("mini.splitjoin")
+      sj.setup() -- This keeps 'gS' as the default Normal mode mapping
+
+      -- Custom function to Split from Insert Mode
+      local split_from_insert = function()
+        vim.schedule(function()
+          sj.toggle()
+        end)
+      end
+
+      -- Map Shift+Enter to split
+      -- Note: <S-Enter> might strictly require a GUI (Neovide, etc.) or specific terminal config.
+      -- If <S-Enter> doesn't work, try <C-g>s or <A-Enter>.
+      vim.keymap.set("i", "<A-Enter>", split_from_insert, { desc = "Split/Join from Insert" })
+    end,
   },
 }
