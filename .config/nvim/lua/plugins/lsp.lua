@@ -65,21 +65,29 @@ return {
       },
       yamlls = {},
       jsonls = {},
+      eslint = {
+        settings = {
+          -- help eslint find the eslintrc when it's placed in a subdirectory
+          workingDirectories = { mode = "auto" },
+        },
+      },
     },
-    eslint = function()
-      if not auto_format then
-        return
-      end
+    setup = {
+      eslint = function()
+        if not vim.g.autoformat then
+          return
+        end
 
-      local formatter = LazyVim.lsp.formatter({
-        name = "eslint: lsp",
-        primary = false,
-        priority = 200,
-        filter = "eslint",
-      })
+        local formatter = LazyVim.lsp.formatter({
+          name = "eslint: lsp",
+          primary = false,
+          priority = 200,
+          filter = "eslint",
+        })
 
-      -- register the formatter with LazyVim
-      LazyVim.format.register(formatter)
-    end,
+        -- register the formatter with LazyVim
+        LazyVim.format.register(formatter)
+      end,
+    },
   },
 }

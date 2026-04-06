@@ -244,39 +244,53 @@ ________________________________________________________________________________
         sections = {
           { section = "header" },
           function()
-            local in_git = Snacks.git.get_root() ~= nil
+            local root = Snacks.git.get_root()
+            local in_git = root ~= nil
+            local remote = in_git and vim.fn.system("git -C " .. root .. " config --get remote.origin.url") or ""
+            local is_bitbucket = remote:find("bitbucket") ~= nil
+            local has_bkt = vim.fn.executable("bkt") == 1
+            local has_gh = vim.fn.executable("gh") == 1
+
+            local cli = (is_bitbucket and has_bkt) and "bkt" or "gh"
+            local limit = cli == "bkt" and "--limit" or "-L"
+            local has_cli = (cli == "bkt" and has_bkt) or (cli == "gh" and has_gh)
+
             local cmds = {
               {
                 title = "Open Issues",
-                cmd = "gh issue list -L 3",
+                cmd = cli .. " issue list " .. limit .. " 3",
                 key = "i",
                 action = function()
-                  vim.fn.jobstart("gh issue list --web", { detach = true })
+                  local action_cmd = cli == "bkt" and "bkt repo browse" or "gh issue list --web"
+                  vim.fn.jobstart(action_cmd, { detach = true })
                 end,
                 icon = " ",
                 height = 5,
+                enabled = in_git and has_cli,
               },
               {
                 icon = " ",
                 title = "Open PRs",
-                cmd = "gh pr list -L 3",
+                cmd = cli .. " pr list " .. limit .. " 3",
                 key = "P",
                 action = function()
-                  vim.fn.jobstart("gh pr list --web", { detach = true })
+                  local action_cmd = cli == "bkt" and "bkt repo browse" or "gh pr list --web"
+                  vim.fn.jobstart(action_cmd, { detach = true })
                 end,
                 height = 5,
+                enabled = in_git and has_cli,
               },
               {
                 icon = " ",
                 title = "Git Status",
                 cmd = "git --no-pager diff --stat -B -M -C",
                 height = 10,
+                enabled = in_git,
               },
             }
             return vim.tbl_map(function(cmd)
               return vim.tbl_extend("force", {
                 section = "terminal",
-                enabled = in_git,
               }, cmd)
             end, cmds)
           end,
@@ -299,22 +313,6 @@ ________________________________________________________________________________
             ignored = true,
           },
         },
-      },
-    },
-    keys = {
-      {
-        "<leader>E",
-        function()
-          Snacks.explorer.open({ cwd = Snacks.git.get_root() })
-        end,
-        desc = "File Explorer in project root",
-      },
-      {
-        "<leader>e",
-        function()
-          Snacks.explorer.open()
-        end,
-        desc = "File Explorer in cwd",
       },
     },
   },
