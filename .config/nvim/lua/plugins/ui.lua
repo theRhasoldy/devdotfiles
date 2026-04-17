@@ -21,6 +21,21 @@ return {
     "rebelot/heirline.nvim",
     event = "UIEnter",
     opts = function()
+      local function get_real_bufnr()
+        local bufnr = vim.api.nvim_get_current_buf()
+        local bt = vim.bo[bufnr].buftype
+        local ft = vim.bo[bufnr].filetype
+
+        -- If we are in a prompt/picker, grab the alternate (previous) buffer
+        if bt == "prompt" or ft == "TelescopePrompt" or ft == "snacks_picker_input" then
+          local prev_bufnr = vim.fn.bufnr("#")
+          if prev_bufnr > 0 then
+            return prev_bufnr
+          end
+        end
+        return bufnr
+      end
+
       local conditions = require("heirline.conditions")
       local utils = require("heirline.utils")
 
@@ -79,7 +94,8 @@ return {
       -- 3. Performance-focused FileName
       local FileNameBlock = {
         init = function(self)
-          self.filename = vim.api.nvim_buf_get_name(0)
+          self.target_bufnr = get_real_bufnr()
+          self.filename = vim.api.nvim_buf_get_name(self.target_bufnr)
         end,
         {
           provider = function(self)
@@ -97,13 +113,13 @@ return {
             return f == "" and "[No Name]"
               or (not conditions.width_percent_below(#f, 0.7) and vim.fn.pathshorten(f) or f)
           end,
-          hl = function()
-            return { fg = utils.get_highlight("Directory").fg, bold = vim.bo.modified }
+          hl = function(self)
+            return { fg = utils.get_highlight("Directory").fg, bold = vim.bo[self.target_bufnr].modified }
           end,
         },
         {
           condition = function()
-            return vim.bo.modified
+            return vim.bo[get_real_bufnr()].modified
           end,
           provider = " ",
           hl = { fg = colors.orange },
@@ -148,15 +164,16 @@ return {
         { provider = "]", hl = { fg = colors.gray } },
       }
 
-      -- 5. Simplified Git (Fixed)
+      -- 5. Simplified Git (Fixed for Pickers)
       local Git = {
-        condition = conditions.is_git_repo,
+        condition = function()
+          return vim.b[get_real_bufnr()].gitsigns_status_dict ~= nil
+        end,
         init = function(self)
-          -- FALLBACK: Ensure the table exists even if gitsigns isn't ready
-          self.status = vim.b.gitsigns_status_dict or { head = "", added = 0, changed = 0, removed = 0 }
+          local bufnr = get_real_bufnr()
+          self.status = vim.b[bufnr].gitsigns_status_dict or { head = "", added = 0, changed = 0, removed = 0 }
         end,
         {
-          -- Only show branch if 'head' exists and isn't empty
           condition = function(self)
             return self.status.head and self.status.head ~= ""
           end,
@@ -298,7 +315,6 @@ ________________________________________________________________________________
         },
       },
       explorer = {
-        auto_close = false,
         replace_netrw = true,
         trash = true,
       },
@@ -309,8 +325,12 @@ ________________________________________________________________________________
         },
         sources = {
           explorer = {
+            auto_close = true,
             hidden = true,
             ignored = true,
+            layout = {
+              auto_hide = { "input" },
+            },
           },
         },
       },

@@ -8,6 +8,9 @@ vim.g.snacks_animate = true
 -- Standard Neovim Options
 local opt = vim.opt
 
+opt.title = true
+opt.titlestring = "%{expand('%:p:h:t')}/%t"
+
 -- Your preferred visual tweaks
 opt.relativenumber = true
 opt.scrolloff = 999 -- Keeps cursor centered

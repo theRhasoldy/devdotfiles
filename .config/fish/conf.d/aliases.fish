@@ -42,7 +42,6 @@ alias g git
 alias gs "git status"
 alias ga "git add"
 alias gc "gemini -m gemini-3-flash-preview --approval-mode default -i 'Act as a Senior Software Engineer. Read the currently staged items and the diff of the last three commits for context. Analyze the staged changes and determine if they should be a SINGLE commit or split into MULTIPLE atomic commits based on logical boundaries (e.g., separating DB migrations from UI changes). Execute this exact sequence: 1) Run `git reset` to unstage everything. 2) For EACH logical group, create a temporary file containing a Conventional Commit title and a detailed description explaining the why/what. 3) `git add` ONLY the specific files belonging to that group. 4) Commit using the temporary file. 5) Remove the temporary file.'"
-alias ggh "ggh.sh"
 
 alias gcz "git cz"
 alias glcz "git cz && gitleaks detect"
