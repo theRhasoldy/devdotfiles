@@ -340,4 +340,103 @@ ________________________________________________________________________________
     "folke/noice.nvim",
     opts = { presets = { bottom_search = true, long_message_to_split = true, lsp_doc_border = true } },
   },
+  {
+    "nvim-mini/mini.hipatterns",
+    opts = function(_, opts)
+      if not opts.highlighters then
+        return
+      end
+
+      -- Helper to dynamically create a highlight group with fg = color
+      -- using the bg color from the matched highlight group.
+      local function get_fg_group(hl_group)
+        if not hl_group then
+          return nil
+        end
+        local fg_hl_name = hl_group .. "_fg"
+        local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = fg_hl_name })
+        if ok and not vim.tbl_isempty(hl) then
+          return fg_hl_name
+        end
+
+        local ok_orig, orig_hl = pcall(vim.api.nvim_get_hl, 0, { name = hl_group })
+        if ok_orig and orig_hl.bg then
+          vim.api.nvim_set_hl(0, fg_hl_name, { fg = orig_hl.bg })
+          return fg_hl_name
+        end
+        return hl_group
+      end
+
+      local function eol_box(_, _, data)
+        local hl_group = get_fg_group(data.hl_group)
+        return {
+          virt_text = { { "■", hl_group } },
+          virt_text_pos = "eol",
+          priority = 2000,
+        }
+      end
+
+      if opts.highlighters.hex_color then
+        opts.highlighters.hex_color.extmark_opts = eol_box
+      end
+
+      if opts.highlighters.shorthand then
+        opts.highlighters.shorthand.extmark_opts = eol_box
+      end
+
+      local tailwind_fts = {
+        "astro",
+        "css",
+        "heex",
+        "html",
+        "html-eex",
+        "javascript",
+        "javascriptreact",
+        "rust",
+        "svelte",
+        "typescript",
+        "typescriptreact",
+        "vue",
+      }
+
+      opts.highlighters.tailwind_white = {
+        pattern = function(buf_id)
+          if not vim.tbl_contains(tailwind_fts, vim.bo[buf_id].filetype) then
+            return nil
+          end
+          return "%f[%w:-]()[%w:-]+%-white()%f[^%w:-]"
+        end,
+        group = function()
+          return MiniHipatterns.compute_hex_color_group("#ffffff", "bg")
+        end,
+        extmark_opts = eol_box,
+      }
+
+      opts.highlighters.tailwind_black = {
+        pattern = function(buf_id)
+          if not vim.tbl_contains(tailwind_fts, vim.bo[buf_id].filetype) then
+            return nil
+          end
+          return "%f[%w:-]()[%w:-]+%-black()%f[^%w:-]"
+        end,
+        group = function()
+          return MiniHipatterns.compute_hex_color_group("#000000", "bg")
+        end,
+        extmark_opts = eol_box,
+      }
+
+      if opts.highlighters.tailwind then
+        opts.highlighters.tailwind.extmark_opts = eol_box
+      else
+        setmetatable(opts.highlighters, {
+          __newindex = function(t, k, v)
+            if k == "tailwind" then
+              v.extmark_opts = eol_box
+            end
+            rawset(t, k, v)
+          end,
+        })
+      end
+    end,
+  },
 }

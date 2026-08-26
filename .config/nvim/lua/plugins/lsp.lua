@@ -1,5 +1,14 @@
 return {
   "neovim/nvim-lspconfig",
+  init = function()
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        if vim.lsp.document_color then
+          vim.lsp.document_color.enable(false, { bufnr = args.buf })
+        end
+      end,
+    })
+  end,
   opts = {
     diagnostics = {
       underline = true,
