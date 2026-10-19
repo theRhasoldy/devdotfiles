@@ -4,6 +4,11 @@ set -gx XDG_DATA_HOME "$HOME/.local/share"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
 set -gx XDG_DATA_DIRS "/usr/local/share:/usr/share"
+set -gx XDG_CONFIG_DIRS "/etc/xdg"
+
+# Relocate app config out of $HOME into XDG dirs
+set -gx CLAUDE_CONFIG_DIR "$XDG_CONFIG_HOME/claude"
+set -gx DOCKER_CONFIG "$XDG_CONFIG_HOME/docker"
 
 # Language Settings
 set -gx LANG 'en_US.UTF-8'
@@ -82,7 +87,7 @@ set -gx fzf_preview_dir_cmd "exa --icons --group-directories-first -l@ --git --t
 set -gx fzf_diff_highlighter "delta --paging=never"
 
 # QT
-set -gx QT_QPA_PLATFORMTHEME qt5ct
+set -gx QT_QPA_PLATFORMTHEME qt5ct:qt6ct
 
 # npm
 set -gx NPM_CONFIG_USERCONFIG $XDG_CONFIG_HOME/npm/npmrc

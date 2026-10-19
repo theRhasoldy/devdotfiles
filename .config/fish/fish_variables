@@ -1,9 +1,11 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export LIBVA_DRIVER_NAME:iHD
+SETUVAR --export VK_DRIVER_FILES:/usr/share/vulkan/icd\x2ed/intel_icd\x2ejson
 SETUVAR __fish_initialized:4300
 SETUVAR _fisher_danhper_2F_fish_2D_ssh_2D_agent_files:\x7e/\x2econfig/fish/functions/__ssh_agent_is_started\x2efish\x1e\x7e/\x2econfig/fish/functions/__ssh_agent_start\x2efish\x1e\x7e/\x2econfig/fish/conf\x2ed/fish\x2dssh\x2dagent\x2efish
 SETUVAR _fisher_jorgebucaran_2F_fisher_files:\x7e/\x2econfig/fish/functions/fisher\x2efish\x1e\x7e/\x2econfig/fish/completions/fisher\x2efish
 SETUVAR _fisher_jorgebucaran_2F_nvm_2E_fish_files:\x7e/\x2econfig/fish/functions/_nvm_index_update\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_list\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_version_activate\x2efish\x1e\x7e/\x2econfig/fish/functions/_nvm_version_deactivate\x2efish\x1e\x7e/\x2econfig/fish/functions/nvm\x2efish\x1e\x7e/\x2econfig/fish/conf\x2ed/nvm\x2efish\x1e\x7e/\x2econfig/fish/completions/nvm\x2efish
 SETUVAR _fisher_plugins:jorgebucaran/fisher\x1ejorgebucaran/nvm\x2efish\x1edanhper/fish\x2dssh\x2dagent
 SETUVAR _fisher_upgraded_to_4_4:\x1d
-SETUVAR fish_user_paths:/home/rhasoldy/\x2elocal/bin
+SETUVAR fish_user_paths:/home/rhasoldy/\x2eopencode/bin\x1e/home/rhasoldy/\x2elocal/bin

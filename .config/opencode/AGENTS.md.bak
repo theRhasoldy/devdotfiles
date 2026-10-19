@@ -5,17 +5,13 @@ lean-ctx shadow mode: native read/search/shell calls auto-route to ctx_* — no 
 File editing → native Edit/StrReplace (lean-ctx only handles reads).
 Exclusive tools (no native trigger): ctx_compose (understand code, call first), ctx_search(action=symbol) (exact symbol), ctx_search(action=semantic) (by meaning), ctx_callgraph (callers), ctx_knowledge / ctx_session (memory).
 <!-- lean-ctx-compression -->
-
 OUTPUT STYLE: concise
-
 - Bullet points over paragraphs
 - Skip filler words and hedging ("I think", "probably", "it seems")
 - 1-sentence explanations max, then code/action
 - No repeating what the user said
-
 <!-- /lean-ctx-compression -->
 <!-- lean-ctx-solution -->
-
 SOLUTION EFFICIENCY: stop at first level that applies:
 skip (YAGNI) → reuse codebase → stdlib → native platform → installed dep → one-line → minimum code.
 Never skip: validation, security, error handling.
@@ -37,6 +33,12 @@ Before coding, choose a planning level based on scope:
 - 3+ files changed: write a brief plan listing each file and the change; get approval before starting.
 - Architectural or cross-cutting change: write a full plan with sequenced steps, risks, and rollback approach; get approval. Implement in stages, validating after each.
 - When in doubt, over-plan. A wasted paragraph costs less than a wasted refactor.
+
+When planning a new feature:
+
+- Before writing the plan, state the project goal (as currently understood) and the context that motivates the feature.
+- Present arguments against the feature (steelman the opposition): does it add complexity without serving the core goal? Could an existing capability cover it? Is now the right time?
+- Conclude with an explicit alignment verdict: how the feature advances (or conflicts with) the project goal. Proceed only after the user confirms; if misaligned, propose alternatives or descoping.
 
 ## Accuracy and Sourcing
 

@@ -1,0 +1,23 @@
+# Custom pronunciations, applied by say.sh before speaking.
+#
+# Format:  word<TAB>espeak-phonemes<TAB>ipa-phonemes
+#   - say.sh substitutes the column matching the active engine, so one entry
+#     keeps both engines correct.
+#   - espeak column: espeak-ng mnemonic alphabet, wrapped in [[ ]]
+#   - ipa column:    IPA, wrapped in [[ ]] — piper's own alphabet. Piper
+#     phonemizes with its bundled espeak-ng and ignores our custom dictionary,
+#     so piper fixes must be given as IPA.
+#   - The word is replaced literally and case-sensitively, so list each spelling
+#     you care about. Lines starting with # are ignored.
+#
+# See what the active engine will say:
+#   bash ~/.config/opencode/skills/speak/say.sh --phonemes some.txt
+#
+# Permanent, system-wide fixes for the espeak engine only:
+#   ~/.local/share/espeak-ng-custom/dictsource/en_extra  +  rebuild.sh
+#
+# word		espeak			ipa
+Hyprland	[[h'aIp@rl'and]]	[[hˈaɪpərlænd]]
+hyprland	[[h'aIp@rl'and]]	[[hˈaɪpərlænd]]
+Vivaldi		[[vIv'a:ldi]]		[[vɪvˈɑːldi]]
+vivaldi		[[vIv'a:ldi]]		[[vɪvˈɑːldi]]

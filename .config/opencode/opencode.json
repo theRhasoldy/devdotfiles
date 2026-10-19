@@ -1,23 +1,69 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "shell": "/bin/fish",
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "agents": {
+    "title": { "model": "opencode-go/deepseek-v4.1-flash" },
+    "plan": { "model": "opencode-go/glm-5.3-flash" },
+    "compaction": { "model": "opencode-go/deepseek-v4.1-flash" }
+  },
+  "compaction": {
+    "auto": true,
+    "keep": { "tokens": 40000 },
+    "buffer": 16000
+  },
+  "tool_output": {
+    "max_lines": 500,
+    "max_bytes": 131072
+  },
   "formatter": true,
   "lsp": true,
   "mcp": {
-    "lean-ctx": {
-      "command": ["/home/rhasoldy/.local/bin/lean-ctx"],
-      "enabled": true,
-      "type": "local"
+    "servers": {
+      "lean-ctx": {
+        "command": [
+          "/home/rhasoldy/.local/bin/lean-ctx"
+        ],
+        "type": "local",
+        "disabled": false
+      },
+      "plane": {
+        "type": "remote",
+        "url": "https://mcp.plane.so/http/mcp",
+        "disabled": false
+      },
+      "figma": {
+        "type": "remote",
+        "url": "https://mcp.figma.com/mcp"
+      }
     }
   },
-  "permission": {
-    "edit": "ask",
-    "bash": "ask"
+  "permissions": [
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "read", "resource": "*.env", "effect": "ask" },
+    { "action": "read", "resource": "*.env.*", "effect": "ask" },
+    { "action": "read", "resource": "*.env.example", "effect": "allow" },
+    { "action": "glob", "resource": "*", "effect": "allow" },
+    { "action": "grep", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "edit", "resource": "*", "effect": "ask" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" }
+  ],
+  "providers": {
+    "opencode-go": {
+      "models": {
+        "deepseek-v4.1-flash": { "limit": { "context": 200000, "output": 131072 } },
+        "glm-5.3": { "limit": { "context": 200000, "output": 131072 } },
+        "glm-5.3-flash": { "limit": { "context": 200000, "output": 131072 } }
+      }
+    }
   },
+  "shell": "/bin/fish",
   "watcher": {
-    "ignore": ["node_modules/**", "dist/**", ".git/**"]
+    "ignore": [
+      "node_modules/**",
+      "dist/**",
+      ".git/**"
+    ]
   },
-  "compaction": {
-    "auto": true
-  }
+  "plugins": []
 }
