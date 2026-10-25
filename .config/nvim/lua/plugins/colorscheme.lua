@@ -1,17 +1,18 @@
+---@type LazySpec
 return {
   {
-    "mellow-theme/mellow.nvim",
+    "Aejkatappaja/cendre",
+    lazy = false,
+    priority = 1000,
     config = function()
-      vim.g.mellow_transparent = true
-      vim.g.mellow_italic_keywords = true
-      vim.g.mellow_bold_functions = true
-      vim.g.mellow_italic_booleans = true
+      ---@type CendreConfig
+      local opts = {
+        background = "medium", -- "hard" | "medium" | "soft"
+        transparent = true,
+        italic_virtual_text = true,
+      }
+      require("cendre").setup(opts)
+      vim.cmd.colorscheme("cendre")
     end,
-  },
-  {
-    "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "mellow",
-    },
   },
 }

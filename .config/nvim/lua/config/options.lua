@@ -1,45 +1,68 @@
--- Global LazyVim Flags (Set these first)
-vim.g.mapleader = " "
-vim.g.maplocalleader = ","
-
-vim.g.autoformat = true
--- TypeScript LSP: vtsls by default (uses the project's own TS version).
--- lua/plugins/lsp.lua additionally enables the native TS 7 `tsc` server for
--- projects whose tsconfig is TS 7 ready (no `baseUrl`), or that contain a `.tsgo` file.
-vim.g.lazyvim_ts_lsp = "vtsls"
-
--- formatting is done by conform (prettierd), not the eslint LSP
-vim.g.lazyvim_eslint_auto_format = false
-vim.g.snacks_animate = true
-
--- Standard Neovim Options
+local g = vim.g
 local opt = vim.opt
+local constants = require("config.constants")
+
+-- Make ripgrep honour the repo's exclude list (node_modules, build outputs, ...)
+vim.env.RIPGREP_CONFIG_PATH = vim.fn.stdpath("config") .. "/ripgreprc"
+
+g.mapleader = " "
+g.maplocalleader = ","
+
+g.autoformat = true
 
 opt.title = true
 opt.titlestring = "%{expand('%:p:h:t')}/%t"
 
+opt.number = true
 opt.relativenumber = true
 opt.scrolloff = 999 -- Keeps cursor centered
 
--- LazyVim's statuscolumn is `%!v:lua.LazyVim.statuscolumn()` (snacks.statuscolumn):
--- a Lua call per visible line on *every* redraw. Its cache key includes the
--- relative line number, so with relativenumber on it misses for every line on
--- every scroll. This native expression draws the same thing (signs + relative
--- numbers, absolute on the cursor line) from C with no Lua call per line:
-opt.statuscolumn = [[%s%{v:relnum == 0 ? v:lnum : v:relnum} ]]
 opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25-Cursor,r-cr-o:hor20"
 opt.hlsearch = false
-opt.winborder = "single"
+opt.winborder = constants.border
+opt.signcolumn = "yes"
 
--- Your preferred file handling
 opt.swapfile = false
 opt.undofile = true
-opt.backup = false
+opt.confirm = true
 
--- Keep LazyVim's default indenting (2 spaces)
+opt.ignorecase = true
+opt.smartcase = true
+
+opt.expandtab = true
 opt.shiftwidth = 2
 opt.tabstop = 2
-opt.expandtab = true
+opt.smartindent = true
+opt.breakindent = true
+opt.undolevels = 10000
 
--- Ensure True Color support
+opt.splitright = true
+opt.splitbelow = true
+opt.mouse = "a"
+opt.updatetime = 200
+opt.laststatus = 3
 opt.termguicolors = true
+opt.clipboard:append("unnamedplus")
+opt.isfname:append("@-@")
+
+-- The statusline shows the mode; keep the mode text out of the message line.
+opt.showmode = false
+
+-- Glyphs live in config/constants.lua, already keyed by severity.
+local severity_sign = vim.tbl_map(function(entry)
+  return entry.glyph
+end, constants.diagnostics)
+
+vim.diagnostic.config({
+  signs = { text = severity_sign },
+  virtual_text = {
+    current_line = true,
+    spacing = 4,
+    prefix = function(diagnostic)
+      return severity_sign[diagnostic.severity] or ""
+    end,
+  },
+  severity_sort = true,
+  update_in_insert = false,
+  float = { border = constants.border, source = true },
+})

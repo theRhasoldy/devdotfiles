@@ -1,31 +1,23 @@
----
 base: lua51
 
 globals:
   vim:
     any: true
-  LazyVim:
-    any: true
   MiniHipatterns:
     any: true
-  Snacks:
+  MiniPick:
     any: true
-  assert:
-    args:
-      - type: bool
-      - type: string
-        required: false
-  after_each:
-    args:
-      - type: function
-  before_each:
-    args:
-      - type: function
-  describe:
-    args:
-      - type: string
-      - type: function
-  it:
-    args:
-      - type: string
-      - type: function
+  MiniExtra:
+    any: true
+  MiniFiles:
+    any: true
+  MiniStatusline:
+    any: true
+  MiniNotify:
+    any: true
+  MiniClue:
+    any: true
+  MiniIcons:
+    any: true
+  MiniDiff:
+    any: true

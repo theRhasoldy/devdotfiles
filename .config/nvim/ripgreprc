@@ -1,0 +1,3 @@
+# Prune common build/dependency outputs from all rg invocations.
+--ignore-file
+/home/rhasoldy/.config/nvim/rgignore

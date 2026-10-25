@@ -1,232 +1,200 @@
+---@type LazySpec
 return {
   {
     "neovim/nvim-lspconfig",
-    init = function()
-      vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(args)
-          if vim.lsp.document_color then
-            vim.lsp.document_color.enable(false, { bufnr = args.buf })
-          end
-        end,
-      })
-    end,
-    opts = {
-      diagnostics = {
-        underline = true,
-        -- don't fight the linters while typing; refresh on InsertLeave
-        update_in_insert = false,
-        float = {
-          source = "if_many",
-          border = "rounded",
-        },
-        virtual_text = {
-          spacing = 10,
-          source = "if_many",
-          prefix = "󰊠",
-          hl_mode = "combine",
-        },
-        severity_sort = true,
-      },
-      inlay_hints = { enabled = false },
-      servers = {
-        ["*"] = {
-          on_attach = function(_, bufnr)
-            local map = function(mode, lhs, rhs, desc)
-              vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-            end
+    event = "BufReadPre",
+    config = function()
+      local constants = require("config.constants")
+      local shared = require("util.shared")
 
-            map("n", "<leader><leader>", vim.diagnostic.open_float, "Floating Diagnostics")
-            map("n", "gs", vim.lsp.buf.signature_help, "Signature Help")
-            map("n", "gD", vim.lsp.buf.declaration, "Go to Declaration")
-            map("n", "gi", vim.lsp.buf.implementation, "Go to Implementation")
-          end,
-        },
-        lua_ls = {
+      -- The only servers allowed to attach by themselves. Enabling is explicit
+      -- so mason-lspconfig cannot pull in every installed server (vue, docker,
+      -- mdx, ...) just because its binary happens to exist.
+      ---@type table<string, vim.lsp.Config>
+      local servers = {
+        vtsls = {
           settings = {
-            Lua = {
-              workspace = { checkThirdParty = false },
-              telemetry = { enable = false },
-              completion = { callSnippet = "Replace" },
+            typescript = {
+              suggest = { completeFunctionCalls = true },
+              preferences = {
+                preferTypeOnlyAutoImports = true,
+              },
+              tsserver = {
+                watchOptions = {
+                  excludeDirectories = { "**/dist/**", "**/build/**", "**/.turbo/**" },
+                },
+              },
             },
+            javascript = {
+              suggest = { completeFunctionCalls = true },
+            },
+          },
+        },
+        astro = {
+          settings = {
+            astro = { suggest = { completeFunctionCalls = true } },
           },
         },
         tailwindcss = {
           settings = {
             tailwindCSS = {
-              experimental = {
-                classRegex = {
-                  { "cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
-                  { "cx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
-                  { "cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]" },
-                },
-              },
+              classFunctions = { "cn", "clsx", "cva", "twMerge" },
             },
           },
         },
-        emmet_language_server = {},
-        astro = {},
-        mdx_analyzer = {},
-        marksman = {},
-        html = {},
         cssls = {
           settings = {
+            -- The shipped at-rule data predates Tailwind v4 and flags every
+            -- @theme/@utility/@apply/@source/... line. lspconfig's own
+            -- `validate` defaults survive the merge.
             css = { lint = { unknownAtRules = "ignore" } },
-            scss = { lint = { unknownAtRules = "ignore" } },
           },
         },
-        yamlls = {},
-        jsonls = {},
-        -- only used when vim.g.lazyvim_ts_lsp is switched back to "vtsls"
-        vtsls = {
-          -- kept so extras that append to vtsls.filetypes (vue, astro) don't break
-          filetypes = {
-            "javascript",
-            "javascriptreact",
-            "javascript.jsx",
-            "typescript",
-            "typescriptreact",
-            "typescript.tsx",
-          },
+        html = {
           settings = {
-            typescript = {
-              tsserver = {
-                -- stop tsserver from watching huge generated/dependency trees
-                watchOptions = {
-                  excludeDirectories = {
-                    "**/node_modules/**",
-                    "**/.next/**",
-                    "**/dist/**",
-                    "**/build/**",
-                    "**/.turbo/**",
-                  },
-                },
-              },
-            },
+            -- nvim-ts-autotag already inserts the closing tag; the server would
+            -- offer a second one as a snippet.
+            html = { autoClosingTags = true },
           },
         },
+        marksman = {
+          init_options = {
+            -- 2 = incremental. Upstream defaults to full sync (the whole buffer
+            -- resent per keystroke) because it distrusts editors.
+            preferredTextSyncKind = 2,
+          },
+        },
+        -- `format = false`: conform owns formatting (prettierd), so eslint must
+        -- not advertise `documentFormattingProvider`.
         eslint = {
           settings = {
-            -- help eslint find the eslintrc when it's placed in a subdirectory
-            workingDirectories = { mode = "auto" },
-            -- NOTE: `run = "onSave"` is ignored by vscode-langservers-extracted 4.10.0
-            -- (it lints on every didChange regardless), so it's not set here.
-            -- formatting is handled by conform (prettierd); don't lint + format twice
             format = false,
           },
         },
-      },
-    },
-  },
-  {
-    "neovim/nvim-lspconfig",
-    -- Route each project to the right TypeScript server:
-    --  * TS 7 (`tsc`)  -> only when the project's tsconfig no longer uses `baseUrl`
-    --    (TS 7 removed it) or when the repo opts in with a `.tsgo` marker file.
-    --  * vtsls         -> everything else, using the workspace TypeScript version
-    --    (vtsls.autoUseWorkspaceTsdk), so old TS versions keep working.
-    -- Force either way per repo with `.tsgo` / `.tsvtsls` in the project root.
-    opts = function(_, opts)
-      local function nearest_tsconfig(bufnr)
-        local name = vim.api.nvim_buf_get_name(bufnr)
-        if name == "" then
-          return nil
+        lua_ls = {},
+        jsonls = {},
+        yamlls = {},
+        emmet_language_server = {},
+        bashls = {},
+        fish_lsp = {},
+        sqls = {},
+        postgres_lsp = {},
+      }
+
+      for name, config in pairs(servers) do
+        vim.lsp.config(name, config)
+      end
+      vim.lsp.enable(vim.tbl_keys(servers))
+      local function eol_swatch(bufnr, range, hex)
+        local client = vim.lsp.get_clients({ bufnr = bufnr, name = "tailwindcss" })[1]
+        if client == nil then
+          return
         end
-        return vim.fs.find({ "tsconfig.json", "jsconfig.json" }, {
-          upward = true,
-          type = "file",
-          path = vim.fs.dirname(name),
-        })[1]
+        local ns = vim.api.nvim_create_namespace("nvim.lsp.document_color:" .. client.id)
+        vim.api.nvim_buf_set_extmark(bufnr, ns, range.start_row, range.start_col, {
+          virt_text = { { constants.swatch, require("mini.hipatterns").compute_hex_color_group(hex, "fg") } },
+          virt_text_pos = "eol",
+          priority = 2000,
+        })
       end
 
-      --- Generated / dependency trees. Never start a project server from a buffer
-      local generated = { "/.next/", "/node_modules/", "/dist/", "/build/", "/.turbo/", "/.intlayer/" }
-      ---@param bufnr integer
-      ---@return boolean
-      local function is_generated(bufnr)
-        local name = vim.api.nvim_buf_get_name(bufnr)
-        for _, dir in ipairs(generated) do
-          if name:find(dir, 1, true) then
-            return true
-          end
-        end
-        return false
-      end
+      vim.lsp.document_color.enable(true, nil, { style = eol_swatch })
 
-      local cache = {}
-      --- Per-buffer decision, cached by tsconfig path (monorepos have several).
-      ---@param bufnr integer
-      ---@param root string
-      local function use_ts7(bufnr, root)
-        local cfg = nearest_tsconfig(bufnr)
-        local key = cfg or root
-        if cache[key] ~= nil then
-          return cache[key]
-        end
-        local res
-        if vim.uv.fs_stat(root .. "/.tsvtsls") then
-          res = false
-        elseif vim.uv.fs_stat(root .. "/.tsgo") then
-          res = true
-        elseif not cfg then
-          -- no tsconfig/jsconfig -> nothing TS 7 can do here
-          res = false
-        else
-          -- NOTE: only the nearest config is inspected; a `baseUrl` inherited
-          -- through `extends` is not detected (drop a `.tsvtsls` in that repo).
-          local lines = vim.fn.readfile(cfg, "", 200)
-          res = not table.concat(lines, "\n"):find('"baseUrl"', 1, true)
-        end
-        cache[key] = res
-        return res
-      end
-
-      opts.servers.tsc = vim.tbl_deep_extend("force", opts.servers.tsc or {}, {
-        enabled = true,
-        settings = {
-          ["js/ts"] = {
-            inlayHints = {
-              parameterNames = { enabled = "none" },
-              parameterTypes = { enabled = false },
-              variableTypes = { enabled = false },
-              propertyDeclarationTypes = { enabled = false },
-              functionLikeReturnTypes = { enabled = false },
-              enumMemberValues = { enabled = false },
-            },
-            referencesCodeLens = { enabled = false },
-            implementationsCodeLens = { enabled = false },
-          },
-        },
-        -- Batch `didChange` notifications: typing (or scrolling while a change is
-        -- pending) no longer triggers one project-wide check per keystroke.
-        flags = { debounce_text_changes = 300 },
-        root_dir = function(bufnr, on_dir)
-          if is_generated(bufnr) then
-            return
-          end
-          local root =
-            vim.fs.root(bufnr, { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock", ".git" })
-          if root and use_ts7(bufnr, root) then
-            on_dir(root)
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("tailwind_color_swatch", { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client ~= nil and client.name ~= "tailwindcss" then
+            vim.lsp.document_color.enable(false, { bufnr = args.buf, client_id = client.id })
           end
         end,
       })
 
-      opts.servers.vtsls = vim.tbl_deep_extend("force", opts.servers.vtsls or {}, {
-        enabled = true,
-        flags = { debounce_text_changes = 300 },
-        root_dir = function(bufnr, on_dir)
-          if is_generated(bufnr) then
-            return
+      -- TypeScript 7 native server (Mason `tsc`), opt-in. A TS buffer must be
+      -- served by exactly one server, so the toggle detaches the other one for
+      -- that buffer only; the detached client keeps serving its other buffers.
+
+      ---Attach a registered config to one buffer, resolving its root dir first.
+      ---@param name string
+      ---@param bufnr integer
+      local function attach(name, bufnr)
+        local config = vim.deepcopy(vim.lsp.config[name])
+        if config == nil or type(config.root_dir) ~= "function" then
+          return
+        end
+        config.root_dir(bufnr, function(root)
+          config.root_dir = root
+          vim.lsp.start(config, { bufnr = bufnr })
+        end)
+      end
+
+      local function tsgo_toggle()
+        local bufnr = vim.api.nvim_get_current_buf()
+        if not vim.tbl_contains(shared.js_ts, vim.bo[bufnr].filetype) then
+          vim.notify("TS7 toggle: only for JS/TS buffers", vim.log.levels.WARN)
+          return
+        end
+
+        local native = vim.lsp.get_clients({ bufnr = bufnr, name = "tsc" })
+        if #native > 0 then
+          for _, client in ipairs(native) do
+            vim.lsp.buf_detach_client(bufnr, client.id)
           end
-          if vim.fs.root(bufnr, { "deno.json", "deno.jsonc", "deno.lock" }) then
-            return
-          end
-          local root = vim.fs.root(
-            bufnr,
-            { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock", ".git" }
-          ) or vim.fn.getcwd()
-          if not use_ts7(bufnr, root) then
-            on_dir(root)
+          attach("vtsls", bufnr)
+          vim.notify("TypeScript: vtsls", vim.log.levels.INFO)
+          return
+        end
+
+        for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr, name = "vtsls" })) do
+          vim.lsp.buf_detach_client(bufnr, client.id)
+        end
+        attach("tsc", bufnr)
+        vim.notify("TypeScript: tsc (7.x native)", vim.log.levels.INFO)
+      end
+
+      vim.api.nvim_create_user_command("TsgoToggle", tsgo_toggle, {
+        desc = "Toggle the TypeScript 7 native server for this buffer",
+      })
+
+      -- tsgo reads a literal `js/ts` section and supports `preferences.*` only
+      -- (no `suggest.completeFunctionCalls`). Kept out of `servers` so
+      -- `vim.lsp.enable` cannot attach it to every JS/TS buffer.
+      vim.lsp.config("tsc", {
+        settings = {
+          ["js/ts"] = {
+            preferences = { preferTypeOnlyAutoImports = true },
+          },
+        },
+      })
+
+      local pick_preview = require("util.pick")
+
+      -- Neovim defaults the request to `includeDeclaration = true`, and
+      -- mini.extra's picker always passes `nil` as the context, so the
+      -- declaration would show up among the usages. Default it to false at the
+      -- source (the default `grr` uses the same function) instead of forking
+      -- the picker.
+      local lsp_references = vim.lsp.buf.references
+      vim.lsp.buf.references = function(context, opts)
+        return lsp_references(context or { includeDeclaration = false }, opts)
+      end
+
+      local function pick_lsp(scope)
+        return pick_preview.with_preview(function(opts)
+          require("mini.extra").pickers.lsp({ scope = scope }, opts)
+        end)
+      end
+
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("lsp_keys", { clear = true }),
+        callback = function(args)
+          vim.keymap.set("n", "grr", pick_lsp("references"), { buffer = args.buf, desc = "References" })
+          vim.keymap.set("n", "gri", pick_lsp("implementation"), { buffer = args.buf, desc = "Implementations" })
+          if vim.tbl_contains(shared.js_ts, vim.bo[args.buf].filetype) then
+            vim.keymap.set("n", "<leader>cT", tsgo_toggle, {
+              buffer = args.buf,
+              desc = "Toggle TS7 native server",
+            })
           end
         end,
       })
@@ -234,7 +202,44 @@ return {
   },
   {
     "mason-org/mason.nvim",
-    -- native TypeScript 7 compiler, used as the TS language server (see options.lua)
-    opts = { ensure_installed = { "tsc" } },
+    cmd = "Mason",
+    opts = {},
+  },
+  {
+    "mason-org/mason-lspconfig.nvim",
+    event = "BufReadPre",
+    dependencies = {
+      "mason-org/mason.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    ---@type MasonLspconfigSettings
+    opts = {
+      ensure_installed = {
+        "lua_ls",
+        "vtsls",
+        "astro",
+        "tailwindcss",
+        "cssls",
+        "html",
+        "eslint",
+        "jsonls",
+        "yamlls",
+        "marksman",
+        "emmet_language_server",
+        "bashls",
+        "fish_lsp",
+        "sqls",
+        "postgres_lsp",
+      },
+      -- lsp.lua owns the enable list; auto-enabling would attach every
+      -- installed server regardless of the stack this config targets.
+      automatic_enable = false,
+    },
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    ---@type lazydev.Config
+    opts = {},
   },
 }

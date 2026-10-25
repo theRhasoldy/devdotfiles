@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "runtime.version": "LuaJIT",
+  "diagnostics.globals": [
+    "vim"
+  ],
+  "workspace.checkThirdParty": false,
+  "workspace.library": [
+    "/home/rhasoldy/.local/share/nvim/lazy/blink.cmp/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/conform.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/codediff.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/gitsigns.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/lazy.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/lazydev.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mason-lspconfig.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mason.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.ai/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.bufremove/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.clue/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.comment/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.extra/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.files/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.hipatterns/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.icons/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.move/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.notify/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.pairs/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.pick/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.splitjoin/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.statusline/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/mini.surround/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/modus-themes.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/nui.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/nvim-lint/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/nvim-lspconfig/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/nvim-treesitter/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/opencode.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/sqmeow.nvim/lua",
+    "/home/rhasoldy/.local/share/nvim/lazy/supermaven-nvim/lua",
+    "/usr/share/nvim/runtime"
+  ]
+}

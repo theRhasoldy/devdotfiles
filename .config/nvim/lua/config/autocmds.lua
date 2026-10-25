@@ -1,26 +1,27 @@
--- Autocmds are automatically loaded on the VeryLazy event
--- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
---
--- Add any additional autocmds here
--- with `vim.api.nvim_create_autocmd`
---
--- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
--- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+local augroup = vim.api.nvim_create_augroup("user_config", { clear = true })
 
--- Don't animate scrolling while a cmdline is open.
--- With `incsearch`, every typed character jumps the cursor to the next match,
--- and with `scrolloff = 999` every jump scrolls the whole window, so the
--- smooth-scroll animation made searching feel far slower than it is.
-local cmdline_scroll = vim.api.nvim_create_augroup("cmdline_scroll", { clear = true })
-vim.api.nvim_create_autocmd("CmdlineEnter", {
-  group = cmdline_scroll,
+vim.api.nvim_create_autocmd("TextYankPost", {
+  group = augroup,
+  desc = "Highlight on yank",
   callback = function()
-    vim.b.snacks_scroll = false
+    vim.hl.hl_op({ timeout = 150 })
   end,
 })
-vim.api.nvim_create_autocmd("CmdlineLeave", {
-  group = cmdline_scroll,
-  callback = function()
-    vim.b.snacks_scroll = nil
+
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group = augroup,
+  desc = "Restore last cursor position when reopening a file",
+  callback = function(event)
+    local mark = vim.api.nvim_buf_get_mark(event.buf, '"')
+    local lcount = vim.api.nvim_buf_line_count(event.buf)
+    if mark[1] > 0 and mark[1] <= lcount then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
   end,
+})
+
+vim.api.nvim_create_autocmd("VimResized", {
+  group = augroup,
+  desc = "Keep splits equal on resize",
+  command = "tabdo wincmd =",
 })

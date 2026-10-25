@@ -1,459 +1,325 @@
-local M = {}
+local constants = require("config.constants")
+local branch_cache = {}
 
-M.mode_names = {
-  n = "󰹇 ",
-  i = "󰏫 ",
-  v = "󰛐 ",
-  V = "󰈈 ",
-  ["\22"] = "󰡭 ",
-  c = "󰹇 ",
-  s = "S",
-  S = "S_",
-  ["\19"] = "^S",
-  R = "",
-  r = " ",
-  t = "T",
-}
-M.git_icons = { branch = " ", added = " ", removed = " ", changed = " " }
+local function compute_branch(dir)
+  local root = vim.fs.root(vim.fs.normalize(dir), ".git")
+  if root == nil or vim.fn.executable("git") == 0 then
+    return ""
+  end
+  local out = vim.fn.system({ "git", "-C", root, "symbolic-ref", "--short", "HEAD" })
+  if vim.v.shell_error ~= 0 or vim.trim(out) == "" then
+    out = vim.fn.system({ "git", "-C", root, "rev-parse", "--short", "HEAD" })
+  end
+  return vim.trim(out)
+end
 
+---@param name string
+---@return string|nil
+local function minifiles_path(name)
+  local path = name:match("^minifiles://%d+/(.*)$")
+  return path and vim.fs.normalize(path)
+end
+
+local function statusline_dir()
+  local files = package.loaded["mini.files"]
+  if files ~= nil and files.get_explorer_state() ~= nil then
+    local ok, entry = pcall(files.get_fs_entry)
+    local path = ok and entry and entry.path or ""
+    if path == "" then
+      path = minifiles_path(vim.api.nvim_buf_get_name(0)) or ""
+    elseif entry.fs_type == "file" then
+      path = vim.fs.dirname(path)
+    end
+    return vim.fs.normalize(path)
+  end
+
+  local name = vim.api.nvim_buf_get_name(0)
+  if name == "" then
+    return vim.fn.getcwd()
+  end
+  return minifiles_path(name) or vim.fs.dirname(name)
+end
+
+-- mini.statusline prints "Normal"/"Visual"/...; the icon map keeps its highlight
+-- but swaps the word. `vim.fn.mode()` can return compound values ('no', 'niI'),
+-- so fall back to the first character.
+local function section_mode()
+  local statusline = require("mini.statusline")
+  local mode, mode_hl = statusline.section_mode({ trunc_width = 0 })
+  local current = vim.fn.mode()
+  return constants.modes[current] or constants.modes[current:sub(1, 1)] or mode, mode_hl
+end
+
+local function section_filename(args)
+  local path = minifiles_path(vim.api.nvim_buf_get_name(0))
+  if path ~= nil then
+    return vim.fn.fnamemodify(path, ":~")
+  end
+  return require("mini.statusline").section_filename(args)
+end
+
+local function section_git()
+  local branch = vim.b.gitsigns_head
+  if branch == nil or branch == "" then
+    local dir = statusline_dir()
+    if branch_cache[dir] == nil then
+      branch_cache[dir] = compute_branch(dir)
+    end
+    branch = branch_cache[dir]
+  end
+  if branch == nil or branch == "" then
+    return ""
+  end
+  return (require("mini.statusline").config.use_icons and constants.git_branch or "Git") .. " " .. branch
+end
+
+---Per-severity segments instead of mini's single string: each count keeps the
+---theme's `Diagnostic*` colour, and the glyph/number pair stays separated.
+---@return { hl: string, strings: string[] }[]
+local function section_diagnostics()
+  local statusline = require("mini.statusline")
+  if statusline.is_truncated(75) then
+    return {}
+  end
+
+  local counts = vim.diagnostic.count(0)
+  local groups = {}
+  for severity, entry in ipairs(constants.diagnostics) do
+    local n = counts[severity] or 0
+    if n > 0 then
+      groups[#groups + 1] = { hl = "Diagnostic" .. entry.name, strings = { entry.glyph .. " " .. n } }
+    end
+  end
+  return groups
+end
+
+---@type LazySpec
 return {
   {
-    "rebelot/heirline.nvim",
-    event = "UIEnter",
-    opts = function()
-      local function get_real_bufnr()
-        local bufnr = vim.api.nvim_get_current_buf()
-        local bt = vim.bo[bufnr].buftype
-        local ft = vim.bo[bufnr].filetype
-
-        -- If we are in a prompt/picker, grab the alternate (previous) buffer
-        if bt == "prompt" or ft == "TelescopePrompt" or ft == "snacks_picker_input" then
-          local prev_bufnr = vim.fn.bufnr("#")
-          if prev_bufnr > 0 then
-            return prev_bufnr
-          end
-        end
-        return bufnr
-      end
-
-      local conditions = require("heirline.conditions")
-      local utils = require("heirline.utils")
-
-      -- Minimal Palette
-      local colors = {
-        gray = utils.get_highlight("Comment").fg,
-        purple = utils.get_highlight("Keyword").fg,
-        orange = utils.get_highlight("Exception").fg,
-        pink = utils.get_highlight("Operator").fg,
-        green = utils.get_highlight("Constant").fg,
-        red = utils.get_highlight("Define").fg,
-      }
-
-      local Align, Space = { provider = "%=" }, { provider = " " }
-
-      -- 1. Optimized ViMode
-      local ViMode = {
-        init = function(self)
-          self.mode = vim.fn.mode(1)
-        end,
-        update = { "ModeChanged" },
-        provider = function(self)
-          return (M.mode_names[self.mode] or "󰹇 ") .. "%)"
-        end,
-        hl = function(self)
-          local m = self.mode:sub(1, 1)
-          local color_map = {
-            n = colors.orange,
-            i = colors.pink,
-            v = colors.purple,
-            V = colors.purple,
-            ["\22"] = colors.purple,
-            R = colors.green,
-            t = colors.red,
-          }
-          return { fg = color_map[m] or colors.gray, bold = true }
-        end,
-      }
-
-      -- 2. Macro Recording Indicator (New)
-      local MacroRec = {
-        condition = function()
-          return vim.fn.reg_recording() ~= ""
-        end,
-        update = { "RecordingEnter", "RecordingLeave" },
-        { provider = " ", hl = { fg = colors.orange, bold = true } },
-        {
-          provider = function()
-            return "@" .. vim.fn.reg_recording()
-          end,
-          hl = { fg = colors.green, bold = true },
-        },
-        Space,
-      }
-
-      -- 3. Performance-focused FileName
-      local FileNameBlock = {
-        init = function(self)
-          self.target_bufnr = get_real_bufnr()
-          self.filename = vim.api.nvim_buf_get_name(self.target_bufnr)
-        end,
-        {
-          provider = function(self)
-            local icon, color = require("nvim-web-devicons").get_icon_color(self.filename, nil, { default = true })
-            self.icon_color = color
-            return icon and (icon .. " ")
-          end,
-          hl = function(self)
-            return { fg = self.icon_color }
-          end,
-        },
-        {
-          provider = function(self)
-            local f = vim.fn.fnamemodify(self.filename, ":.")
-            return f == "" and "[No Name]"
-              or (not conditions.width_percent_below(#f, 0.7) and vim.fn.pathshorten(f) or f)
-          end,
-          hl = function(self)
-            return { fg = utils.get_highlight("Directory").fg, bold = vim.bo[self.target_bufnr].modified }
-          end,
-        },
-        {
-          condition = function()
-            return vim.bo[get_real_bufnr()].modified
-          end,
-          provider = " ",
-          hl = { fg = colors.orange },
-        },
-      }
-
-      -- 4. Diagnostics with Colors
-      local Diagnostics = {
-        condition = conditions.has_diagnostics,
-        update = { "DiagnosticChanged", "BufEnter" },
-        init = function(self)
-          self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
-          self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
-          self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
-          self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
-        end,
-        { provider = " [ ", hl = { fg = colors.gray } },
-        {
-          provider = function(self)
-            return self.errors > 0 and ("󰅚 " .. self.errors .. " ")
-          end,
-          hl = { fg = colors.red },
-        },
-        {
-          provider = function(self)
-            return self.warnings > 0 and ("󰀪 " .. self.warnings .. " ")
-          end,
-          hl = { fg = colors.orange },
-        },
-        {
-          provider = function(self)
-            return self.info > 0 and ("󰋽 " .. self.info .. " ")
-          end,
-          hl = { fg = colors.purple },
-        },
-        {
-          provider = function(self)
-            return self.hints > 0 and ("󰌶 " .. self.hints)
-          end,
-          hl = { fg = colors.green },
-        },
-        { provider = "]", hl = { fg = colors.gray } },
-      }
-
-      -- 5. Simplified Git (Fixed for Pickers)
-      local Git = {
-        condition = function()
-          return vim.b[get_real_bufnr()].gitsigns_status_dict ~= nil
-        end,
-        init = function(self)
-          local bufnr = get_real_bufnr()
-          self.status = vim.b[bufnr].gitsigns_status_dict or { head = "", added = 0, changed = 0, removed = 0 }
-        end,
-        {
-          condition = function(self)
-            return self.status.head and self.status.head ~= ""
-          end,
-          provider = function(self)
-            return M.git_icons.branch .. self.status.head .. " "
-          end,
-          hl = { fg = colors.purple, bold = true },
-        },
-        {
-          condition = function(self)
-            return (self.status.added or 0) + (self.status.removed or 0) + (self.status.changed or 0) > 0
-          end,
-          provider = function(self)
-            local res = "[ "
-            if (self.status.added or 0) > 0 then
-              res = res .. " " .. self.status.added .. " "
-            end
-            if (self.status.changed or 0) > 0 then
-              res = res .. " " .. self.status.changed .. " "
-            end
-            if (self.status.removed or 0) > 0 then
-              res = res .. " " .. self.status.removed .. " "
-            end
-            return res .. "]"
-          end,
-          hl = { fg = colors.gray },
-        },
-      }
-
-      return {
-        statusline = {
-          condition = function()
-            return not conditions.buffer_matches({
-              filetype = { "ministarter", "dashboard", "alpha", "starter", "snacks_dashboard" },
-            })
-          end,
-          Space,
-          ViMode,
-          Space,
-          MacroRec,
-          Git,
-          Align, -- Added MacroRec here
-          { provider = " ", hl = { fg = colors.gray }, condition = conditions.lsp_attached },
-          Space,
-          FileNameBlock,
-          Align,
-          { provider = "%l:%c | %P", hl = { fg = colors.gray } },
-          Space,
-        },
-        winbar = { Diagnostics, Align, FileNameBlock },
-        opts = {
-          disable_winbar_cb = function(args)
-            return conditions.buffer_matches({
-              buftype = { "nofile", "prompt", "help", "quickfix" },
-              filetype = { "^git.*", "fugitive", "Trouble", "dashboard", "nterm", "ministarter" },
-            }, args.buf)
-          end,
-        },
-      }
-    end,
+    -- Startup: the first statusline and blink's kind icons need it.
+    "nvim-mini/mini.icons",
+    lazy = false,
+    opts = {},
   },
   {
-    "snacks.nvim",
+    "nvim-mini/mini.statusline",
+    lazy = false,
+    ---@type MiniStatuslineConfig
     opts = {
-      indent = {
-        enabled = false,
-      },
-      scroll = {
-        animate = { fps = 60, duration = { step = 6, total = 90 }, easing = "linear" },
-        animate_repeat = { delay = 60, duration = { step = 3, total = 30 }, easing = "linear" },
-      },
-      ---@class snacks.dashboard.Config
-      ---@field enabled? boolean
-      ---@field sections snacks.dashboard.Section
-      ---@field formats table<string, snacks.dashboard.Text|fun(item:snacks.dashboard.Item, ctx:snacks.dashboard.Format.ctx):snacks.dashboard.Text>
-      dashboard = {
-        width = 60,
-        -- These settings are used by some built-in sections
-        preset = {
-          header = [[
-     _/\/\/\/\/\____/\/\____/\/\______/\/\________/\/\/\/\/\____/\/\/\/\____/\/\________/\/\/\/\/\____/\/\____/\/\_
-    _/\/\____/\/\__/\/\____/\/\____/\/\/\/\____/\/\__________/\/\____/\/\__/\/\________/\/\____/\/\__/\/\____/\/\_
-   _/\/\/\/\/\____/\/\/\/\/\/\__/\/\____/\/\____/\/\/\/\____/\/\____/\/\__/\/\________/\/\____/\/\____/\/\/\/\___
-  _/\/\__/\/\____/\/\____/\/\__/\/\/\/\/\/\__________/\/\__/\/\____/\/\__/\/\________/\/\____/\/\______/\/\_____
- _/\/\____/\/\__/\/\____/\/\__/\/\____/\/\__/\/\/\/\/\______/\/\/\/\____/\/\/\/\/\__/\/\/\/\/\________/\/\_____
-______________________________________________________________________________________________________________]],
-        },
-        -- item field formatters
-        sections = {
-          { section = "header" },
-          function()
-            local root = Snacks.git.get_root()
-            local in_git = root ~= nil
-            local remote = in_git and vim.fn.system("git -C " .. root .. " config --get remote.origin.url") or ""
-            local is_bitbucket = remote:find("bitbucket") ~= nil
-            local has_bkt = vim.fn.executable("bkt") == 1
-            local has_gh = vim.fn.executable("gh") == 1
+      use_icons = true,
+      content = {
+        active = function()
+          local statusline = require("mini.statusline")
+          local mode, mode_hl = section_mode()
+          local git = section_git()
+          local diff = statusline.section_diff({ trunc_width = 75 })
+          local lsp = statusline.section_lsp({ trunc_width = 75 })
+          local filename = section_filename({ trunc_width = 140 })
+          local fileinfo = statusline.section_fileinfo({ trunc_width = 120 })
+          local search = statusline.section_searchcount({ trunc_width = 75, options = { recompute = false } })
+          local location = statusline.section_location({ trunc_width = 75 })
 
-            local cli = (is_bitbucket and has_bkt) and "bkt" or "gh"
-            local limit = cli == "bkt" and "--limit" or "-L"
-            local has_cli = (cli == "bkt" and has_bkt) or (cli == "gh" and has_gh)
-
-            local cmds = {
-              {
-                title = "Open Issues",
-                cmd = cli .. " issue list " .. limit .. " 3",
-                key = "i",
-                action = function()
-                  local action_cmd = cli == "bkt" and "bkt repo browse" or "gh issue list --web"
-                  vim.fn.jobstart(action_cmd, { detach = true })
-                end,
-                icon = " ",
-                height = 5,
-                enabled = in_git and has_cli,
-              },
-              {
-                icon = " ",
-                title = "Open PRs",
-                cmd = cli .. " pr list " .. limit .. " 3",
-                key = "P",
-                action = function()
-                  local action_cmd = cli == "bkt" and "bkt repo browse" or "gh pr list --web"
-                  vim.fn.jobstart(action_cmd, { detach = true })
-                end,
-                height = 5,
-                enabled = in_git and has_cli,
-              },
-              {
-                icon = " ",
-                title = "Git Status",
-                cmd = "git --no-pager diff --stat -B -M -C",
-                height = 10,
-                enabled = in_git,
-              },
-            }
-            return vim.tbl_map(function(cmd)
-              return vim.tbl_extend("force", {
-                section = "terminal",
-              }, cmd)
-            end, cmds)
-          end,
-          { section = "startup" },
-        },
-      },
-      explorer = {
-        replace_netrw = true,
-        trash = true,
-      },
-      picker = {
-        matcher = {
-          frecency = true,
-          history_bonus = true,
-        },
-        sources = {
-          explorer = {
-            auto_close = true,
-            hidden = true,
-            ignored = true,
-            layout = {
-              auto_hide = { "input" },
-            },
-          },
-        },
+          local groups = {
+            { hl = mode_hl, strings = { mode } },
+            { hl = "MiniStatuslineDevinfo", strings = { git, diff } },
+            "%<",
+            { hl = "MiniStatuslineFilename", strings = { filename } },
+            "%=%<",
+          }
+          vim.list_extend(groups, section_diagnostics())
+          vim.list_extend(groups, {
+            { hl = "MiniStatuslineDevinfo", strings = { lsp } },
+            { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+            { hl = mode_hl, strings = { search, location } },
+          })
+          return statusline.combine_groups(groups)
+        end,
       },
     },
-  },
-  {
-    "nvim-treesitter/nvim-treesitter-context",
-    -- Context is recomputed on every CursorMoved/WinScrolled. `topline` mode
-    -- derives it from the viewport instead of the cursor node, and disabling
-    -- line numbers skips the extra statuscolumn work for the context window.
-    opts = function(_, opts)
-      opts.mode = "topline"
-      opts.max_lines = 3
-      opts.line_numbers = false
-      opts.multiline_threshold = 3
-      return opts
+    ---@param opts MiniStatuslineConfig
+    config = function(_, opts)
+      require("mini.statusline").setup(opts)
+
+      -- Branch fallback cache: invalidate when the working directory or the
+      -- checked-out branch changes (gitsigns emits GitSignsUpdate).
+      local group = vim.api.nvim_create_augroup("statusline_git_branch", { clear = true })
+      vim.api.nvim_create_autocmd("DirChanged", {
+        group = group,
+        callback = function()
+          branch_cache = {}
+        end,
+      })
+      vim.api.nvim_create_autocmd("User", {
+        group = group,
+        pattern = "GitSignsUpdate",
+        callback = function()
+          branch_cache = {}
+        end,
+      })
     end,
   },
   {
-    "folke/noice.nvim",
-    opts = { presets = { bottom_search = true, long_message_to_split = true, lsp_doc_border = true } },
+    "nvim-mini/mini.notify",
+    event = "VeryLazy",
+    opts = {},
   },
   {
-    "nvim-mini/mini.hipatterns",
-    opts = function(_, opts)
-      if not opts.highlighters then
-        return
-      end
-
-      -- Helper to dynamically create a highlight group with fg = color
-      -- using the bg color from the matched highlight group.
-      local function get_fg_group(hl_group)
-        if not hl_group then
-          return nil
-        end
-        local fg_hl_name = hl_group .. "_fg"
-        local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = fg_hl_name })
-        if ok and not vim.tbl_isempty(hl) then
-          return fg_hl_name
-        end
-
-        local ok_orig, orig_hl = pcall(vim.api.nvim_get_hl, 0, { name = hl_group })
-        if ok_orig and orig_hl.bg then
-          vim.api.nvim_set_hl(0, fg_hl_name, { fg = orig_hl.bg })
-          return fg_hl_name
-        end
-        return hl_group
-      end
-
-      local function eol_box(_, _, data)
-        local hl_group = get_fg_group(data.hl_group)
-        return {
-          virt_text = { { "■", hl_group } },
-          virt_text_pos = "eol",
-          priority = 2000,
-        }
-      end
-
-      if opts.highlighters.hex_color then
-        opts.highlighters.hex_color.extmark_opts = eol_box
-      end
-
-      if opts.highlighters.shorthand then
-        opts.highlighters.shorthand.extmark_opts = eol_box
-      end
-
-      local tailwind_fts = {
-        "astro",
-        "css",
-        "heex",
-        "html",
-        "html-eex",
-        "javascript",
-        "javascriptreact",
-        "rust",
-        "svelte",
-        "typescript",
-        "typescriptreact",
-        "vue",
+    "nvim-mini/mini.clue",
+    event = "VeryLazy",
+    config = function()
+      local clue = require("mini.clue")
+      ---@type MiniClueConfig
+      local opts = {
+        triggers = {
+          { mode = "n", keys = "<Leader>" },
+          { mode = "n", keys = "<LocalLeader>" },
+          { mode = "n", keys = "g" },
+          { mode = "x", keys = "g" },
+          { mode = "n", keys = "z" },
+          { mode = "n", keys = "[" },
+          { mode = "n", keys = "]" },
+          { mode = "n", keys = "<C-w>" },
+          { mode = "x", keys = "<Leader>" },
+        },
+        window = { delay = 300 },
+        clues = {
+          clue.gen_clues.builtin_completion(),
+          -- `gs` is mini.surround's prefix here, not the builtin `gs` (sleep),
+          -- so drop that generated clue; the group below replaces it.
+          vim.tbl_filter(function(entry)
+            return not (entry.mode == "n" and entry.keys == "gs")
+          end, clue.gen_clues.g()),
+          clue.gen_clues.marks(),
+          clue.gen_clues.registers(),
+          clue.gen_clues.square_brackets(),
+          -- Groups for the mappings these specs declare. `gs` needs both modes:
+          -- visual only has add/find, not delete/replace/highlight.
+          { mode = "n", keys = "gs", desc = "+surround" },
+          { mode = "x", keys = "gs", desc = "+surround" },
+          { mode = "n", keys = "<Leader>f", desc = "+find" },
+          { mode = "n", keys = "<Leader>g", desc = "+git" },
+          { mode = "n", keys = "<Leader>b", desc = "+buffer" },
+          { mode = "n", keys = "<Leader>c", desc = "+code" },
+          { mode = "n", keys = "<Leader>d", desc = "+database" },
+          { mode = "n", keys = "<Leader>o", desc = "+opencode" },
+          { mode = "n", keys = "<LocalLeader>", desc = "+splits" },
+        },
       }
-
-      opts.highlighters.tailwind_white = {
-        pattern = function(buf_id)
-          if not vim.tbl_contains(tailwind_fts, vim.bo[buf_id].filetype) then
-            return nil
-          end
-          return "%f[%w:-]()[%w:-]+%-white()%f[^%w:-]"
-        end,
-        group = function()
-          return MiniHipatterns.compute_hex_color_group("#ffffff", "bg")
-        end,
-        extmark_opts = eol_box,
-      }
-
-      opts.highlighters.tailwind_black = {
-        pattern = function(buf_id)
-          if not vim.tbl_contains(tailwind_fts, vim.bo[buf_id].filetype) then
-            return nil
-          end
-          return "%f[%w:-]()[%w:-]+%-black()%f[^%w:-]"
-        end,
-        group = function()
-          return MiniHipatterns.compute_hex_color_group("#000000", "bg")
-        end,
-        extmark_opts = eol_box,
-      }
-
-      if opts.highlighters.tailwind then
-        opts.highlighters.tailwind.extmark_opts = eol_box
-      else
-        setmetatable(opts.highlighters, {
-          __newindex = function(t, k, v)
-            if k == "tailwind" then
-              v.extmark_opts = eol_box
-            end
-            rawset(t, k, v)
+      clue.setup(opts)
+    end,
+  },
+  {
+    -- Viewport jumps only; `j`/`k` never animate.
+    "nvim-mini/mini.animate",
+    event = "VeryLazy",
+    config = function()
+      local animate = require("mini.animate")
+      ---@type MiniAnimateConfig
+      local opts = {
+        cursor = { enable = false },
+        -- Keep scroll animation for <C-d>/<C-u>; mouse wheel is handled
+        -- separately in keymaps.lua (animation disabled there).
+        scroll = {
+          enable = true,
+          timing = function(_, n)
+            return math.min(6, 120 / n)
           end,
-        })
+        },
+        resize = {
+          enable = true,
+          timing = animate.gen_timing.linear({ duration = 60, unit = "total" }),
+        },
+        open = { enable = false },
+        close = { enable = false },
+      }
+      animate.setup(opts)
+    end,
+  },
+  {
+    -- The token keeps its highlighting; the colour becomes an EOL block.
+    -- Tailwind classes belong to the Tailwind server (see lsp.lua).
+    "nvim-mini/mini.hipatterns",
+    event = { "BufReadPost", "BufNewFile" },
+    ---@return MiniHipatternsConfig
+    opts = function()
+      local hipatterns = require("mini.hipatterns")
+
+      -- Empty group: the extmark omits `hl_group`, so only virtual text paints.
+      local swatch_group = "HipatternsSwatch"
+      vim.api.nvim_set_hl(0, swatch_group, {})
+
+      local function swatch(hex_of)
+        return function(_, match)
+          local hex = hex_of(match)
+          local hl_group = hex and hipatterns.compute_hex_color_group(hex, "fg")
+          if hl_group == nil then
+            return {}
+          end
+          return { virt_text = { { constants.swatch, hl_group } }, virt_text_pos = "eol", priority = 2000 }
+        end
       end
+
+      local normalise_hex = require("util.shared").normalise_hex
+
+      local hex_color = hipatterns.gen_highlighter.hex_color()
+      hex_color.group = function()
+        return swatch_group
+      end
+      hex_color.extmark_opts = swatch(normalise_hex)
+
+      -- Classes the Tailwind server cannot resolve (v4 tokens kept in
+      -- `:root`); see util/tailwind.lua.
+      local tailwind = require("util.tailwind")
+
+      -- The resolver reads CSS asynchronously, so the first paint can miss
+      -- design-token swatches; repaint when a palette arrives.
+      vim.api.nvim_create_autocmd("User", {
+        group = vim.api.nvim_create_augroup("tailwind_colors_repaint", { clear = true }),
+        pattern = "TailwindColorsReady",
+        callback = function()
+          for _, buf in ipairs(hipatterns.get_enabled_buffers()) do
+            pcall(hipatterns.update, buf)
+          end
+        end,
+      })
+
+      local web_filetypes = require("util.shared").web_filetypes
+
+      return {
+        highlighters = {
+          hex_color = hex_color,
+          shorthand = {
+            pattern = "#%x%x%x%f[^%x]",
+            group = function()
+              return swatch_group
+            end,
+            extmark_opts = swatch(normalise_hex),
+          },
+          theme_class = {
+            pattern = function(buf_id)
+              if not vim.tbl_contains(web_filetypes, vim.bo[buf_id].filetype) then
+                return nil
+              end
+              return "%f[%w:!_-]()[%w:!_-]+()"
+            end,
+            group = function(buf_id, match, data)
+              local hex = tailwind.lookup(buf_id, match)
+              if hex == nil then
+                return nil
+              end
+              data.hex = hex
+              return swatch_group
+            end,
+            extmark_opts = function(_, _, data)
+              return {
+                virt_text = { { constants.swatch, hipatterns.compute_hex_color_group(data.hex, "fg") } },
+                virt_text_pos = "eol",
+                priority = 2000,
+              }
+            end,
+          },
+        },
+      }
     end,
   },
 }
