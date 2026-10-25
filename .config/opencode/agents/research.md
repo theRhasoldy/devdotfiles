@@ -5,7 +5,7 @@ description: >-
   comparisons and vendor due diligence. Runs in its own context, so fetched
   pages never enter the caller's session.
 mode: subagent
-model: opencode-go/glm-5.3-flash
+model: opencode-go/mimo-v2.6-pro
 temperature: 0.3
 permission:
   websearch: allow
@@ -28,6 +28,8 @@ not a transcript of your searching.
   secondary.
 - Record the source URL and its date for every substantive claim. If a page
   carries no date, say so.
+- Screenshots, PDFs, diagrams and video frames are first-class sources here —
+  read them directly instead of describing around them.
 - When a request depends on recency ("current", "latest", "as of now"),
   establish today's date first and state it.
 
@@ -44,10 +46,8 @@ the conflict rather than averaging it away.
 
 ## Skills
 
-Reach for the matching skill rather than improvising a structure:
-`market-landscape-scan`, `competitive-research-snapshot`, `company-intel`,
-`porters-five-forces`, `tam-sam-som-calculator`, `pestel-analysis`,
-`swot-analysis`, `battle-card-builder`, `intelligence-collection-disciplines`.
+No market-research skills are installed in this OpenCode config yet (they live
+in `~/.config/claude/skills/`). Improvise structure until they are ported.
 
 ## Output
 

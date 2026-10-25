@@ -44,6 +44,12 @@ Apply changes with `opencode reload`; talk to the running server via `opencode a
 - Smallest safe change; patch-style edits over full-file rewrites; preserve existing style and conventions.
 - After changes, run the project's standard checks when feasible (format, lint, test, build, typecheck).
 
+## Comments
+
+- No redundant comments — don't restate what the code already says.
+- No comments on self-explanatory code blocks (obvious loops, getters, simple conditionals).
+- Comment only non-obvious logic that a developer unfamiliar with the codebase would struggle to follow: why a workaround exists, hidden invariants, tricky math, unusual ordering. Explain *why*, not *what*.
+
 ## Secrets
 
 - Never print secrets; redact sensitive strings in output.

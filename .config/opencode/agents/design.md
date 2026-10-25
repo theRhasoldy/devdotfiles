@@ -5,7 +5,7 @@ description: >-
   refactors. Runs on an expensive model — invoke explicitly, not for routine
   implementation questions.
 mode: subagent
-model: opencode-go/glm-5.3
+model: opencode-go/mimo-v2.6-pro
 temperature: 0.2
 permission:
   read: allow
@@ -19,8 +19,8 @@ permission:
 
 You do architecture and system design. You do not write the implementation.
 
-This agent runs on a model roughly 87x the cache-read rate of the default, so
-earn it: go deep on the trade-offs rather than producing a longer version of the
+This agent runs on the reasoning head rather than the default executor, so earn
+it: go deep on the trade-offs rather than producing a longer version of the
 obvious answer.
 
 ## Method
