@@ -241,6 +241,10 @@ return {
       indent = {
         enabled = false,
       },
+      scroll = {
+        animate = { fps = 60, duration = { step = 6, total = 90 }, easing = "linear" },
+        animate_repeat = { delay = 60, duration = { step = 3, total = 30 }, easing = "linear" },
+      },
       ---@class snacks.dashboard.Config
       ---@field enabled? boolean
       ---@field sections snacks.dashboard.Section
@@ -335,6 +339,19 @@ ________________________________________________________________________________
         },
       },
     },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    -- Context is recomputed on every CursorMoved/WinScrolled. `topline` mode
+    -- derives it from the viewport instead of the cursor node, and disabling
+    -- line numbers skips the extra statuscolumn work for the context window.
+    opts = function(_, opts)
+      opts.mode = "topline"
+      opts.max_lines = 3
+      opts.line_numbers = false
+      opts.multiline_threshold = 3
+      return opts
+    end,
   },
   {
     "folke/noice.nvim",

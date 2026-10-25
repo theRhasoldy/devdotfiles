@@ -4,6 +4,12 @@ function fish_hybrid_key_bindings --description \
         fish_default_key_bindings -M $mode
     end
     fish_vi_key_bindings --no-erase
+
+    # Atuin: normal-mode `k` should open the history search like the up arrow.
+    # Set as a user binding so it overrides the vi preset (up-or-search).
+    if functions -q _atuin_bind_up
+        bind -M default k _atuin_bind_up
+    end
 end
 
 set -g fish_cursor_insert line

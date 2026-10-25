@@ -1,32 +1,6 @@
 return {
   {
     "saghen/blink.cmp",
-    dependencies = {
-      {
-        "jsongerber/nvim-px-to-rem",
-        opts = {
-          root_font_size = 16,
-          decimal_count = 4,
-          show_virtual_text = true,
-          add_cmp_source = false,
-          filetypes = {
-            "css",
-            "scss",
-            "sass",
-            "js",
-            "jsx",
-            "javascript",
-            "javascriptreact",
-            "typescript",
-            "typescriptreact",
-            "ts",
-            "tsx",
-            "vue",
-            "html",
-          },
-        },
-      },
-    },
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
     opts = {

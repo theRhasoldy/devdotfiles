@@ -9,3 +9,7 @@
 	name = Nour El Din Shady
 [alias]
 	branches-tree = log --graph --oneline --all --decorate --simplify-by-decoration
+[delta]
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = ansi

@@ -5,9 +5,54 @@ if not set -q ATUIN_SESSION; or test "$ATUIN_SHLVL" != "$SHLVL"
 end
 set --erase ATUIN_HISTORY_ID
 
+if not set -q __atuin_pty_proxy_owns_tty
+    # The pty-proxy preamble also sets this variable, but make sure it's set here,
+    # so a manually started proxy still functions when `pty_proxy.enabled` is false.
+    set -g __atuin_pty_proxy_owns_tty 0
+    if set -q ATUIN_PTY_PROXY_ACTIVE
+        set -l __atuin_pty_proxy_answer (atuin __internal pty-proxy-active 2>/dev/null)
+        set -l __atuin_pty_proxy_status $status
+        if test $__atuin_pty_proxy_status -eq 0; and test "$__atuin_pty_proxy_answer" = 1
+            set -g __atuin_pty_proxy_owns_tty 1
+        end
+    end
+end
+
+function _atuin_mark_output_start
+    test "$__atuin_pty_proxy_owns_tty" = 1; or return
+
+    if test -n "$__atuin_needs_osc133_reset"
+        set -e __atuin_needs_osc133_reset
+        # Old pty-proxy will reset an in-progress capture on a `B` marker.
+        # Always reset, even if there's no history ID, to avoid capturing a
+        # filtered command.
+        printf '\033]133;B\a'
+    end
+
+    test -n "$ATUIN_HISTORY_ID"; or return
+
+    if test "$ATUIN_PTY_PROXY_ACTIVE" = 1
+        printf '\033]133;C\a'
+    else
+        printf '\033]18188735;C;%s\a' "$ATUIN_HISTORY_ID"
+    end
+end
+
+function _atuin_mark_output_end --argument-names exit_code
+    test "$__atuin_pty_proxy_owns_tty" = 1; or return
+    test -n "$ATUIN_HISTORY_ID"; or return
+
+    if test "$ATUIN_PTY_PROXY_ACTIVE" = 1
+        printf '\033]133;D;%s;history_id=%s\a' "$exit_code" "$ATUIN_HISTORY_ID"
+    else
+        printf '\033]18188735;D;%s\a' "$ATUIN_HISTORY_ID"
+    end
+end
+
 function _atuin_preexec --on-event fish_preexec
     if not test -n "$fish_private_mode"
-        set -g ATUIN_HISTORY_ID (atuin history start -- "$argv[1]")
+        set -g ATUIN_HISTORY_ID (ATUIN_SHELL=fish atuin history start --hook -- "$argv[1]" 2>/dev/null)
+        _atuin_mark_output_start
     end
 end
 
@@ -15,7 +60,8 @@ function _atuin_postexec --on-event fish_postexec
     set -l s $status
 
     if test -n "$ATUIN_HISTORY_ID"
-        ATUIN_LOG=error atuin history end --exit $s -- $ATUIN_HISTORY_ID &>/dev/null &
+        _atuin_mark_output_end $s
+        atuin history end --hook --exit $s -- $ATUIN_HISTORY_ID &>/dev/null &
         disown
     end
 
@@ -29,7 +75,7 @@ function _atuin_tmux_popup_check
         return
     end
 
-    if test "$ATUIN_TMUX_POPUP" = "false"
+    if test "$ATUIN_TMUX_POPUP" = false
         echo 0
         return
     end
@@ -56,7 +102,9 @@ function _atuin_tmux_popup_check
         set m2 0
     end
 
-    if test "$m1" -gt 3 2>/dev/null; or begin; test "$m1" -eq 3 2>/dev/null; and test "$m2" -ge 2 2>/dev/null; end
+    if test "$m1" -gt 3 2>/dev/null; or begin
+            test "$m1" -eq 3 2>/dev/null; and test "$m2" -ge 2 2>/dev/null
+        end
         echo 1
     else
         echo 0
@@ -66,13 +114,8 @@ end
 function _atuin_search
     set -l keymap_mode
     switch $fish_key_bindings
-        case fish_vi_key_bindings
-            switch $fish_bind_mode
-                case default
-                    set keymap_mode vim-normal
-                case insert
-                    set keymap_mode vim-insert
-            end
+        case fish_vi_key_bindings fish_hybrid_key_bindings
+            set keymap_mode vim-normal
         case '*'
             set keymap_mode emacs
     end
@@ -80,11 +123,13 @@ function _atuin_search
     set -l use_tmux_popup (_atuin_tmux_popup_check)
 
     set -l ATUIN_H
+    set -l ATUIN_STATUS 0
     if test "$use_tmux_popup" -eq 1
         set -l tmpdir (mktemp -d)
         if not test -d "$tmpdir"
             # if mktemp got errors
-            set ATUIN_H (ATUIN_SHELL=fish ATUIN_LOG=error ATUIN_QUERY=(commandline -b) atuin search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 | string collect)
+            set ATUIN_H (ATUIN_SHELL=fish ATUIN_QUERY=(commandline -b) atuin search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 3>&- | string collect)
+            set ATUIN_STATUS $pipestatus[1]
         else
             set -l result_file "$tmpdir/result"
 
@@ -100,7 +145,8 @@ function _atuin_search
             set -l popup_width (test -n "$ATUIN_TMUX_POPUP_WIDTH" && echo "$ATUIN_TMUX_POPUP_WIDTH" || echo "80%")
             set -l popup_height (test -n "$ATUIN_TMUX_POPUP_HEIGHT" && echo "$ATUIN_TMUX_POPUP_HEIGHT" || echo "60%")
             tmux display-popup -d "$cdir" -w "$popup_width" -h "$popup_height" -E -E -- \
-                sh -c "ATUIN_SESSION='$ATUIN_SESSION' ATUIN_SHELL=fish ATUIN_LOG=error ATUIN_QUERY='$query' atuin search --keymap-mode=$keymap_mode$escaped_args -i 2>'$result_file'"
+                sh -c "PATH='$PATH' ATUIN_SESSION='$ATUIN_SESSION' ATUIN_SHELL=fish ATUIN_QUERY='$query' atuin search --keymap-mode=$keymap_mode$escaped_args -i 2>'$result_file'"
+            set ATUIN_STATUS $status
 
             if test -f "$result_file"
                 set ATUIN_H (cat "$result_file" | string collect)
@@ -112,20 +158,63 @@ function _atuin_search
         # In fish 3.4 and above we can use `"$(some command)"` to keep multiple lines separate;
         # but to support fish 3.3 we need to use `(some command | string collect)`.
         # https://fishshell.com/docs/current/relnotes.html#id24 (fish 3.4 "Notable improvements and fixes")
-        set ATUIN_H (ATUIN_SHELL=fish ATUIN_LOG=error ATUIN_QUERY=(commandline -b) atuin search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 | string collect)
+        set ATUIN_H (ATUIN_SHELL=fish ATUIN_QUERY=(commandline -b) atuin search --keymap-mode=$keymap_mode $argv -i 3>&1 1>&2 2>&3 3>&- | string collect)
+        set ATUIN_STATUS $pipestatus[1]
     end
 
-    set ATUIN_H (string trim -- $ATUIN_H) # trim whitespace
+    if test "$ATUIN_STATUS" -ne 0
+        test -n "$ATUIN_H"; and printf '%s\n' "$ATUIN_H" >&2
+        commandline -f repaint
+        return "$ATUIN_STATUS"
+    end
+
+    set ATUIN_H (string trim -- $ATUIN_H | string collect) # trim whitespace
 
     if test -n "$ATUIN_H"
         if string match --quiet '__atuin_accept__:*' "$ATUIN_H"
-          set -l ATUIN_HIST (string replace "__atuin_accept__:" "" -- "$ATUIN_H" | string collect)
-          commandline -r "$ATUIN_HIST"
-          commandline -f repaint
-          commandline -f execute
-          return
+            set -l ATUIN_HIST (string replace "__atuin_accept__:" "" -- "$ATUIN_H" | string collect)
+            commandline -r "$ATUIN_HIST"
+            commandline -f repaint
+            commandline -f execute
+            return
         else
-          commandline -r "$ATUIN_H"
+            commandline -r "$ATUIN_H"
+        end
+    end
+
+    commandline -f repaint
+end
+
+# `atuin threads resume`: pick a captured AI coding-agent session. The result uses
+# the same protocol as the history search: `__atuin_accept__:` runs it.
+function _atuin_ai_resume
+    set -l keymap_mode
+    switch $fish_key_bindings
+        case fish_vi_key_bindings fish_hybrid_key_bindings
+            set keymap_mode vim-normal
+        case '*'
+            set keymap_mode emacs
+    end
+
+    set -l ATUIN_H (ATUIN_SHELL=fish ATUIN_QUERY=(commandline -b) atuin threads resume --shell-widget --keymap-mode=$keymap_mode $argv 3>&1 1>&2 2>&3 3>&- | string collect)
+    set -l ATUIN_STATUS $pipestatus[1]
+
+    if test "$ATUIN_STATUS" -ne 0
+        test -n "$ATUIN_H"; and printf '%s\n' "$ATUIN_H" >&2
+        commandline -f repaint
+        return "$ATUIN_STATUS"
+    end
+
+    set ATUIN_H (string trim -- $ATUIN_H | string collect)
+
+    if test -n "$ATUIN_H"
+        if string match --quiet '__atuin_accept__:*' "$ATUIN_H"
+            commandline -r (string replace "__atuin_accept__:" "" -- "$ATUIN_H" | string collect)
+            commandline -f repaint
+            commandline -f execute
+            return
+        else
+            commandline -r "$ATUIN_H"
         end
     end
 
@@ -150,18 +239,76 @@ function _atuin_bind_up
     end
 end
 
+ATUIN_SHELL=fish atuin __internal prepare-search-index &>/dev/null &
+disown 2>/dev/null
+
+if test "$__atuin_pty_proxy_owns_tty" = 1 && test "$ATUIN_PTY_PROXY_ACTIVE" = 1
+    # We're running in an old pty-proxy that expects OSC 133 markers. The outer
+    # shell may have already sent a `C` marker, causing the proxy to start
+    # capturing output. We need to clear this state before the first command's
+    # output starts, or else the prompt and command itself will be erroneously
+    # included in the output.
+    set __atuin_needs_osc133_reset 1
+end
 if string match -q '4.*' $version
     bind ctrl-r _atuin_search
+    bind -M insert ctrl-r _atuin_search
     bind up _atuin_bind_up
-    if bind -M insert >/dev/null 2>&1
-        bind -M insert ctrl-r _atuin_search
-        bind -M insert up _atuin_bind_up
-    end
+    bind -M insert up _atuin_bind_up
 else
     bind \cr _atuin_search
+    bind -M insert \cr _atuin_search
     bind -k up _atuin_bind_up; bind \eOA _atuin_bind_up; bind \e\[A _atuin_bind_up
-    if bind -M insert >/dev/null 2>&1
-        bind -M insert \cr _atuin_search
-        bind -M insert -k up _atuin_bind_up; bind -M insert \eOA _atuin_bind_up; bind -M insert \e\[A _atuin_bind_up
+    bind -M insert -k up _atuin_bind_up; bind -M insert \eOA _atuin_bind_up; bind -M insert \e\[A _atuin_bind_up
+end
+# Question mark at start of line - natural language mode
+function _atuin_ai_question_mark
+    set -l buf (commandline -b)
+
+    # If buffer is empty or just contains '?', trigger natural language mode
+    if test -z "$buf" -o "$buf" = "?"
+        commandline -r ""
+
+        # Close the semantic prompt zone (OSC 133 C) so terminals with
+        # shell integration don't erase the TUI's output during their
+        # resize-time prompt reflow.
+        printf '\033]133;C\007' > /dev/tty
+
+        # Run atuin ai inline, swapping stdout and stderr
+        set -l output (atuin ai inline --hook 3>&1 1>&2 2>&3 | string collect)
+        set -l atuin_status $pipestatus[1]
+
+        if test $atuin_status -ne 0
+            test -n "$output"; and printf '%s\n' "$output" >&2
+            commandline -f repaint
+        else if string match --quiet '__atuin_ai_print__:*' "$output"
+            echo (string replace "__atuin_ai_print__:" "" -- "$output" | string collect)
+            commandline -f repaint
+        else if test "$output" = "__atuin_ai_cancel__"
+            commandline -f repaint
+        else if string match --quiet '__atuin_ai_execute__:*' "$output"
+            # Execute the command immediately
+            set -l cmd (string replace "__atuin_ai_execute__:" "" -- "$output" | string collect)
+            commandline -r "$cmd"
+            commandline -f repaint
+            commandline -f execute
+        else if string match --quiet '__atuin_ai_insert__:*' "$output"
+            # Insert the command for editing
+            set -l cmd (string replace "__atuin_ai_insert__:" "" -- "$output" | string collect)
+            commandline -r "$cmd"
+            commandline -f repaint
+        else if test -n "$output"
+            # Default: insert for editing
+            commandline -r "$output"
+            commandline -f repaint
+        else
+            commandline -f repaint
+        end
+    else if not contains -- "$fish_key_bindings" fish_vi_key_bindings fish_hybrid_key_bindings
+        # Not at empty prompt, just insert the question mark
+        commandline -i "?"
     end
 end
+
+# Set up keybindings
+bind "?" _atuin_ai_question_mark

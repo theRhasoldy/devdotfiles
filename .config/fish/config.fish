@@ -14,6 +14,10 @@ if test -f "/home/rhasoldy/.config/lean-ctx/shell-hook.fish"
 end
 # lean-ctx shell hook — end
 
+if test -f ~/.config/secrets.fish
+    source ~/.config/secrets.fish
+end
+
 # >>> lean-ctx proxy env >>>
 # ANTHROPIC_BASE_URL omitted: Claude Pro/Max subscription authenticates against api.anthropic.com directly (set ANTHROPIC_API_KEY to route Claude through the proxy)
 # OPENAI_BASE_URL omitted: Codex is signed in with a ChatGPT subscription, whose token only authenticates against chatgpt.com (set OPENAI_API_KEY to route OpenAI through the proxy)
