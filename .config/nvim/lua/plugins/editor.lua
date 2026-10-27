@@ -50,7 +50,11 @@ return {
   },
   {
     "windwp/nvim-ts-autotag",
-    event = { "BufReadPre", "BufNewFile" },
+    -- The plugin attaches from its own FileType hook, which does not fire for
+    -- the buffer that triggered the load; its one-shot InsertEnter attach
+    -- covers that first buffer. Listing only tag filetypes keeps treesitter
+    -- and this plugin away from Lua/JSON/Markdown buffers.
+    ft = { "html", "xml", "typescriptreact", "svelte", "rust", "templ", "heex", "glimmer" },
     ---@type AutotagConfig
     opts = {
       opts = {

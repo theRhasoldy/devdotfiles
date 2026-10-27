@@ -2,7 +2,7 @@
 return {
   {
     "lewis6991/gitsigns.nvim",
-    event = { "BufReadPre", "BufNewFile" },
+    event = "VeryLazy",
     opts = {
       -- Match codediff's hunk navigation (`]g`/`[g`) so the same keys work
       -- in both the buffer and the side-by-side view.

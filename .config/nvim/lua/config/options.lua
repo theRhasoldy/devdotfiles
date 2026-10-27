@@ -48,6 +48,12 @@ opt.isfname:append("@-@")
 -- The statusline shows the mode; keep the mode text out of the message line.
 opt.showmode = false
 
+-- Markdown carries its markup in the text (fences, `**`, link brackets, quote
+-- bars). 2 hides those blocks outright; `nc` keeps the compact view on the
+-- cursor line, so raw syntax only comes back while inserting.
+opt.conceallevel = 2
+opt.concealcursor = "nc"
+
 -- Glyphs live in config/constants.lua, already keyed by severity.
 local severity_sign = vim.tbl_map(function(entry)
   return entry.glyph
