@@ -68,6 +68,16 @@
 ---@field use_icons? boolean
 ---@field content? MiniStatuslineContent
 
+---@class MiniStarterItem
+---@field name string Text shown and matched by the query
+---@field action string|fun() Command run on `<CR>`; empty means inactive
+---@field section string
+
+---@class MiniStarterConfig
+---@field header? string|fun(): string
+---@field footer? string|fun(): string
+---@field items? table[]
+
 ---@class MiniClueEntry
 ---@field mode? string|string[]
 ---@field keys? string

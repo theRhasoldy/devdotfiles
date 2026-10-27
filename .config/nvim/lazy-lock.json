@@ -22,6 +22,7 @@
   "mini.pairs": { "branch": "main", "commit": "03eb1f0062a2cee5314d1ac3939246e4bb21352e" },
   "mini.pick": { "branch": "main", "commit": "9368112b7cafb61d837bed55fc6f40e55df53fa0" },
   "mini.splitjoin": { "branch": "main", "commit": "be4536a1b8608a482dfac7aec5ce91b1c2f9bdab" },
+  "mini.starter": { "branch": "main", "commit": "aa5c1eacdac80b09786d5be4e58e2b28c5ebb646" },
   "mini.statusline": { "branch": "main", "commit": "d7133a9a244a8d93ccee42ff37fb9499af5956fb" },
   "mini.surround": { "branch": "main", "commit": "59ce0acf79e1d930756ef3a7cb4c2369560cf548" },
   "nui.nvim": { "branch": "main", "commit": "10fc361835c856ba4233ef5ea135b919bf3dce97" },

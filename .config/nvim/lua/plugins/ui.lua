@@ -50,14 +50,6 @@ local function section_mode()
   return constants.modes[current] or constants.modes[current:sub(1, 1)] or mode, mode_hl
 end
 
-local function section_filename(args)
-  local path = minifiles_path(vim.api.nvim_buf_get_name(0))
-  if path ~= nil then
-    return vim.fn.fnamemodify(path, ":~")
-  end
-  return require("mini.statusline").section_filename(args)
-end
-
 local function section_git()
   local branch = vim.b.gitsigns_head
   if branch == nil or branch == "" then
@@ -93,6 +85,85 @@ local function section_diagnostics()
   return groups
 end
 
+-- The dashboard's git block is a snapshot taken when the buffer is drawn:
+-- mini.starter has no terminal or async sections, so every line is rendered as
+-- an inactive item (no action) and refreshed only when the dashboard opens.
+---@return MiniStarterItem[]
+local function dashboard_git()
+  local root = vim.fs.root(vim.fn.getcwd(), ".git")
+  if root == nil or vim.fn.executable("git") == 0 then
+    return {}
+  end
+
+  ---@type MiniStarterItem[]
+  local items = {}
+  local function add(name)
+    items[#items + 1] = { name = name, action = "", section = "Git" }
+  end
+
+  local status = vim.fn.systemlist({ "git", "-C", root, "status", "--short", "--branch" })
+  if vim.v.shell_error ~= 0 then
+    return {}
+  end
+  -- `## main...origin/main [ahead 1, behind 2]`: keep the branch, condense the
+  -- tracking state to arrows so the line stays inside the dashboard width.
+  local head = ((status[1] or ""):gsub("^## ", ""))
+  local marks = {}
+  local ahead, behind = head:match("ahead (%d+)"), head:match("behind (%d+)")
+  if ahead then
+    marks[#marks + 1] = "↑" .. ahead
+  end
+  if behind then
+    marks[#marks + 1] = "↓" .. behind
+  end
+
+  local branch = vim.split(head, "...", { plain = true })[1]:gsub("^No commits yet on ", "")
+  add(constants.git_branch .. " " .. branch .. (#marks > 0 and " " .. table.concat(marks, " ") or ""))
+
+  local changes = vim.list_slice(status, 2)
+  vim.list_extend(
+    items,
+    vim.tbl_map(function(line)
+      return { name = line, action = "", section = "Git" }
+    end, vim.list_slice(changes, 1, 5))
+  )
+  if #changes > 5 then
+    add(("+%d more"):format(#changes - 5))
+  end
+
+  -- `HEAD` needs a commit, so a fresh repository has no summary to show.
+  local stat = vim.trim(vim.fn.system({ "git", "-C", root, "diff", "HEAD", "--shortstat" }))
+  if vim.v.shell_error == 0 and stat ~= "" then
+    add(stat)
+  end
+  if #items == 1 then
+    add("working tree clean")
+  end
+  return items
+end
+
+---@return MiniStarterItem[]
+local function dashboard_recent()
+  local cwd = vim.fn.getcwd() .. "/"
+  ---@type MiniStarterItem[]
+  local items = {}
+  local seen = {}
+  for _, path in ipairs(vim.v.oldfiles) do
+    if #items == 5 then
+      break
+    end
+    if not seen[path] and vim.startswith(path, cwd) and vim.fn.filereadable(path) == 1 then
+      seen[path] = true
+      items[#items + 1] = {
+        name = vim.fn.fnamemodify(path, ":~:."),
+        action = "edit " .. vim.fn.fnameescape(path),
+        section = "Recent",
+      }
+    end
+  end
+  return items
+end
+
 ---@type LazySpec
 return {
   {
@@ -100,6 +171,42 @@ return {
     "nvim-mini/mini.icons",
     lazy = false,
     opts = {},
+  },
+  {
+    -- Startup: opens itself from a VimEnter autocmd that setup() registers, and
+    -- an autocmd added while an event runs does not fire for that event.
+    "nvim-mini/mini.starter",
+    lazy = false,
+    ---@type MiniStarterConfig
+    opts = {
+      header = [[
+
+     _/\/\/\/\/\____/\/\____/\/\______/\/\________/\/\/\/\/\____/\/\/\/\____/\/\________/\/\/\/\/\____/\/\____/\/\_
+    _/\/\____/\/\__/\/\____/\/\____/\/\/\/\____/\/\__________/\/\____/\/\__/\/\________/\/\____/\/\__/\/\____/\/\_
+   _/\/\/\/\/\____/\/\/\/\/\/\__/\/\____/\/\____/\/\/\/\____/\/\____/\/\__/\/\________/\/\____/\/\____/\/\/\/\___
+  _/\/\__/\/\____/\/\____/\/\__/\/\/\/\/\/\__________/\/\__/\/\____/\/\__/\/\________/\/\____/\/\______/\/\_____
+ _/\/\____/\/\__/\/\____/\/\__/\/\____/\/\__/\/\/\/\/\______/\/\/\/\____/\/\/\/\/\__/\/\/\/\/\________/\/\_____
+______________________________________________________________________________________________________________
+]],
+      footer = "",
+      items = { dashboard_git, dashboard_recent },
+    },
+    ---@param opts MiniStarterConfig
+    config = function(_, opts)
+      require("mini.starter").setup(opts)
+
+      -- mini paints each item's shortest unique prefix with `WarningMsg`. Across
+      -- file paths that prefix is the shared directory part, so a slice of every
+      -- path would wear the accent colour in a different place; keep the prefix
+      -- in the item's own colour. Query feedback still comes from the items that
+      -- stay active (mini dims the rest).
+      local group = vim.api.nvim_create_augroup("starter_highlight", { clear = true })
+      local function links()
+        vim.api.nvim_set_hl(0, "MiniStarterItemPrefix", { link = "MiniStarterItem" })
+      end
+      links()
+      vim.api.nvim_create_autocmd("ColorScheme", { group = group, desc = "Item prefix colour", callback = links })
+    end,
   },
   {
     "nvim-mini/mini.statusline",
@@ -112,19 +219,17 @@ return {
           local statusline = require("mini.statusline")
           local mode, mode_hl = section_mode()
           local git = section_git()
-          local diff = statusline.section_diff({ trunc_width = 75 })
           local lsp = statusline.section_lsp({ trunc_width = 75 })
-          local filename = section_filename({ trunc_width = 140 })
           local fileinfo = statusline.section_fileinfo({ trunc_width = 120 })
           local search = statusline.section_searchcount({ trunc_width = 75, options = { recompute = false } })
           local location = statusline.section_location({ trunc_width = 75 })
 
           local groups = {
             { hl = mode_hl, strings = { mode } },
-            { hl = "MiniStatuslineDevinfo", strings = { git, diff } },
-            "%<",
-            { hl = "MiniStatuslineFilename", strings = { filename } },
-            "%=%<",
+            { hl = "MiniStatuslineDevinfo", strings = { git } },
+            -- The window header carries the buffer name and its changed-line
+            -- counts (pack/winheader), so the statusline only shows state.
+            "%<%=",
           }
           vim.list_extend(groups, section_diagnostics())
           vim.list_extend(groups, {
@@ -321,5 +426,16 @@ return {
         },
       }
     end,
+  },
+  {
+    -- Local plugin (pack/winheader): the header above every file window. Loaded
+    -- on the first buffer rather than at startup; it renders its own windows
+    -- during setup, so none is missed.
+    "winheader.nvim",
+    dir = vim.fn.stdpath("config") .. "/pack/winheader",
+    main = "winheader",
+    event = "BufWinEnter",
+    ---@type winheader.Opts
+    opts = {},
   },
 }

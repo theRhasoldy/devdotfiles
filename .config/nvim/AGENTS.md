@@ -38,7 +38,7 @@ lua/types.lua            editor-only LuaCATS classes (never required at runtime)
 lua/plugins/             every file returns a lazy.nvim spec
   editor.lua             mini.ai/comment/move/pairs/surround/splitjoin/bufremove
   navigation.lua         mini.pick + mini.extra + mini.files
-  ui.lua                 mini.statusline/icons/notify/clue/hipatterns
+  ui.lua                 mini.statusline/icons/notify/clue/hipatterns/starter
   completion.lua         blink.cmp + supermaven-nvim
   lsp.lua                nvim-lspconfig + mason + lazydev
   treesitter.lua         parsers/highlighting
@@ -48,6 +48,8 @@ lua/plugins/             every file returns a lazy.nvim spec
   git.lua                gitsigns + codediff
   terminal.lua           tmux navigation
   colorscheme.lua        theme candidates
+pack/winheader/          local plugin, loaded by lua/plugins/ui.lua
+  lua/winheader/init.lua window header: path, revision, changed-line counts
 docs/research/           measured findings behind the non-obvious settings
 ```
 
@@ -98,6 +100,7 @@ docs/research/           measured findings behind the non-obvious settings
 | --- | --- |
 | mini.ai/comment/move/pairs/surround/splitjoin, mini.animate, mini.notify, mini.clue | `VeryLazy` |
 | mini.statusline, mini.icons | startup (first-screen correctness) |
+| mini.starter | startup (dashboard: its own `VimEnter` autocmd must exist first) |
 | mini.pick, mini.extra, mini.files | `keys` (`<leader>f*`, `<leader>g*`, `<leader>e`, `-`) |
 | mini.bufremove | `keys` (`<leader>bd`, `<leader>bD`) |
 | mini.hipatterns | `BufReadPost` / `BufNewFile` |
@@ -113,6 +116,7 @@ docs/research/           measured findings behind the non-obvious settings
 | opencode.nvim | `:OpenCode`, `<leader>oa/os` |
 | mason | `:Mason` (plus `BufReadPre`: its `setup()` puts the bin dir on PATH) |
 | lazydev | `ft=lua` |
+| winheader | `BufWinEnter` |
 
 ## LSP
 
@@ -207,6 +211,38 @@ Startup: `--startuptime` total is 26–28 ms for a plain buffer.
   (`lua/util/pick.lua`), fed from `source.show` + the list cursor. That only
   works for file/location pickers; symbols and diagnostics keep mini.pick's own
   preview.
+- **The winbar is a local plugin, and codediff owns the same option.** It lives in
+  `pack/winheader` (spec at the end of `lua/plugins/ui.lua`, `event =
+  BufWinEnter`, loaded through `main` + `setup(opts)`), because mini.statusline
+  only writes `statusline` and no plugin may own `winbar`. It renders path
+  relative to cwd, `(<rev>)` for codediff's `codediff://` buffers, `%m` for the
+  modified flag, right-aligned `b.gitsigns_status` counts, and skips floats and
+  `nofile`/`help`/`quickfix`/`terminal` buffers. The string is
+  built per event rather than through `%{}`, which keeps redraws native, and the
+  counts come from the pane's **own** buffer (`vim.b[buf]`) — reading `vim.b` would
+  print the focused buffer's counts in every pane until the other one gained focus.
+  codediff clears its panes' winbars from `BufWinEnter`/`BufEnter`/`WinEnter`/
+  `FileType`, so the header is rewritten from `vim.schedule` (after that pass) and
+  `User GitSignsUpdate` re-applies it, since the counts land after the first paint.
+  `apply` leaves any header that does not start with `%<` alone — that is what keeps
+  codediff's merge-view labels (" Result", " Ours (Current)"). Colours are white
+  (`Normal`, bold) when focused and gray (`Comment`) otherwise, re-applied on
+  `ColorScheme` because cendre's own `WinBar`/`WinBarNC` are too dim to read. The
+  statusline no longer prints the buffer name or the diff summary (`ui.lua`), so
+  the header is the only place they appear.
+- **The dashboard is `mini.starter` with a git snapshot on it.** It must load at
+  startup: it opens itself from a `VimEnter` autocmd that `setup()` registers, and
+  an autocmd added while an event is running does not fire for that event. Its API
+  has no async or terminal sections (what `snacks.dashboard` used), so
+  `dashboard_git` in `lua/plugins/ui.lua` shells out to `git status --short
+  --branch` and `git diff HEAD --shortstat` once per draw and renders every line as
+  an item with `action = ""`; mini paints those with `MiniStarterInactive`, which is
+  the muted gray the block is supposed to have. `dashboard_recent` filters
+  `v:oldfiles` to the cwd, since the builtin section lists files from anywhere.
+  `MiniStarterItemPrefix` is relinked to `MiniStarterItem` in the spec's `config`
+  (re-applied on `ColorScheme`): mini defaults it to `WarningMsg` and paints each
+  item's shortest unique prefix, which across file paths is the shared directory
+  part — every entry would show the accent colour in a different place.
 - **`codediff` downloads native binaries** on first use (needs `curl` + network;
   `:Lazy clean` means downloading again). It accepts plain revisions only —
   `<rev>^!` fails, so the commit picker passes `<hash>^ <hash>` and substitutes
